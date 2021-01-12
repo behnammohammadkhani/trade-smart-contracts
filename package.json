@@ -66,7 +66,7 @@
       "yarn prettier:sol",
       "yarn lint:sol:fix"
     ],
-    "**/*.{js,json,md,sol,ts}": [
+    "**/*.{js,ts}": [
       "yarn prettier:ts",
       "yarn lint:ts:fix"
     ]
