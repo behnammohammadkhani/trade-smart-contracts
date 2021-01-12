@@ -49,9 +49,10 @@
     "lint:ts": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js,.ts .",
     "lint:ts:fix": "yarn lint:ts --fix",
     "prettier:sol": "prettier --config .prettierrc --write \"contracts/**/*.sol\"",
-    "prettier:ts": "prettier --config .prettierrc --write \"**/*.{js,json,md,ts}\"",
+    "prettier:ts": "prettier --config .prettierrc --write \"**/*.{js,ts}\"",
+    "prettier:json:md": "prettier --config .prettierrc --write \"**/*.{json,md}\"",
     "prettier": "yarn prettier:sol && yarn prettier:ts",
-    "prettier:list-different": "prettier --config .prettierrc --list-different \"**/*.{js,json,md,sol,ts}\"",
+    "prettier:list-different": "prettier --config .prettierrc --list-different \"**/*.{js,sol,ts}\"",
     "test": "hardhat test",
     "typechain": "hardhat typechain"
   },
