@@ -7,7 +7,7 @@ pragma solidity ^0.7.0;
  * Never remove items from this list
  */
 abstract contract AuthorizationStorage {
-    address public prermissions;
+    address public permissions;
     mapping(address => uint256) private limits;
 
     bytes4 public constant ERC20_TRANSFER = bytes4(keccak256("transfer(address,uint256)"));

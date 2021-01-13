@@ -2,7 +2,7 @@
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts-upgradeable/GSN/ContextUpgradeable.sol";
-import "./IAuthorization";
+import "./IAuthorization.sol";
 
 abstract contract Autorizable is ContextUpgradeable {
     IAuthorization private authorization;

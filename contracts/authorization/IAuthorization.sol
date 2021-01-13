@@ -2,8 +2,6 @@
 pragma solidity ^0.7.0;
 
 interface IAuthorization {
-    event PermissionsSetted(address indexed previousPermissions, address indexed newPermissions);
-
     function setPermissions(address _prermissions) external returns (bool);
 
     function isAuthorized(
