@@ -33,6 +33,7 @@
     "prettier-plugin-solidity": "^1.0.0-beta.3",
     "shelljs": "^0.8.4",
     "solc": "^0.8.0",
+    "solhint": "^3.3.2",
     "solhint-plugin-prettier": "^0.0.5",
     "solidity-coverage": "^0.7.13",
     "ts-generator": "^0.1.1",
@@ -46,7 +47,7 @@
     "compile": "hardhat compile",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles \"./test/**/*.ts\"",
     "lint": "yarn run lint:sol && yarn run lint:ts && yarn run prettier:list-different",
-    "lint:sol": "solhint --config ./.solhint.json --max-warnings 0 \"contracts/**/*.sol\"",
+    "lint:sol": "solhint --max-warnings 0 \"contracts/**/*.sol\"",
     "lint:sol:fix": "yarn lint:sol --fix",
     "lint:ts": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js,.ts .",
     "lint:ts:fix": "yarn lint:ts --fix",
@@ -64,7 +65,7 @@
     }
   },
   "lint-staged": {
-    "contracts/**/*.sol": [
+    "contracts/**/*.sol,!contracts/authorization/Authorization.sol": [
       "yarn prettier:sol",
       "yarn lint:sol:fix"
     ],

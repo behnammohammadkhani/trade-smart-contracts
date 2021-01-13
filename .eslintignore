@@ -12,3 +12,6 @@ typechain/
 .solcover.js
 coverage.json
 package.json
+
+# Temporary ignore this due some error with prettier-plugin-solidity
+contracts/authorization/Authorization.sol
