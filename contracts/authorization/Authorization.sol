@@ -41,7 +41,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         //ERC20
         if (_operation == ERC20_TRANSFER) {
             (address recipient, uint256 amount) = abi.decode(_data[4:], (address, uint256));
-            sconsole.log("TRANSFER", _user, _asset, recipient, amount);
+            console.log("TRANSFER", _user, _asset, recipient, amount);
         }
 
         if (_operation == ERC20_TRANSFER_FROM) {
