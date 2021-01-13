@@ -14,7 +14,7 @@ abstract contract Autorizable is ContextUpgradeable {
         require(
             authorization.isAuthorized(_msgSender(), msg.sig, address(this), _msgData()),
             "Authorizable: not authorized"
-        )
+        );
         _;
     }
 }
