@@ -1,10 +1,10 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.7.0;
 
-import "@openzeppelin/contracts/GSN/Context.sol";
+import "@openzeppelin/contracts-upgradeable/GSN/ContextUpgradeable.sol";
 import "./IAuthorization.sol";
 
-abstract contract Authorizable is Context {
+abstract contract AuthorizableUpgradeable is ContextUpgradeable {
     IAuthorization public authorization;
 
     /**
