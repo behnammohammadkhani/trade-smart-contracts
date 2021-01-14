@@ -5,7 +5,7 @@ import { Authorization, ERC20Authorizable, PermissionsMock, EurPriceFeedMock } f
 
 const { BigNumber } = ethers;
 let deployer: Signer;
-// let kakaroto: Signer;
+let kakaroto: Signer;
 // let vegeta: Signer;
 // let karpincho: Signer;
 
@@ -25,7 +25,7 @@ const traidingLimit = ethers.constants.One.mul(5000);
 
 describe('Authorization', function () {
   before(async () => {
-    [deployer] = await ethers.getSigners();
+    [deployer, kakaroto] = await ethers.getSigners();
     [deployerAddress] = await Promise.all([deployer.getAddress()]);
 
     const PermissionsMock = await ethers.getContractFactory('PermissionsMock');
