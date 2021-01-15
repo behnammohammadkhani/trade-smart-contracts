@@ -6,7 +6,9 @@ interface IAuthorization {
 
     function setEurPriceFeed(address _prermissions) external returns (bool);
 
-    function setTraidingLimint(uint256 _traidingLimit) external returns (bool);
+    function setTradingRegistry(address _prermissions) external returns (bool);
+
+    function setTradingLimint(uint256 _tradingLimit) external returns (bool);
 
     function isAuthorized(
         address _user,

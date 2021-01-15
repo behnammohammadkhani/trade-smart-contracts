@@ -20,28 +20,34 @@ import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
-interface IEurPriceFeedInterface extends ethers.utils.Interface {
+interface TradingRegistryAssetMockInterface extends ethers.utils.Interface {
   functions: {
-    "calculateAmount(address,uint256)": FunctionFragment;
-    "getPrice(address)": FunctionFragment;
+    "someFunction(uint256)": FunctionFragment;
+    "tradingRegistry()": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "calculateAmount",
-    values: [string, BigNumberish]
+    functionFragment: "someFunction",
+    values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "getPrice", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "tradingRegistry",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(
-    functionFragment: "calculateAmount",
+    functionFragment: "someFunction",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getPrice", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "tradingRegistry",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
 
-export class IEurPriceFeed extends Contract {
+export class TradingRegistryAssetMock extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -52,116 +58,87 @@ export class IEurPriceFeed extends Contract {
   removeAllListeners(eventName: EventFilter | string): this;
   removeListener(eventName: any, listener: Listener): this;
 
-  interface: IEurPriceFeedInterface;
+  interface: TradingRegistryAssetMockInterface;
 
   functions: {
-    calculateAmount(
-      _asset: string,
+    someFunction(
       _amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "calculateAmount(address,uint256)"(
-      _asset: string,
+    "someFunction(uint256)"(
       _amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    getPrice(
-      _asset: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+    tradingRegistry(overrides?: CallOverrides): Promise<[string]>;
 
-    "getPrice(address)"(
-      _asset: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+    "tradingRegistry()"(overrides?: CallOverrides): Promise<[string]>;
   };
 
-  calculateAmount(
-    _asset: string,
+  someFunction(
     _amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "calculateAmount(address,uint256)"(
-    _asset: string,
+  "someFunction(uint256)"(
     _amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  getPrice(_asset: string, overrides?: Overrides): Promise<ContractTransaction>;
+  tradingRegistry(overrides?: CallOverrides): Promise<string>;
 
-  "getPrice(address)"(
-    _asset: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+  "tradingRegistry()"(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
-    calculateAmount(
-      _asset: string,
+    someFunction(
       _amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
-    "calculateAmount(address,uint256)"(
-      _asset: string,
+    "someFunction(uint256)"(
       _amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
-    getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+    tradingRegistry(overrides?: CallOverrides): Promise<string>;
 
-    "getPrice(address)"(
-      _asset: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "tradingRegistry()"(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
 
   estimateGas: {
-    calculateAmount(
-      _asset: string,
+    someFunction(
       _amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "calculateAmount(address,uint256)"(
-      _asset: string,
+    "someFunction(uint256)"(
       _amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    getPrice(_asset: string, overrides?: Overrides): Promise<BigNumber>;
+    tradingRegistry(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getPrice(address)"(
-      _asset: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
+    "tradingRegistry()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    calculateAmount(
-      _asset: string,
+    someFunction(
       _amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "calculateAmount(address,uint256)"(
-      _asset: string,
+    "someFunction(uint256)"(
       _amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    getPrice(
-      _asset: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
+    tradingRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getPrice(address)"(
-      _asset: string,
-      overrides?: Overrides
+    "tradingRegistry()"(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

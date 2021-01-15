@@ -23,13 +23,15 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
   functions: {
     "ERC20_APPROVE()": FunctionFragment;
     "ERC20_MINT()": FunctionFragment;
+    "ERC20_RECEIVE()": FunctionFragment;
     "ERC20_TRANSFER()": FunctionFragment;
     "ERC20_TRANSFER_FROM()": FunctionFragment;
     "TIER_1_ID()": FunctionFragment;
     "TIER_2_ID()": FunctionFragment;
     "eurPriceFeed()": FunctionFragment;
     "permissions()": FunctionFragment;
-    "traidingLimit()": FunctionFragment;
+    "tradingLimit()": FunctionFragment;
+    "tradingRegistry()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -38,6 +40,10 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "ERC20_MINT",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ERC20_RECEIVE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -59,7 +65,11 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "traidingLimit",
+    functionFragment: "tradingLimit",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "tradingRegistry",
     values?: undefined
   ): string;
 
@@ -68,6 +78,10 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "ERC20_MINT", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "ERC20_RECEIVE",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "ERC20_TRANSFER",
     data: BytesLike
@@ -87,7 +101,11 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "traidingLimit",
+    functionFragment: "tradingLimit",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "tradingRegistry",
     data: BytesLike
   ): Result;
 
@@ -116,6 +134,10 @@ export class AuthorizationStorage extends Contract {
 
     "ERC20_MINT()"(overrides?: CallOverrides): Promise<[string]>;
 
+    ERC20_RECEIVE(overrides?: CallOverrides): Promise<[string]>;
+
+    "ERC20_RECEIVE()"(overrides?: CallOverrides): Promise<[string]>;
+
     ERC20_TRANSFER(overrides?: CallOverrides): Promise<[string]>;
 
     "ERC20_TRANSFER()"(overrides?: CallOverrides): Promise<[string]>;
@@ -140,9 +162,13 @@ export class AuthorizationStorage extends Contract {
 
     "permissions()"(overrides?: CallOverrides): Promise<[string]>;
 
-    traidingLimit(overrides?: CallOverrides): Promise<[BigNumber]>;
+    tradingLimit(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "traidingLimit()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "tradingLimit()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    tradingRegistry(overrides?: CallOverrides): Promise<[string]>;
+
+    "tradingRegistry()"(overrides?: CallOverrides): Promise<[string]>;
   };
 
   ERC20_APPROVE(overrides?: CallOverrides): Promise<string>;
@@ -152,6 +178,10 @@ export class AuthorizationStorage extends Contract {
   ERC20_MINT(overrides?: CallOverrides): Promise<string>;
 
   "ERC20_MINT()"(overrides?: CallOverrides): Promise<string>;
+
+  ERC20_RECEIVE(overrides?: CallOverrides): Promise<string>;
+
+  "ERC20_RECEIVE()"(overrides?: CallOverrides): Promise<string>;
 
   ERC20_TRANSFER(overrides?: CallOverrides): Promise<string>;
 
@@ -177,9 +207,13 @@ export class AuthorizationStorage extends Contract {
 
   "permissions()"(overrides?: CallOverrides): Promise<string>;
 
-  traidingLimit(overrides?: CallOverrides): Promise<BigNumber>;
+  tradingLimit(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "traidingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "tradingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  tradingRegistry(overrides?: CallOverrides): Promise<string>;
+
+  "tradingRegistry()"(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     ERC20_APPROVE(overrides?: CallOverrides): Promise<string>;
@@ -189,6 +223,10 @@ export class AuthorizationStorage extends Contract {
     ERC20_MINT(overrides?: CallOverrides): Promise<string>;
 
     "ERC20_MINT()"(overrides?: CallOverrides): Promise<string>;
+
+    ERC20_RECEIVE(overrides?: CallOverrides): Promise<string>;
+
+    "ERC20_RECEIVE()"(overrides?: CallOverrides): Promise<string>;
 
     ERC20_TRANSFER(overrides?: CallOverrides): Promise<string>;
 
@@ -214,9 +252,13 @@ export class AuthorizationStorage extends Contract {
 
     "permissions()"(overrides?: CallOverrides): Promise<string>;
 
-    traidingLimit(overrides?: CallOverrides): Promise<BigNumber>;
+    tradingLimit(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "traidingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "tradingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    tradingRegistry(overrides?: CallOverrides): Promise<string>;
+
+    "tradingRegistry()"(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
@@ -229,6 +271,10 @@ export class AuthorizationStorage extends Contract {
     ERC20_MINT(overrides?: CallOverrides): Promise<BigNumber>;
 
     "ERC20_MINT()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ERC20_RECEIVE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "ERC20_RECEIVE()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     ERC20_TRANSFER(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -254,9 +300,13 @@ export class AuthorizationStorage extends Contract {
 
     "permissions()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    traidingLimit(overrides?: CallOverrides): Promise<BigNumber>;
+    tradingLimit(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "traidingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "tradingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    tradingRegistry(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "tradingRegistry()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -267,6 +317,10 @@ export class AuthorizationStorage extends Contract {
     ERC20_MINT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "ERC20_MINT()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    ERC20_RECEIVE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "ERC20_RECEIVE()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     ERC20_TRANSFER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -298,8 +352,14 @@ export class AuthorizationStorage extends Contract {
 
     "permissions()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    traidingLimit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    tradingLimit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "traidingLimit()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "tradingLimit()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    tradingRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "tradingRegistry()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

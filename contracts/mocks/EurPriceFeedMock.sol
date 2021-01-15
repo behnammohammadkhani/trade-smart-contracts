@@ -5,7 +5,11 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../authorization/IEurPriceFeed.sol";
 
 contract EurPriceFeedMock is IEurPriceFeed {
-    function getPrice(address _asset) external override returns (uint256) {
+    function getPrice(address) external override returns (uint256) {
         return 1;
+    }
+
+    function calculateAmount(address, uint256 _amount) external override returns (uint256) {
+        return _amount;
     }
 }

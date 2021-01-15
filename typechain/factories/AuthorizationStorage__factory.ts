@@ -49,6 +49,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "ERC20_RECEIVE",
+    outputs: [
+      {
+        internalType: "bytes4",
+        name: "",
+        type: "bytes4",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "ERC20_TRANSFER",
     outputs: [
       {
@@ -127,12 +140,25 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "traidingLimit",
+    name: "tradingLimit",
     outputs: [
       {
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "tradingRegistry",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",

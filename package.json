@@ -33,6 +33,7 @@
     "prettier": "^2.2.1",
     "prettier-plugin-solidity": "^1.0.0-beta.3",
     "shelljs": "^0.8.4",
+    "sol2uml": "^1.1.25",
     "solc": "^0.8.0",
     "solhint": "^3.3.2",
     "solhint-plugin-prettier": "^0.0.5",
@@ -58,7 +59,8 @@
     "prettier": "yarn prettier:sol && yarn prettier:ts",
     "prettier:list-different": "prettier --config .prettierrc --list-different \"**/*.{js,sol,ts}\"",
     "test": "hardhat test",
-    "typechain": "hardhat typechain"
+    "typechain": "hardhat typechain",
+    "doc:uml": "sol2uml ./contracts -i mocks -f png -o ./docs/uml/swarm-markets.png"
   },
   "husky": {
     "hooks": {

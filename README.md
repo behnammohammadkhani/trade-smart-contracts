@@ -2,5 +2,6 @@
 
 ---
 
-
 # swarm-smart-contracts
+
+![](docs/uml/swarm-markets.png?raw=true)

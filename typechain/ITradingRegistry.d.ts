@@ -20,38 +20,37 @@ import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
-interface IAuthorizationInterface extends ethers.utils.Interface {
+interface ITradingRegistryInterface extends ethers.utils.Interface {
   functions: {
-    "isAuthorized(address,address,bytes4,bytes)": FunctionFragment;
+    "addTrade(address,bytes4,uint256)": FunctionFragment;
+    "allowAsset(address)": FunctionFragment;
+    "disallowAsset(address)": FunctionFragment;
     "setEurPriceFeed(address)": FunctionFragment;
-    "setPermissions(address)": FunctionFragment;
-    "setTradingLimint(uint256)": FunctionFragment;
-    "setTradingRegistry(address)": FunctionFragment;
+    "tradingBalanceByOperation(address,bytes4)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "isAuthorized",
-    values: [string, string, BytesLike, BytesLike]
+    functionFragment: "addTrade",
+    values: [string, BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "allowAsset", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "disallowAsset",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setEurPriceFeed",
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "setPermissions",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTradingLimint",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTradingRegistry",
-    values: [string]
+    functionFragment: "tradingBalanceByOperation",
+    values: [string, BytesLike]
   ): string;
 
+  decodeFunctionResult(functionFragment: "addTrade", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "allowAsset", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "isAuthorized",
+    functionFragment: "disallowAsset",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -59,22 +58,14 @@ interface IAuthorizationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setPermissions",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setTradingLimint",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setTradingRegistry",
+    functionFragment: "tradingBalanceByOperation",
     data: BytesLike
   ): Result;
 
   events: {};
 }
 
-export class IAuthorization extends Contract {
+export class ITradingRegistry extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -85,294 +76,282 @@ export class IAuthorization extends Contract {
   removeAllListeners(eventName: EventFilter | string): this;
   removeListener(eventName: any, listener: Listener): this;
 
-  interface: IAuthorizationInterface;
+  interface: ITradingRegistryInterface;
 
   functions: {
-    isAuthorized(
+    addTrade(
       _user: string,
-      _asset: string,
       _operation: BytesLike,
-      _data: BytesLike,
+      _amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "isAuthorized(address,address,bytes4,bytes)"(
+    "addTrade(address,bytes4,uint256)"(
       _user: string,
-      _asset: string,
       _operation: BytesLike,
-      _data: BytesLike,
+      _amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    allowAsset(
+      _asset: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "allowAsset(address)"(
+      _asset: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    disallowAsset(
+      _asset: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "disallowAsset(address)"(
+      _asset: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setEurPriceFeed(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setEurPriceFeed(address)"(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    setPermissions(
-      _prermissions: string,
+    tradingBalanceByOperation(
+      _user: string,
+      _operation: BytesLike,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "setPermissions(address)"(
-      _prermissions: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    setTradingLimint(
-      _tradingLimit: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setTradingLimint(uint256)"(
-      _tradingLimit: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    setTradingRegistry(
-      _prermissions: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setTradingRegistry(address)"(
-      _prermissions: string,
+    "tradingBalanceByOperation(address,bytes4)"(
+      _user: string,
+      _operation: BytesLike,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
 
-  isAuthorized(
+  addTrade(
     _user: string,
-    _asset: string,
     _operation: BytesLike,
-    _data: BytesLike,
+    _amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "isAuthorized(address,address,bytes4,bytes)"(
+  "addTrade(address,bytes4,uint256)"(
     _user: string,
-    _asset: string,
     _operation: BytesLike,
-    _data: BytesLike,
+    _amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  allowAsset(
+    _asset: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "allowAsset(address)"(
+    _asset: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  disallowAsset(
+    _asset: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "disallowAsset(address)"(
+    _asset: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setEurPriceFeed(
-    _prermissions: string,
+    _eurPriceFeed: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setEurPriceFeed(address)"(
-    _prermissions: string,
+    _eurPriceFeed: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  setPermissions(
-    _prermissions: string,
+  tradingBalanceByOperation(
+    _user: string,
+    _operation: BytesLike,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "setPermissions(address)"(
-    _prermissions: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  setTradingLimint(
-    _tradingLimit: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setTradingLimint(uint256)"(
-    _tradingLimit: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  setTradingRegistry(
-    _prermissions: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setTradingRegistry(address)"(
-    _prermissions: string,
+  "tradingBalanceByOperation(address,bytes4)"(
+    _user: string,
+    _operation: BytesLike,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    isAuthorized(
+    addTrade(
       _user: string,
-      _asset: string,
       _operation: BytesLike,
-      _data: BytesLike,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "addTrade(address,bytes4,uint256)"(
+      _user: string,
+      _operation: BytesLike,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    allowAsset(_asset: string, overrides?: CallOverrides): Promise<boolean>;
+
+    "allowAsset(address)"(
+      _asset: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "isAuthorized(address,address,bytes4,bytes)"(
-      _user: string,
+    disallowAsset(_asset: string, overrides?: CallOverrides): Promise<boolean>;
+
+    "disallowAsset(address)"(
       _asset: string,
-      _operation: BytesLike,
-      _data: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     setEurPriceFeed(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     "setEurPriceFeed(address)"(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    setPermissions(
-      _prermissions: string,
+    tradingBalanceByOperation(
+      _user: string,
+      _operation: BytesLike,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<BigNumber>;
 
-    "setPermissions(address)"(
-      _prermissions: string,
+    "tradingBalanceByOperation(address,bytes4)"(
+      _user: string,
+      _operation: BytesLike,
       overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    setTradingLimint(
-      _tradingLimit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "setTradingLimint(uint256)"(
-      _tradingLimit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    setTradingRegistry(
-      _prermissions: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "setTradingRegistry(address)"(
-      _prermissions: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<BigNumber>;
   };
 
   filters: {};
 
   estimateGas: {
-    isAuthorized(
+    addTrade(
       _user: string,
-      _asset: string,
       _operation: BytesLike,
-      _data: BytesLike,
+      _amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "isAuthorized(address,address,bytes4,bytes)"(
+    "addTrade(address,bytes4,uint256)"(
       _user: string,
-      _asset: string,
       _operation: BytesLike,
-      _data: BytesLike,
+      _amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    allowAsset(_asset: string, overrides?: Overrides): Promise<BigNumber>;
+
+    "allowAsset(address)"(
+      _asset: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    disallowAsset(_asset: string, overrides?: Overrides): Promise<BigNumber>;
+
+    "disallowAsset(address)"(
+      _asset: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     setEurPriceFeed(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setEurPriceFeed(address)"(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    setPermissions(
-      _prermissions: string,
+    tradingBalanceByOperation(
+      _user: string,
+      _operation: BytesLike,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "setPermissions(address)"(
-      _prermissions: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    setTradingLimint(
-      _tradingLimit: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setTradingLimint(uint256)"(
-      _tradingLimit: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    setTradingRegistry(
-      _prermissions: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setTradingRegistry(address)"(
-      _prermissions: string,
+    "tradingBalanceByOperation(address,bytes4)"(
+      _user: string,
+      _operation: BytesLike,
       overrides?: Overrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    isAuthorized(
+    addTrade(
       _user: string,
-      _asset: string,
       _operation: BytesLike,
-      _data: BytesLike,
+      _amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "isAuthorized(address,address,bytes4,bytes)"(
+    "addTrade(address,bytes4,uint256)"(
       _user: string,
-      _asset: string,
       _operation: BytesLike,
-      _data: BytesLike,
+      _amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    allowAsset(
+      _asset: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "allowAsset(address)"(
+      _asset: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    disallowAsset(
+      _asset: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "disallowAsset(address)"(
+      _asset: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setEurPriceFeed(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setEurPriceFeed(address)"(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    setPermissions(
-      _prermissions: string,
+    tradingBalanceByOperation(
+      _user: string,
+      _operation: BytesLike,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "setPermissions(address)"(
-      _prermissions: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    setTradingLimint(
-      _tradingLimit: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setTradingLimint(uint256)"(
-      _tradingLimit: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    setTradingRegistry(
-      _prermissions: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setTradingRegistry(address)"(
-      _prermissions: string,
+    "tradingBalanceByOperation(address,bytes4)"(
+      _user: string,
+      _operation: BytesLike,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };

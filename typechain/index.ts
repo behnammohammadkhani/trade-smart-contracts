@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { OwnableUpgradeable } from "./OwnableUpgradeable";
+export type { Ownable } from "./Ownable";
 export type { ERC165 } from "./ERC165";
 export type { IERC165 } from "./IERC165";
 export type { ERC1155 } from "./ERC1155";
@@ -16,12 +17,16 @@ export type { Authorization } from "./Authorization";
 export type { AuthorizationStorage } from "./AuthorizationStorage";
 export type { IAuthorization } from "./IAuthorization";
 export type { IEurPriceFeed } from "./IEurPriceFeed";
+export type { ITradingRegistry } from "./ITradingRegistry";
+export type { TradingRegistry } from "./TradingRegistry";
 export type { Greeter } from "./Greeter";
-export type { ERC20Authorizable } from "./ERC20Authorizable";
 export type { EurPriceFeedMock } from "./EurPriceFeedMock";
 export type { PermissionsMock } from "./PermissionsMock";
+export type { TradingRegistryAssetMock } from "./TradingRegistryAssetMock";
+export type { XTokenMock } from "./XTokenMock";
 
 export { OwnableUpgradeable__factory } from "./factories/OwnableUpgradeable__factory";
+export { Ownable__factory } from "./factories/Ownable__factory";
 export { ERC165__factory } from "./factories/ERC165__factory";
 export { IERC165__factory } from "./factories/IERC165__factory";
 export { ERC1155__factory } from "./factories/ERC1155__factory";
@@ -36,7 +41,10 @@ export { Authorization__factory } from "./factories/Authorization__factory";
 export { AuthorizationStorage__factory } from "./factories/AuthorizationStorage__factory";
 export { IAuthorization__factory } from "./factories/IAuthorization__factory";
 export { IEurPriceFeed__factory } from "./factories/IEurPriceFeed__factory";
+export { ITradingRegistry__factory } from "./factories/ITradingRegistry__factory";
+export { TradingRegistry__factory } from "./factories/TradingRegistry__factory";
 export { Greeter__factory } from "./factories/Greeter__factory";
-export { ERC20Authorizable__factory } from "./factories/ERC20Authorizable__factory";
 export { EurPriceFeedMock__factory } from "./factories/EurPriceFeedMock__factory";
 export { PermissionsMock__factory } from "./factories/PermissionsMock__factory";
+export { TradingRegistryAssetMock__factory } from "./factories/TradingRegistryAssetMock__factory";
+export { XTokenMock__factory } from "./factories/XTokenMock__factory";

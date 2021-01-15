@@ -22,11 +22,20 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface EurPriceFeedMockInterface extends ethers.utils.Interface {
   functions: {
+    "calculateAmount(address,uint256)": FunctionFragment;
     "getPrice(address)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "calculateAmount",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "getPrice", values: [string]): string;
 
+  decodeFunctionResult(
+    functionFragment: "calculateAmount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getPrice", data: BytesLike): Result;
 
   events: {};
@@ -46,6 +55,18 @@ export class EurPriceFeedMock extends Contract {
   interface: EurPriceFeedMockInterface;
 
   functions: {
+    calculateAmount(
+      _: string,
+      _amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "calculateAmount(address,uint256)"(
+      _: string,
+      _amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     getPrice(
       _asset: string,
       overrides?: Overrides
@@ -57,6 +78,18 @@ export class EurPriceFeedMock extends Contract {
     ): Promise<ContractTransaction>;
   };
 
+  calculateAmount(
+    _: string,
+    _amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "calculateAmount(address,uint256)"(
+    _: string,
+    _amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   getPrice(_asset: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "getPrice(address)"(
@@ -65,6 +98,18 @@ export class EurPriceFeedMock extends Contract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    calculateAmount(
+      _: string,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "calculateAmount(address,uint256)"(
+      _: string,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "getPrice(address)"(
@@ -76,6 +121,18 @@ export class EurPriceFeedMock extends Contract {
   filters: {};
 
   estimateGas: {
+    calculateAmount(
+      _: string,
+      _amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "calculateAmount(address,uint256)"(
+      _: string,
+      _amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     getPrice(_asset: string, overrides?: Overrides): Promise<BigNumber>;
 
     "getPrice(address)"(
@@ -85,6 +142,18 @@ export class EurPriceFeedMock extends Contract {
   };
 
   populateTransaction: {
+    calculateAmount(
+      _: string,
+      _amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "calculateAmount(address,uint256)"(
+      _: string,
+      _amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     getPrice(
       _asset: string,
       overrides?: Overrides

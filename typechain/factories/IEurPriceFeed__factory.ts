@@ -24,6 +24,30 @@ const _abi = [
         name: "_asset",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
+      },
+    ],
+    name: "calculateAmount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
     ],
     name: "getPrice",
     outputs: [

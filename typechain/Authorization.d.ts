@@ -24,20 +24,23 @@ interface AuthorizationInterface extends ethers.utils.Interface {
   functions: {
     "ERC20_APPROVE()": FunctionFragment;
     "ERC20_MINT()": FunctionFragment;
+    "ERC20_RECEIVE()": FunctionFragment;
     "ERC20_TRANSFER()": FunctionFragment;
     "ERC20_TRANSFER_FROM()": FunctionFragment;
     "TIER_1_ID()": FunctionFragment;
     "TIER_2_ID()": FunctionFragment;
     "eurPriceFeed()": FunctionFragment;
-    "initialize(address,address,uint256)": FunctionFragment;
+    "initialize(address,address,address,uint256)": FunctionFragment;
     "isAuthorized(address,address,bytes4,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "permissions()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setEurPriceFeed(address)": FunctionFragment;
     "setPermissions(address)": FunctionFragment;
-    "setTraidingLimint(uint256)": FunctionFragment;
-    "traidingLimit()": FunctionFragment;
+    "setTradingLimint(uint256)": FunctionFragment;
+    "setTradingRegistry(address)": FunctionFragment;
+    "tradingLimit()": FunctionFragment;
+    "tradingRegistry()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -47,6 +50,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "ERC20_MINT",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ERC20_RECEIVE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -65,7 +72,7 @@ interface AuthorizationInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, BigNumberish]
+    values: [string, string, string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "isAuthorized",
@@ -89,11 +96,19 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "setTraidingLimint",
+    functionFragment: "setTradingLimint",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "traidingLimit",
+    functionFragment: "setTradingRegistry",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "tradingLimit",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "tradingRegistry",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -106,6 +121,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "ERC20_MINT", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "ERC20_RECEIVE",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "ERC20_TRANSFER",
     data: BytesLike
@@ -143,11 +162,19 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setTraidingLimint",
+    functionFragment: "setTradingLimint",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "traidingLimit",
+    functionFragment: "setTradingRegistry",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "tradingLimit",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "tradingRegistry",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -159,13 +186,15 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     "EurPriceFeedSetted(address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "PermissionsSetted(address)": EventFragment;
-    "TraidingLimitSetted(uint256)": EventFragment;
+    "TradingLimitSetted(uint256)": EventFragment;
+    "TradingRegistrySetted(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "EurPriceFeedSetted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PermissionsSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TraidingLimitSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TradingLimitSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TradingRegistrySetted"): EventFragment;
 }
 
 export class Authorization extends Contract {
@@ -190,6 +219,10 @@ export class Authorization extends Contract {
 
     "ERC20_MINT()"(overrides?: CallOverrides): Promise<[string]>;
 
+    ERC20_RECEIVE(overrides?: CallOverrides): Promise<[string]>;
+
+    "ERC20_RECEIVE()"(overrides?: CallOverrides): Promise<[string]>;
+
     ERC20_TRANSFER(overrides?: CallOverrides): Promise<[string]>;
 
     "ERC20_TRANSFER()"(overrides?: CallOverrides): Promise<[string]>;
@@ -213,14 +246,16 @@ export class Authorization extends Contract {
     initialize(
       _permissions: string,
       _eurPriceFeed: string,
-      _traidingLimit: BigNumberish,
+      _tradingRegistry: string,
+      _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "initialize(address,address,uint256)"(
+    "initialize(address,address,address,uint256)"(
       _permissions: string,
       _eurPriceFeed: string,
-      _traidingLimit: BigNumberish,
+      _tradingRegistry: string,
+      _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -272,19 +307,33 @@ export class Authorization extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    setTraidingLimint(
-      _traidingLimit: BigNumberish,
+    setTradingLimint(
+      _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "setTraidingLimint(uint256)"(
-      _traidingLimit: BigNumberish,
+    "setTradingLimint(uint256)"(
+      _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    traidingLimit(overrides?: CallOverrides): Promise<[BigNumber]>;
+    setTradingRegistry(
+      _tradingRegistry: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    "traidingLimit()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "setTradingRegistry(address)"(
+      _tradingRegistry: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    tradingLimit(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "tradingLimit()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    tradingRegistry(overrides?: CallOverrides): Promise<[string]>;
+
+    "tradingRegistry()"(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
       newOwner: string,
@@ -304,6 +353,10 @@ export class Authorization extends Contract {
   ERC20_MINT(overrides?: CallOverrides): Promise<string>;
 
   "ERC20_MINT()"(overrides?: CallOverrides): Promise<string>;
+
+  ERC20_RECEIVE(overrides?: CallOverrides): Promise<string>;
+
+  "ERC20_RECEIVE()"(overrides?: CallOverrides): Promise<string>;
 
   ERC20_TRANSFER(overrides?: CallOverrides): Promise<string>;
 
@@ -328,14 +381,16 @@ export class Authorization extends Contract {
   initialize(
     _permissions: string,
     _eurPriceFeed: string,
-    _traidingLimit: BigNumberish,
+    _tradingRegistry: string,
+    _tradingLimit: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "initialize(address,address,uint256)"(
+  "initialize(address,address,address,uint256)"(
     _permissions: string,
     _eurPriceFeed: string,
-    _traidingLimit: BigNumberish,
+    _tradingRegistry: string,
+    _tradingLimit: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -387,19 +442,33 @@ export class Authorization extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  setTraidingLimint(
-    _traidingLimit: BigNumberish,
+  setTradingLimint(
+    _tradingLimit: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "setTraidingLimint(uint256)"(
-    _traidingLimit: BigNumberish,
+  "setTradingLimint(uint256)"(
+    _tradingLimit: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  traidingLimit(overrides?: CallOverrides): Promise<BigNumber>;
+  setTradingRegistry(
+    _tradingRegistry: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  "traidingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "setTradingRegistry(address)"(
+    _tradingRegistry: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  tradingLimit(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "tradingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  tradingRegistry(overrides?: CallOverrides): Promise<string>;
+
+  "tradingRegistry()"(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
     newOwner: string,
@@ -419,6 +488,10 @@ export class Authorization extends Contract {
     ERC20_MINT(overrides?: CallOverrides): Promise<string>;
 
     "ERC20_MINT()"(overrides?: CallOverrides): Promise<string>;
+
+    ERC20_RECEIVE(overrides?: CallOverrides): Promise<string>;
+
+    "ERC20_RECEIVE()"(overrides?: CallOverrides): Promise<string>;
 
     ERC20_TRANSFER(overrides?: CallOverrides): Promise<string>;
 
@@ -443,14 +516,16 @@ export class Authorization extends Contract {
     initialize(
       _permissions: string,
       _eurPriceFeed: string,
-      _traidingLimit: BigNumberish,
+      _tradingRegistry: string,
+      _tradingLimit: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "initialize(address,address,uint256)"(
+    "initialize(address,address,address,uint256)"(
       _permissions: string,
       _eurPriceFeed: string,
-      _traidingLimit: BigNumberish,
+      _tradingRegistry: string,
+      _tradingLimit: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -502,19 +577,33 @@ export class Authorization extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    setTraidingLimint(
-      _traidingLimit: BigNumberish,
+    setTradingLimint(
+      _tradingLimit: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "setTraidingLimint(uint256)"(
-      _traidingLimit: BigNumberish,
+    "setTradingLimint(uint256)"(
+      _tradingLimit: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    traidingLimit(overrides?: CallOverrides): Promise<BigNumber>;
+    setTradingRegistry(
+      _tradingRegistry: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
-    "traidingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "setTradingRegistry(address)"(
+      _tradingRegistry: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    tradingLimit(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "tradingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    tradingRegistry(overrides?: CallOverrides): Promise<string>;
+
+    "tradingRegistry()"(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
       newOwner: string,
@@ -537,7 +626,9 @@ export class Authorization extends Contract {
 
     PermissionsSetted(newPermissions: string | null): EventFilter;
 
-    TraidingLimitSetted(newLimit: null): EventFilter;
+    TradingLimitSetted(newLimit: null): EventFilter;
+
+    TradingRegistrySetted(newTradingRegistry: string | null): EventFilter;
   };
 
   estimateGas: {
@@ -548,6 +639,10 @@ export class Authorization extends Contract {
     ERC20_MINT(overrides?: CallOverrides): Promise<BigNumber>;
 
     "ERC20_MINT()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ERC20_RECEIVE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "ERC20_RECEIVE()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     ERC20_TRANSFER(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -572,14 +667,16 @@ export class Authorization extends Contract {
     initialize(
       _permissions: string,
       _eurPriceFeed: string,
-      _traidingLimit: BigNumberish,
+      _tradingRegistry: string,
+      _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "initialize(address,address,uint256)"(
+    "initialize(address,address,address,uint256)"(
       _permissions: string,
       _eurPriceFeed: string,
-      _traidingLimit: BigNumberish,
+      _tradingRegistry: string,
+      _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -631,19 +728,33 @@ export class Authorization extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    setTraidingLimint(
-      _traidingLimit: BigNumberish,
+    setTradingLimint(
+      _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "setTraidingLimint(uint256)"(
-      _traidingLimit: BigNumberish,
+    "setTradingLimint(uint256)"(
+      _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    traidingLimit(overrides?: CallOverrides): Promise<BigNumber>;
+    setTradingRegistry(
+      _tradingRegistry: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    "traidingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "setTradingRegistry(address)"(
+      _tradingRegistry: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    tradingLimit(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "tradingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    tradingRegistry(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "tradingRegistry()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
@@ -664,6 +775,10 @@ export class Authorization extends Contract {
     ERC20_MINT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "ERC20_MINT()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    ERC20_RECEIVE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "ERC20_RECEIVE()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     ERC20_TRANSFER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -694,14 +809,16 @@ export class Authorization extends Contract {
     initialize(
       _permissions: string,
       _eurPriceFeed: string,
-      _traidingLimit: BigNumberish,
+      _tradingRegistry: string,
+      _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "initialize(address,address,uint256)"(
+    "initialize(address,address,address,uint256)"(
       _permissions: string,
       _eurPriceFeed: string,
-      _traidingLimit: BigNumberish,
+      _tradingRegistry: string,
+      _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -753,19 +870,35 @@ export class Authorization extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    setTraidingLimint(
-      _traidingLimit: BigNumberish,
+    setTradingLimint(
+      _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "setTraidingLimint(uint256)"(
-      _traidingLimit: BigNumberish,
+    "setTradingLimint(uint256)"(
+      _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    traidingLimit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    setTradingRegistry(
+      _tradingRegistry: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
-    "traidingLimit()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "setTradingRegistry(address)"(
+      _tradingRegistry: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    tradingLimit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "tradingLimit()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    tradingRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "tradingRegistry()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: string,

@@ -5,14 +5,14 @@
 import { Contract, Signer } from "ethers";
 import { Provider } from "@ethersproject/providers";
 
-import type { IAuthorization } from "../IAuthorization";
+import type { ITradingRegistry } from "../ITradingRegistry";
 
-export class IAuthorization__factory {
+export class ITradingRegistry__factory {
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IAuthorization {
-    return new Contract(address, _abi, signerOrProvider) as IAuthorization;
+  ): ITradingRegistry {
+    return new Contract(address, _abi, signerOrProvider) as ITradingRegistry;
   }
 }
 
@@ -25,22 +25,30 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "address",
-        name: "_asset",
-        type: "address",
-      },
-      {
         internalType: "bytes4",
         name: "_operation",
         type: "bytes4",
       },
       {
-        internalType: "bytes",
-        name: "_data",
-        type: "bytes",
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
       },
     ],
-    name: "isAuthorized",
+    name: "addTrade",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "allowAsset",
     outputs: [
       {
         internalType: "bool",
@@ -55,7 +63,26 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_prermissions",
+        name: "_asset",
+        type: "address",
+      },
+    ],
+    name: "disallowAsset",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_eurPriceFeed",
         type: "address",
       },
     ],
@@ -74,54 +101,21 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_prermissions",
+        name: "_user",
         type: "address",
       },
-    ],
-    name: "setPermissions",
-    outputs: [
       {
-        internalType: "bool",
-        name: "",
-        type: "bool",
+        internalType: "bytes4",
+        name: "_operation",
+        type: "bytes4",
       },
     ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
+    name: "tradingBalanceByOperation",
+    outputs: [
       {
         internalType: "uint256",
-        name: "_tradingLimit",
+        name: "",
         type: "uint256",
-      },
-    ],
-    name: "setTradingLimint",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_prermissions",
-        type: "address",
-      },
-    ],
-    name: "setTradingRegistry",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
       },
     ],
     stateMutability: "nonpayable",
