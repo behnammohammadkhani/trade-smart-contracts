@@ -36,7 +36,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "ERC20_MINT",
+    name: "ERC20_BURN_FROM",
     outputs: [
       {
         internalType: "bytes4",
@@ -49,7 +49,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "ERC20_RECEIVE",
+    name: "ERC20_MINT",
     outputs: [
       {
         internalType: "bytes4",

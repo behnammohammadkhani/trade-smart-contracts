@@ -126,14 +126,14 @@ export class ITradingRegistry extends Contract {
     tradingBalanceByOperation(
       _user: string,
       _operation: BytesLike,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     "tradingBalanceByOperation(address,bytes4)"(
       _user: string,
       _operation: BytesLike,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
   };
 
   addTrade(
@@ -183,14 +183,14 @@ export class ITradingRegistry extends Contract {
   tradingBalanceByOperation(
     _user: string,
     _operation: BytesLike,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   "tradingBalanceByOperation(address,bytes4)"(
     _user: string,
     _operation: BytesLike,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   callStatic: {
     addTrade(
@@ -288,13 +288,13 @@ export class ITradingRegistry extends Contract {
     tradingBalanceByOperation(
       _user: string,
       _operation: BytesLike,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "tradingBalanceByOperation(address,bytes4)"(
       _user: string,
       _operation: BytesLike,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
@@ -346,13 +346,13 @@ export class ITradingRegistry extends Contract {
     tradingBalanceByOperation(
       _user: string,
       _operation: BytesLike,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "tradingBalanceByOperation(address,bytes4)"(
       _user: string,
       _operation: BytesLike,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

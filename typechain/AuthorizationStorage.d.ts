@@ -22,8 +22,8 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface AuthorizationStorageInterface extends ethers.utils.Interface {
   functions: {
     "ERC20_APPROVE()": FunctionFragment;
+    "ERC20_BURN_FROM()": FunctionFragment;
     "ERC20_MINT()": FunctionFragment;
-    "ERC20_RECEIVE()": FunctionFragment;
     "ERC20_TRANSFER()": FunctionFragment;
     "ERC20_TRANSFER_FROM()": FunctionFragment;
     "TIER_1_ID()": FunctionFragment;
@@ -39,11 +39,11 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "ERC20_MINT",
+    functionFragment: "ERC20_BURN_FROM",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "ERC20_RECEIVE",
+    functionFragment: "ERC20_MINT",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -77,11 +77,11 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     functionFragment: "ERC20_APPROVE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "ERC20_MINT", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "ERC20_RECEIVE",
+    functionFragment: "ERC20_BURN_FROM",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "ERC20_MINT", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ERC20_TRANSFER",
     data: BytesLike
@@ -130,13 +130,13 @@ export class AuthorizationStorage extends Contract {
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<[string]>;
 
+    ERC20_BURN_FROM(overrides?: CallOverrides): Promise<[string]>;
+
+    "ERC20_BURN_FROM()"(overrides?: CallOverrides): Promise<[string]>;
+
     ERC20_MINT(overrides?: CallOverrides): Promise<[string]>;
 
     "ERC20_MINT()"(overrides?: CallOverrides): Promise<[string]>;
-
-    ERC20_RECEIVE(overrides?: CallOverrides): Promise<[string]>;
-
-    "ERC20_RECEIVE()"(overrides?: CallOverrides): Promise<[string]>;
 
     ERC20_TRANSFER(overrides?: CallOverrides): Promise<[string]>;
 
@@ -175,13 +175,13 @@ export class AuthorizationStorage extends Contract {
 
   "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<string>;
 
+  ERC20_BURN_FROM(overrides?: CallOverrides): Promise<string>;
+
+  "ERC20_BURN_FROM()"(overrides?: CallOverrides): Promise<string>;
+
   ERC20_MINT(overrides?: CallOverrides): Promise<string>;
 
   "ERC20_MINT()"(overrides?: CallOverrides): Promise<string>;
-
-  ERC20_RECEIVE(overrides?: CallOverrides): Promise<string>;
-
-  "ERC20_RECEIVE()"(overrides?: CallOverrides): Promise<string>;
 
   ERC20_TRANSFER(overrides?: CallOverrides): Promise<string>;
 
@@ -220,13 +220,13 @@ export class AuthorizationStorage extends Contract {
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<string>;
 
+    ERC20_BURN_FROM(overrides?: CallOverrides): Promise<string>;
+
+    "ERC20_BURN_FROM()"(overrides?: CallOverrides): Promise<string>;
+
     ERC20_MINT(overrides?: CallOverrides): Promise<string>;
 
     "ERC20_MINT()"(overrides?: CallOverrides): Promise<string>;
-
-    ERC20_RECEIVE(overrides?: CallOverrides): Promise<string>;
-
-    "ERC20_RECEIVE()"(overrides?: CallOverrides): Promise<string>;
 
     ERC20_TRANSFER(overrides?: CallOverrides): Promise<string>;
 
@@ -268,13 +268,13 @@ export class AuthorizationStorage extends Contract {
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    ERC20_BURN_FROM(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "ERC20_BURN_FROM()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     ERC20_MINT(overrides?: CallOverrides): Promise<BigNumber>;
 
     "ERC20_MINT()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    ERC20_RECEIVE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "ERC20_RECEIVE()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     ERC20_TRANSFER(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -314,13 +314,15 @@ export class AuthorizationStorage extends Contract {
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    ERC20_BURN_FROM(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "ERC20_BURN_FROM()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     ERC20_MINT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "ERC20_MINT()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    ERC20_RECEIVE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "ERC20_RECEIVE()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     ERC20_TRANSFER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

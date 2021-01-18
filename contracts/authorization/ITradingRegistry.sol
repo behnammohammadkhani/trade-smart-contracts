@@ -2,7 +2,7 @@
 pragma solidity ^0.7.0;
 
 interface ITradingRegistry {
-    function tradingBalanceByOperation(address _user, bytes4 _operation) external returns (uint256);
+    function tradingBalanceByOperation(address _user, bytes4 _operation) external view returns (uint256);
 
     function setEurPriceFeed(address _eurPriceFeed) external returns (bool);
 

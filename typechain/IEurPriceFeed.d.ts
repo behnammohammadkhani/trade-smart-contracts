@@ -58,14 +58,14 @@ export class IEurPriceFeed extends Contract {
     calculateAmount(
       _asset: string,
       _amount: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     "calculateAmount(address,uint256)"(
       _asset: string,
       _amount: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     getPrice(
       _asset: string,
@@ -81,14 +81,14 @@ export class IEurPriceFeed extends Contract {
   calculateAmount(
     _asset: string,
     _amount: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   "calculateAmount(address,uint256)"(
     _asset: string,
     _amount: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getPrice(_asset: string, overrides?: Overrides): Promise<ContractTransaction>;
 
@@ -124,13 +124,13 @@ export class IEurPriceFeed extends Contract {
     calculateAmount(
       _asset: string,
       _amount: BigNumberish,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "calculateAmount(address,uint256)"(
       _asset: string,
       _amount: BigNumberish,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPrice(_asset: string, overrides?: Overrides): Promise<BigNumber>;
@@ -145,13 +145,13 @@ export class IEurPriceFeed extends Contract {
     calculateAmount(
       _asset: string,
       _amount: BigNumberish,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "calculateAmount(address,uint256)"(
       _asset: string,
       _amount: BigNumberish,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getPrice(

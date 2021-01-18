@@ -6,9 +6,11 @@ import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
+import "./AuthorizationStorage.sol";
+
 import "./IAuthorization.sol";
 import "./IEurPriceFeed.sol";
-import "./AuthorizationStorage.sol";
+import "./ITradingRegistry.sol";
 
 import "hardhat/console.sol";
 
@@ -76,10 +78,52 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
 
     function isAuthorized(
         address _user,
-        address _asset, // solhint-disable-line
+        address _asset,
         bytes4 _operation,
         bytes calldata _data // solhint-disable-line
     ) public view override returns (bool) {
+        // Only allowed operations
+        if (
+            _operation == ERC20_TRANSFER ||
+            _operation == ERC20_TRANSFER_FROM ||
+            _operation == ERC20_MINT ||
+            _operation == ERC20_BURN_FROM
+        ) {
+            // Get user and amount based on the operation
+            address user = _user;
+            uint256 operationAmount;
+
+            if (_operation == ERC20_MINT || _operation == ERC20_BURN_FROM) {
+                (address account, uint256 amount) = abi.decode(_data[4:], (address, uint256));
+                user = account;
+                operationAmount = amount;
+            }
+
+            if (_operation == ERC20_TRANSFER) {
+                (address _, uint256 amount) = abi.decode(_data[4:], (address, uint256));
+                operationAmount = amount;
+            }
+
+            if (_operation == ERC20_TRANSFER_FROM) {
+                // solhint-disable-next-line no-unused-vars
+                (address sender, address _, uint256 amount) = abi.decode(_data[4:], (address, address, uint256));
+                user = sender;
+                operationAmount = amount;
+            }
+
+            return checkPermissions(user, _asset, _operation, operationAmount);
+        }
+
+        return false;
+    }
+
+    function checkPermissions(
+        address _user,
+        address _asset,
+        bytes4 _operation,
+        uint256 amount
+    ) internal view returns (bool) {
+        // Get user permissions
         address[] memory accounts = new address[](2);
         accounts[0] = _user;
         accounts[1] = _user;
@@ -96,32 +140,11 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         }
 
         // If not Tier 2 but Tier 1, we need to check limits and actions
-        if (permissionsBlance[0] > 0) {
-            //ERC20
-            // solhint-disable-next-line
-            if (_operation == ERC20_TRANSFER) {
-                // (address recipient, uint256 amount) = abi.decode(_data[4:], (address, uint256));
-                // console.log("TRANSFER", recipient, amount);
-            }
+        uint256 currentTradigBalace = ITradingRegistry(tradingRegistry).tradingBalanceByOperation(user, _operation);
+        uint256 eurAmount = IEurPriceFeed(eurPriceFeed).calculateAmount(_asset, amount);
 
-            // solhint-disable-next-line
-            if (_operation == ERC20_TRANSFER_FROM) {
-                // solhint-disable-next-line
-                // (address sender, address recipient, uint256 amount) = abi.decode(_data[4:], (address, address, uint256));
-                // console.log("TRANSFER_FROM", sender, recipient, amount);
-            }
-
-            // solhint-disable-next-line
-            if (_operation == ERC20_APPROVE) {
-                // (address spender, uint256 amount) = abi.decode(_data[4:], (address, uint256));
-                // console.log("APPROVE",  spender, amount);
-            }
-
-            // solhint-disable-next-line
-            if (_operation == ERC20_MINT) {
-                // (address account, uint256 amount) = abi.decode(_data[4:], (address, uint256));
-                // console.log("MINT",  account, amount);
-            }
+        if (permissionsBlance[0] > 0 && currentTradigBalace.add(eurAmount) <= tradingLimit) {
+            return true;
         }
 
         // Neither Tier 2 or Tier 1

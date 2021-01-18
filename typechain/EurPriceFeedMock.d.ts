@@ -58,14 +58,14 @@ export class EurPriceFeedMock extends Contract {
     calculateAmount(
       arg0: string,
       _amount: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     "calculateAmount(address,uint256)"(
       arg0: string,
       _amount: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     getPrice(arg0: string, overrides?: Overrides): Promise<ContractTransaction>;
 
@@ -78,14 +78,14 @@ export class EurPriceFeedMock extends Contract {
   calculateAmount(
     arg0: string,
     _amount: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   "calculateAmount(address,uint256)"(
     arg0: string,
     _amount: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getPrice(arg0: string, overrides?: Overrides): Promise<ContractTransaction>;
 
@@ -121,13 +121,13 @@ export class EurPriceFeedMock extends Contract {
     calculateAmount(
       arg0: string,
       _amount: BigNumberish,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "calculateAmount(address,uint256)"(
       arg0: string,
       _amount: BigNumberish,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPrice(arg0: string, overrides?: Overrides): Promise<BigNumber>;
@@ -142,13 +142,13 @@ export class EurPriceFeedMock extends Contract {
     calculateAmount(
       arg0: string,
       _amount: BigNumberish,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "calculateAmount(address,uint256)"(
       arg0: string,
       _amount: BigNumberish,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getPrice(

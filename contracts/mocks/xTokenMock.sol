@@ -2,15 +2,17 @@
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 import "../authorization/Authorizable.sol";
+
 import "../authorization/IAuthorization.sol";
 import "../authorization/ITradingRegistry.sol";
 
 // solhint-disable-next-line
-contract xTokenMock is ERC20, Authorizable {
+contract xTokenMock is ERC20, Ownable, Authorizable {
     ITradingRegistry public tradingRegistry;
 
-    bytes4 public constant ERC20_RECEIVE = bytes4(keccak256("receive(address,uint256)"));
     bytes4 public constant ERC20_TRANSFER = bytes4(keccak256("transfer(address,uint256)"));
 
     constructor(
@@ -23,24 +25,27 @@ contract xTokenMock is ERC20, Authorizable {
         tradingRegistry = ITradingRegistry(tradingRegistry_);
     }
 
-    function transfer(address recipient, uint256 amount) public virtual override onlyAuthorized returns (bool) {
+    function transfer(address recipient, uint256 amount) public override onlyAuthorized returns (bool) {
         super.transfer(recipient, amount);
         tradingRegistry.addTrade(_msgSender(), msg.sig, amount);
-        tradingRegistry.addTrade(recipient, ERC20_RECEIVE, amount);
     }
 
     function transferFrom(
         address sender,
         address recipient,
         uint256 amount
-    ) public virtual override onlyAuthorized returns (bool) {
+    ) public override onlyAuthorized returns (bool) {
         super.transferFrom(sender, recipient, amount);
         tradingRegistry.addTrade(sender, ERC20_TRANSFER, amount);
-        tradingRegistry.addTrade(recipient, ERC20_RECEIVE, amount);
     }
 
-    function mint(address account, uint256 amount) public {
+    function mint(address account, uint256 amount) public onlyOwner onlyAuthorized {
         _mint(account, amount);
+        tradingRegistry.addTrade(account, msg.sig, amount);
+    }
+
+    function burnFrom(address account, uint256 amount) public onlyOwner onlyAuthorized {
+        _burn(account, amount);
         tradingRegistry.addTrade(account, msg.sig, amount);
     }
 }

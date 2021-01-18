@@ -9,7 +9,7 @@ contract EurPriceFeedMock is IEurPriceFeed {
         return 1;
     }
 
-    function calculateAmount(address, uint256 _amount) external override returns (uint256) {
+    function calculateAmount(address, uint256 _amount) external view override returns (uint256) {
         return _amount;
     }
 }
