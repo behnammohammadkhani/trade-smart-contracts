@@ -24,9 +24,9 @@ interface IAuthorizationInterface extends ethers.utils.Interface {
   functions: {
     "isAuthorized(address,address,bytes4,bytes)": FunctionFragment;
     "setEurPriceFeed(address)": FunctionFragment;
+    "setOperationsRegistry(address)": FunctionFragment;
     "setPermissions(address)": FunctionFragment;
     "setTradingLimint(uint256)": FunctionFragment;
-    "setTradingRegistry(address)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -38,16 +38,16 @@ interface IAuthorizationInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "setOperationsRegistry",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setPermissions",
     values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setTradingLimint",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTradingRegistry",
-    values: [string]
   ): string;
 
   decodeFunctionResult(
@@ -59,15 +59,15 @@ interface IAuthorizationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setOperationsRegistry",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setPermissions",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setTradingLimint",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setTradingRegistry",
     data: BytesLike
   ): Result;
 
@@ -114,6 +114,16 @@ export class IAuthorization extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    setOperationsRegistry(
+      _prermissions: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setOperationsRegistry(address)"(
+      _prermissions: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     setPermissions(
       _prermissions: string,
       overrides?: Overrides
@@ -131,16 +141,6 @@ export class IAuthorization extends Contract {
 
     "setTradingLimint(uint256)"(
       _tradingLimit: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    setTradingRegistry(
-      _prermissions: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setTradingRegistry(address)"(
-      _prermissions: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
@@ -171,6 +171,16 @@ export class IAuthorization extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  setOperationsRegistry(
+    _prermissions: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setOperationsRegistry(address)"(
+    _prermissions: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   setPermissions(
     _prermissions: string,
     overrides?: Overrides
@@ -188,16 +198,6 @@ export class IAuthorization extends Contract {
 
   "setTradingLimint(uint256)"(
     _tradingLimit: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  setTradingRegistry(
-    _prermissions: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setTradingRegistry(address)"(
-    _prermissions: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -228,6 +228,16 @@ export class IAuthorization extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    setOperationsRegistry(
+      _prermissions: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "setOperationsRegistry(address)"(
+      _prermissions: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     setPermissions(
       _prermissions: string,
       overrides?: CallOverrides
@@ -245,16 +255,6 @@ export class IAuthorization extends Contract {
 
     "setTradingLimint(uint256)"(
       _tradingLimit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    setTradingRegistry(
-      _prermissions: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "setTradingRegistry(address)"(
-      _prermissions: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
@@ -288,6 +288,16 @@ export class IAuthorization extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    setOperationsRegistry(
+      _prermissions: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setOperationsRegistry(address)"(
+      _prermissions: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     setPermissions(
       _prermissions: string,
       overrides?: Overrides
@@ -305,16 +315,6 @@ export class IAuthorization extends Contract {
 
     "setTradingLimint(uint256)"(
       _tradingLimit: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    setTradingRegistry(
-      _prermissions: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setTradingRegistry(address)"(
-      _prermissions: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
   };
@@ -346,6 +346,16 @@ export class IAuthorization extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    setOperationsRegistry(
+      _prermissions: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setOperationsRegistry(address)"(
+      _prermissions: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     setPermissions(
       _prermissions: string,
       overrides?: Overrides
@@ -363,16 +373,6 @@ export class IAuthorization extends Contract {
 
     "setTradingLimint(uint256)"(
       _tradingLimit: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    setTradingRegistry(
-      _prermissions: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setTradingRegistry(address)"(
-      _prermissions: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };

@@ -29,9 +29,9 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     "TIER_1_ID()": FunctionFragment;
     "TIER_2_ID()": FunctionFragment;
     "eurPriceFeed()": FunctionFragment;
+    "operationsRegistry()": FunctionFragment;
     "permissions()": FunctionFragment;
     "tradingLimit()": FunctionFragment;
-    "tradingRegistry()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -61,15 +61,15 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "operationsRegistry",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "permissions",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "tradingLimit",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tradingRegistry",
     values?: undefined
   ): string;
 
@@ -97,15 +97,15 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "operationsRegistry",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "permissions",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "tradingLimit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "tradingRegistry",
     data: BytesLike
   ): Result;
 
@@ -158,6 +158,10 @@ export class AuthorizationStorage extends Contract {
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<[string]>;
 
+    operationsRegistry(overrides?: CallOverrides): Promise<[string]>;
+
+    "operationsRegistry()"(overrides?: CallOverrides): Promise<[string]>;
+
     permissions(overrides?: CallOverrides): Promise<[string]>;
 
     "permissions()"(overrides?: CallOverrides): Promise<[string]>;
@@ -165,10 +169,6 @@ export class AuthorizationStorage extends Contract {
     tradingLimit(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "tradingLimit()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    tradingRegistry(overrides?: CallOverrides): Promise<[string]>;
-
-    "tradingRegistry()"(overrides?: CallOverrides): Promise<[string]>;
   };
 
   ERC20_APPROVE(overrides?: CallOverrides): Promise<string>;
@@ -203,6 +203,10 @@ export class AuthorizationStorage extends Contract {
 
   "eurPriceFeed()"(overrides?: CallOverrides): Promise<string>;
 
+  operationsRegistry(overrides?: CallOverrides): Promise<string>;
+
+  "operationsRegistry()"(overrides?: CallOverrides): Promise<string>;
+
   permissions(overrides?: CallOverrides): Promise<string>;
 
   "permissions()"(overrides?: CallOverrides): Promise<string>;
@@ -210,10 +214,6 @@ export class AuthorizationStorage extends Contract {
   tradingLimit(overrides?: CallOverrides): Promise<BigNumber>;
 
   "tradingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  tradingRegistry(overrides?: CallOverrides): Promise<string>;
-
-  "tradingRegistry()"(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     ERC20_APPROVE(overrides?: CallOverrides): Promise<string>;
@@ -248,6 +248,10 @@ export class AuthorizationStorage extends Contract {
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<string>;
 
+    operationsRegistry(overrides?: CallOverrides): Promise<string>;
+
+    "operationsRegistry()"(overrides?: CallOverrides): Promise<string>;
+
     permissions(overrides?: CallOverrides): Promise<string>;
 
     "permissions()"(overrides?: CallOverrides): Promise<string>;
@@ -255,10 +259,6 @@ export class AuthorizationStorage extends Contract {
     tradingLimit(overrides?: CallOverrides): Promise<BigNumber>;
 
     "tradingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tradingRegistry(overrides?: CallOverrides): Promise<string>;
-
-    "tradingRegistry()"(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
@@ -296,6 +296,10 @@ export class AuthorizationStorage extends Contract {
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    operationsRegistry(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "operationsRegistry()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     permissions(overrides?: CallOverrides): Promise<BigNumber>;
 
     "permissions()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -303,10 +307,6 @@ export class AuthorizationStorage extends Contract {
     tradingLimit(overrides?: CallOverrides): Promise<BigNumber>;
 
     "tradingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tradingRegistry(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "tradingRegistry()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -350,6 +350,14 @@ export class AuthorizationStorage extends Contract {
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    operationsRegistry(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "operationsRegistry()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     permissions(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "permissions()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -357,11 +365,5 @@ export class AuthorizationStorage extends Contract {
     tradingLimit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "tradingLimit()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    tradingRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "tradingRegistry()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
   };
 }

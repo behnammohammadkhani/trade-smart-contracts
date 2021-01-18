@@ -1,16 +1,16 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.7.0;
 
-import "../authorization/ITradingRegistry.sol";
+import "../authorization/IOperationsRegistry.sol";
 
-contract TradingRegistryAssetMock {
-    ITradingRegistry public tradingRegistry;
+contract OperationsRegistryAssetMock {
+    IOperationsRegistry public operationsRegistry;
 
-    constructor(address tradingRegistry_) public {
-        tradingRegistry = ITradingRegistry(tradingRegistry_);
+    constructor(address operationsRegistry_) public {
+        operationsRegistry = IOperationsRegistry(operationsRegistry_);
     }
 
     function someFunction(uint256 _amount) public {
-        tradingRegistry.addTrade(msg.sender, msg.sig, _amount);
+        operationsRegistry.addTrade(msg.sender, msg.sig, _amount);
     }
 }

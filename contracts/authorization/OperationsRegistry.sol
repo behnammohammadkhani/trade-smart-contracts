@@ -4,12 +4,12 @@ pragma solidity ^0.7.0;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "./ITradingRegistry.sol";
+import "./IOperationsRegistry.sol";
 import "./IEurPriceFeed.sol";
 
 import "hardhat/console.sol";
 
-contract TradingRegistry is ITradingRegistry, Ownable {
+contract OperationsRegistry is IOperationsRegistry, Ownable {
     using SafeMath for uint256;
 
     address public eurPriceFeed;

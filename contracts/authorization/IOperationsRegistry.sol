@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.7.0;
 
-interface ITradingRegistry {
+interface IOperationsRegistry {
     function tradingBalanceByOperation(address _user, bytes4 _operation) external view returns (uint256);
 
     function setEurPriceFeed(address _eurPriceFeed) external returns (bool);

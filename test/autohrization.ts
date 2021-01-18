@@ -1,7 +1,7 @@
 import { ethers, upgrades } from 'hardhat';
 import { Signer } from 'ethers';
 import { expect } from 'chai';
-import { Authorization, XTokenMock, PermissionsMock, EurPriceFeedMock, TradingRegistry } from '../typechain';
+import { Authorization, XTokenMock, PermissionsMock, EurPriceFeedMock, OperationsRegistry } from '../typechain';
 import Reverter from './utils/reverter';
 
 const { BigNumber } = ethers;
@@ -24,7 +24,7 @@ let eurPriceFeedContract: EurPriceFeedMock;
 let permissionsContract: PermissionsMock;
 let authorizationContract: Authorization;
 let authorizationContractKakaroto: Authorization;
-let tradingRegistryContract: TradingRegistry;
+let operationsRegistryContract: OperationsRegistry;
 
 const tradingLimit = ethers.constants.One.mul(5000);
 
@@ -44,7 +44,7 @@ describe('Authorization', function () {
     const Authorization = await ethers.getContractFactory('Authorization');
     const xTokenMock = await ethers.getContractFactory('xTokenMock');
     const EurPriceFeed = await ethers.getContractFactory('EurPriceFeedMock');
-    const TradingRegistry = await ethers.getContractFactory('TradingRegistry');
+    const OperationsRegistry = await ethers.getContractFactory('OperationsRegistry');
 
     eurPriceFeedContract = (await EurPriceFeed.deploy()) as EurPriceFeedMock;
     await eurPriceFeedContract.deployed();
@@ -52,13 +52,13 @@ describe('Authorization', function () {
     permissionsContract = (await PermissionsMock.deploy('')) as PermissionsMock;
     await permissionsContract.deployed();
 
-    tradingRegistryContract = (await TradingRegistry.deploy(eurPriceFeedContract.address)) as TradingRegistry;
-    await tradingRegistryContract.deployed();
+    operationsRegistryContract = (await OperationsRegistry.deploy(eurPriceFeedContract.address)) as OperationsRegistry;
+    await operationsRegistryContract.deployed();
 
     authorizationContract = (await upgrades.deployProxy(Authorization, [
       permissionsContract.address,
       eurPriceFeedContract.address,
-      tradingRegistryContract.address,
+      operationsRegistryContract.address,
       tradingLimit,
     ])) as Authorization;
 
@@ -66,11 +66,11 @@ describe('Authorization', function () {
       'Authorizable Token',
       'AT',
       authorizationContract.address,
-      tradingRegistryContract.address,
+      operationsRegistryContract.address,
     )) as XTokenMock;
     await token.deployed();
 
-    await tradingRegistryContract.allowAsset(token.address);
+    await operationsRegistryContract.allowAsset(token.address);
 
     authorizationContractKakaroto = authorizationContract.connect(kakaroto);
 
@@ -87,7 +87,7 @@ describe('Authorization', function () {
         authorizationContract.initialize(
           permissionsContract.address,
           eurPriceFeedContract.address,
-          tradingRegistryContract.address,
+          operationsRegistryContract.address,
           tradingLimit,
         ),
       ).to.be.revertedWith('Initializable: contract is already initialized');
@@ -97,13 +97,13 @@ describe('Authorization', function () {
       const ownerAddress = await authorizationContract.owner();
       const permissionsAddress = await authorizationContract.permissions();
       const eurPriceFeedAddress = await authorizationContract.eurPriceFeed();
-      const tradingRegistryAddress = await authorizationContract.tradingRegistry();
+      const operationsRegistryAddress = await authorizationContract.operationsRegistry();
       const tradingLimitValue = await authorizationContract.tradingLimit();
 
       expect(ownerAddress).to.equal(deployerAddress);
       expect(permissionsAddress).to.equal(permissionsContract.address);
       expect(eurPriceFeedAddress).to.equal(eurPriceFeedContract.address);
-      expect(tradingRegistryAddress).to.equal(tradingRegistryContract.address);
+      expect(operationsRegistryAddress).to.equal(operationsRegistryContract.address);
       expect(tradingLimitValue).to.equal(tradingLimit.toString());
     });
   });
@@ -127,7 +127,7 @@ describe('Authorization', function () {
 
     it('Should not allow to set trading registry address to non owner', async function () {
       await expect(
-        authorizationContractKakaroto.setTradingRegistry(tradingRegistryContract.address),
+        authorizationContractKakaroto.setOperationsRegistry(operationsRegistryContract.address),
       ).to.be.revertedWith('Ownable: caller is not the owner');
     });
 
@@ -160,16 +160,16 @@ describe('Authorization', function () {
     });
 
     it('Should allow to set trading registry address to owner', async function () {
-      const TradingRegistry = await ethers.getContractFactory('TradingRegistry');
-      const newTradingRegistryContract = (await TradingRegistry.deploy(
+      const OperationsRegistry = await ethers.getContractFactory('OperationsRegistry');
+      const newOperationsRegistryContract = (await OperationsRegistry.deploy(
         eurPriceFeedContract.address,
-      )) as TradingRegistry;
-      await newTradingRegistryContract.deployed();
+      )) as OperationsRegistry;
+      await newOperationsRegistryContract.deployed();
 
-      await authorizationContract.setTradingRegistry(newTradingRegistryContract.address);
+      await authorizationContract.setOperationsRegistry(newOperationsRegistryContract.address);
 
-      const tradingRegistryAddress = await authorizationContract.tradingRegistry();
-      expect(tradingRegistryAddress).to.equal(newTradingRegistryContract.address);
+      const operationsRegistryAddress = await authorizationContract.operationsRegistry();
+      expect(operationsRegistryAddress).to.equal(newOperationsRegistryContract.address);
     });
 
     it('Should allow to set trading limit to owner', async function () {

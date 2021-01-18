@@ -9,7 +9,7 @@ pragma solidity ^0.7.0;
 abstract contract AuthorizationStorage {
     address public permissions;
     address public eurPriceFeed;
-    address public tradingRegistry;
+    address public operationsRegistry;
     uint256 public tradingLimit;
 
     bytes4 public constant ERC20_TRANSFER = bytes4(keccak256("transfer(address,uint256)"));

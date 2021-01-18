@@ -33,11 +33,11 @@ interface XTokenMockInterface extends ethers.utils.Interface {
     "increaseAllowance(address,uint256)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
+    "operationsRegistry()": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
-    "tradingRegistry()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -78,6 +78,10 @@ interface XTokenMockInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "operationsRegistry",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -86,10 +90,6 @@ interface XTokenMockInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tradingRegistry",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -128,6 +128,10 @@ interface XTokenMockInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "operationsRegistry",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
@@ -136,10 +140,6 @@ interface XTokenMockInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "tradingRegistry",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
@@ -272,6 +272,10 @@ export class XTokenMock extends Contract {
 
     "name()"(overrides?: CallOverrides): Promise<[string]>;
 
+    operationsRegistry(overrides?: CallOverrides): Promise<[string]>;
+
+    "operationsRegistry()"(overrides?: CallOverrides): Promise<[string]>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     "owner()"(overrides?: CallOverrides): Promise<[string]>;
@@ -287,10 +291,6 @@ export class XTokenMock extends Contract {
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    tradingRegistry(overrides?: CallOverrides): Promise<[string]>;
-
-    "tradingRegistry()"(overrides?: CallOverrides): Promise<[string]>;
 
     transfer(
       recipient: string,
@@ -424,6 +424,10 @@ export class XTokenMock extends Contract {
 
   "name()"(overrides?: CallOverrides): Promise<string>;
 
+  operationsRegistry(overrides?: CallOverrides): Promise<string>;
+
+  "operationsRegistry()"(overrides?: CallOverrides): Promise<string>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   "owner()"(overrides?: CallOverrides): Promise<string>;
@@ -439,10 +443,6 @@ export class XTokenMock extends Contract {
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  tradingRegistry(overrides?: CallOverrides): Promise<string>;
-
-  "tradingRegistry()"(overrides?: CallOverrides): Promise<string>;
 
   transfer(
     recipient: string,
@@ -576,6 +576,10 @@ export class XTokenMock extends Contract {
 
     "name()"(overrides?: CallOverrides): Promise<string>;
 
+    operationsRegistry(overrides?: CallOverrides): Promise<string>;
+
+    "operationsRegistry()"(overrides?: CallOverrides): Promise<string>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     "owner()"(overrides?: CallOverrides): Promise<string>;
@@ -591,10 +595,6 @@ export class XTokenMock extends Contract {
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tradingRegistry(overrides?: CallOverrides): Promise<string>;
-
-    "tradingRegistry()"(overrides?: CallOverrides): Promise<string>;
 
     transfer(
       recipient: string,
@@ -744,6 +744,10 @@ export class XTokenMock extends Contract {
 
     "name()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    operationsRegistry(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "operationsRegistry()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -759,10 +763,6 @@ export class XTokenMock extends Contract {
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tradingRegistry(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "tradingRegistry()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
       recipient: string,
@@ -902,6 +902,14 @@ export class XTokenMock extends Contract {
 
     "name()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    operationsRegistry(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "operationsRegistry()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "owner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -917,12 +925,6 @@ export class XTokenMock extends Contract {
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "totalSupply()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    tradingRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "tradingRegistry()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     transfer(
       recipient: string,

@@ -10,7 +10,7 @@ import "./AuthorizationStorage.sol";
 
 import "./IAuthorization.sol";
 import "./IEurPriceFeed.sol";
-import "./ITradingRegistry.sol";
+import "./IOperationsRegistry.sol";
 
 import "hardhat/console.sol";
 
@@ -18,14 +18,14 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
     using SafeMathUpgradeable for uint256;
 
     event PermissionsSetted(address indexed newPermissions);
-    event TradingRegistrySetted(address indexed newTradingRegistry);
+    event OperationsRegistrySetted(address indexed newOperationsRegistry);
     event TradingLimitSetted(uint256 newLimit);
     event EurPriceFeedSetted(address indexed newEurPriceFeed);
 
     function initialize(
         address _permissions,
         address _eurPriceFeed,
-        address _tradingRegistry,
+        address _operationsRegistry,
         uint256 _tradingLimit
     ) public initializer {
         require(_permissions != address(0), "new permissions is the zero address");
@@ -33,14 +33,14 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         require(_tradingLimit != 0, "trading limit is 0");
         permissions = _permissions;
         eurPriceFeed = _eurPriceFeed;
-        tradingRegistry = _tradingRegistry;
+        operationsRegistry = _operationsRegistry;
         tradingLimit = _tradingLimit;
 
         __Ownable_init();
 
         emit PermissionsSetted(permissions);
         emit EurPriceFeedSetted(_eurPriceFeed);
-        emit TradingRegistrySetted(_tradingRegistry);
+        emit OperationsRegistrySetted(_operationsRegistry);
         emit TradingLimitSetted(_tradingLimit);
     }
 
@@ -68,10 +68,10 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         return true;
     }
 
-    function setTradingRegistry(address _tradingRegistry) public override onlyOwner returns (bool) {
-        require(_tradingRegistry != address(0), "trading registry is the zero address");
-        emit TradingRegistrySetted(_tradingRegistry);
-        tradingRegistry = _tradingRegistry;
+    function setOperationsRegistry(address _operationsRegistry) public override onlyOwner returns (bool) {
+        require(_operationsRegistry != address(0), "trading registry is the zero address");
+        emit OperationsRegistrySetted(_operationsRegistry);
+        operationsRegistry = _operationsRegistry;
 
         return true;
     }
@@ -142,7 +142,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         }
 
         // If not Tier 2 but Tier 1, we need to check limits and actions
-        uint256 currentTradigBalace = ITradingRegistry(tradingRegistry).tradingBalanceByOperation(_user, _operation);
+        uint256 currentTradigBalace = IOperationsRegistry(operationsRegistry).tradingBalanceByOperation(_user, _operation);
         uint256 eurAmount = IEurPriceFeed(eurPriceFeed).calculateAmount(_asset, amount);
 
         if (permissionsBlance[0] > 0 && currentTradigBalace.add(eurAmount) <= tradingLimit) {

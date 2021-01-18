@@ -1,7 +1,7 @@
 import { ethers } from 'hardhat';
 import { Signer } from 'ethers';
 import { expect } from 'chai';
-import { EurPriceFeedMock, TradingRegistry, TradingRegistryAssetMock } from '../typechain';
+import { EurPriceFeedMock, OperationsRegistry, OperationsRegistryAssetMock } from '../typechain';
 import Reverter from './utils/reverter';
 
 // let deployer: Signer;
@@ -15,46 +15,46 @@ let kakarotoAddress: string;
 // let karpinchoAddress: string;
 
 let eurPriceFeedContract: EurPriceFeedMock;
-let tradingRegistryContract: TradingRegistry;
-let tradingRegistryContractKakaroto: TradingRegistry;
+let operationsRegistryContract: OperationsRegistry;
+let operationsRegistryContractKakaroto: OperationsRegistry;
 
-let allowedAssetContract: TradingRegistryAssetMock;
-let disallowedAssetContract: TradingRegistryAssetMock;
+let allowedAssetContract: OperationsRegistryAssetMock;
+let disallowedAssetContract: OperationsRegistryAssetMock;
 
-let allowedAssetContractKakaroto: TradingRegistryAssetMock;
-let disallowedAssetContractKakaroto: TradingRegistryAssetMock;
+let allowedAssetContractKakaroto: OperationsRegistryAssetMock;
+let disallowedAssetContractKakaroto: OperationsRegistryAssetMock;
 
 // const tradingLimit = ethers.constants.One.mul(5000);
 
-describe('TradingRegistry', function () {
+describe('OperationsRegistry', function () {
   const reverter = new Reverter();
 
   before(async () => {
     kakaroto = (await ethers.getSigners())[1];
     [kakarotoAddress] = await Promise.all([kakaroto.getAddress()]);
 
-    const TradingRegistry = await ethers.getContractFactory('TradingRegistry');
+    const OperationsRegistry = await ethers.getContractFactory('OperationsRegistry');
     const EurPriceFeed = await ethers.getContractFactory('EurPriceFeedMock');
-    const TradingRegistryAssetMock = await ethers.getContractFactory('TradingRegistryAssetMock');
+    const OperationsRegistryAssetMock = await ethers.getContractFactory('OperationsRegistryAssetMock');
 
     eurPriceFeedContract = (await EurPriceFeed.deploy()) as EurPriceFeedMock;
     await eurPriceFeedContract.deployed();
 
-    tradingRegistryContract = (await TradingRegistry.deploy(eurPriceFeedContract.address)) as TradingRegistry;
-    await tradingRegistryContract.deployed();
+    operationsRegistryContract = (await OperationsRegistry.deploy(eurPriceFeedContract.address)) as OperationsRegistry;
+    await operationsRegistryContract.deployed();
 
-    tradingRegistryContractKakaroto = await tradingRegistryContract.connect(kakaroto);
+    operationsRegistryContractKakaroto = await operationsRegistryContract.connect(kakaroto);
 
-    allowedAssetContract = (await TradingRegistryAssetMock.deploy(
-      tradingRegistryContract.address,
-    )) as TradingRegistryAssetMock;
+    allowedAssetContract = (await OperationsRegistryAssetMock.deploy(
+      operationsRegistryContract.address,
+    )) as OperationsRegistryAssetMock;
     await allowedAssetContract.deployed();
-    disallowedAssetContract = (await TradingRegistryAssetMock.deploy(
-      tradingRegistryContract.address,
-    )) as TradingRegistryAssetMock;
+    disallowedAssetContract = (await OperationsRegistryAssetMock.deploy(
+      operationsRegistryContract.address,
+    )) as OperationsRegistryAssetMock;
     await disallowedAssetContract.deployed();
 
-    await tradingRegistryContract.allowAsset(allowedAssetContract.address);
+    await operationsRegistryContract.allowAsset(allowedAssetContract.address);
 
     allowedAssetContractKakaroto = allowedAssetContract.connect(kakaroto);
     disallowedAssetContractKakaroto = disallowedAssetContract.connect(kakaroto);
@@ -70,13 +70,13 @@ describe('TradingRegistry', function () {
     });
 
     it('Should not allow to set eurPriceFeed address to non owner', async function () {
-      await expect(tradingRegistryContractKakaroto.setEurPriceFeed(eurPriceFeedContract.address)).to.be.revertedWith(
+      await expect(operationsRegistryContractKakaroto.setEurPriceFeed(eurPriceFeedContract.address)).to.be.revertedWith(
         'Ownable: caller is not the owner',
       );
     });
 
     it('Should not allow to set eurPriceFeed as zero address to owner', async function () {
-      await expect(tradingRegistryContract.setEurPriceFeed(ethers.constants.AddressZero)).to.be.revertedWith(
+      await expect(operationsRegistryContract.setEurPriceFeed(ethers.constants.AddressZero)).to.be.revertedWith(
         'eur price feed is the zero address',
       );
     });
@@ -86,34 +86,34 @@ describe('TradingRegistry', function () {
       eurPriceFeedContract2 = (await EurPriceFeed.deploy()) as EurPriceFeedMock;
       await eurPriceFeedContract2.deployed();
 
-      await tradingRegistryContract.setEurPriceFeed(eurPriceFeedContract2.address);
+      await operationsRegistryContract.setEurPriceFeed(eurPriceFeedContract2.address);
 
-      const eurPriceFeedAddress = await tradingRegistryContract.eurPriceFeed();
+      const eurPriceFeedAddress = await operationsRegistryContract.eurPriceFeed();
       expect(eurPriceFeedAddress).to.equal(eurPriceFeedContract2.address);
     });
 
     it('Should not allow to set allowed asset address to non owner', async function () {
-      await expect(tradingRegistryContractKakaroto.allowAsset(allowedAssetContract.address)).to.be.revertedWith(
+      await expect(operationsRegistryContractKakaroto.allowAsset(allowedAssetContract.address)).to.be.revertedWith(
         'Ownable: caller is not the owner',
       );
     });
 
     it('Should not allow to allowed asset as zero address to owner', async function () {
-      await expect(tradingRegistryContract.allowAsset(ethers.constants.AddressZero)).to.be.revertedWith(
+      await expect(operationsRegistryContract.allowAsset(ethers.constants.AddressZero)).to.be.revertedWith(
         'asset is the zero address',
       );
     });
 
     it('Should allow to allowed asset address to owner', async function () {
-      await tradingRegistryContract.allowAsset(allowedAssetContract.address);
-      expect(await tradingRegistryContract.allowedAssets(allowedAssetContract.address)).to.equal(true);
+      await operationsRegistryContract.allowAsset(allowedAssetContract.address);
+      expect(await operationsRegistryContract.allowedAssets(allowedAssetContract.address)).to.equal(true);
     });
   });
 
   describe('#addTrade', () => {
     before(async () => {
       await reverter.revert();
-      await tradingRegistryContract.allowAsset(allowedAssetContract.address);
+      await operationsRegistryContract.allowAsset(allowedAssetContract.address);
     });
 
     it('Should not allow to call addTrade from a not allowed asset', async function () {
@@ -122,14 +122,14 @@ describe('TradingRegistry', function () {
 
     it('Should allow to call addTrade from an allowed asset', async function () {
       await allowedAssetContractKakaroto.someFunction(15);
-      let tradeBalance = await tradingRegistryContract.tradingBalanceByOperation(
+      let tradeBalance = await operationsRegistryContract.tradingBalanceByOperation(
         kakarotoAddress,
         allowedAssetContractKakaroto.interface.getSighash('someFunction'),
       );
       expect(tradeBalance).to.equal('15');
       await allowedAssetContractKakaroto.someFunction(1);
       await allowedAssetContractKakaroto.someFunction(7);
-      tradeBalance = await tradingRegistryContract.tradingBalanceByOperation(
+      tradeBalance = await operationsRegistryContract.tradingBalanceByOperation(
         kakarotoAddress,
         allowedAssetContractKakaroto.interface.getSighash('someFunction'),
       );

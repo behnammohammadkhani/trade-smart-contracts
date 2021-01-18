@@ -32,15 +32,15 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     "eurPriceFeed()": FunctionFragment;
     "initialize(address,address,address,uint256)": FunctionFragment;
     "isAuthorized(address,address,bytes4,bytes)": FunctionFragment;
+    "operationsRegistry()": FunctionFragment;
     "owner()": FunctionFragment;
     "permissions()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setEurPriceFeed(address)": FunctionFragment;
+    "setOperationsRegistry(address)": FunctionFragment;
     "setPermissions(address)": FunctionFragment;
     "setTradingLimint(uint256)": FunctionFragment;
-    "setTradingRegistry(address)": FunctionFragment;
     "tradingLimit()": FunctionFragment;
-    "tradingRegistry()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -78,6 +78,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     functionFragment: "isAuthorized",
     values: [string, string, BytesLike, BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "operationsRegistry",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "permissions",
@@ -92,6 +96,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "setOperationsRegistry",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setPermissions",
     values: [string]
   ): string;
@@ -100,15 +108,7 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setTradingRegistry",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "tradingLimit",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tradingRegistry",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -144,6 +144,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     functionFragment: "isAuthorized",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "operationsRegistry",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "permissions",
@@ -158,6 +162,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setOperationsRegistry",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setPermissions",
     data: BytesLike
   ): Result;
@@ -166,15 +174,7 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setTradingRegistry",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "tradingLimit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "tradingRegistry",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -184,17 +184,17 @@ interface AuthorizationInterface extends ethers.utils.Interface {
 
   events: {
     "EurPriceFeedSetted(address)": EventFragment;
+    "OperationsRegistrySetted(address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "PermissionsSetted(address)": EventFragment;
     "TradingLimitSetted(uint256)": EventFragment;
-    "TradingRegistrySetted(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "EurPriceFeedSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OperationsRegistrySetted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PermissionsSetted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TradingLimitSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TradingRegistrySetted"): EventFragment;
 }
 
 export class Authorization extends Contract {
@@ -246,7 +246,7 @@ export class Authorization extends Contract {
     initialize(
       _permissions: string,
       _eurPriceFeed: string,
-      _tradingRegistry: string,
+      _operationsRegistry: string,
       _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -254,7 +254,7 @@ export class Authorization extends Contract {
     "initialize(address,address,address,uint256)"(
       _permissions: string,
       _eurPriceFeed: string,
-      _tradingRegistry: string,
+      _operationsRegistry: string,
       _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -274,6 +274,10 @@ export class Authorization extends Contract {
       _data: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    operationsRegistry(overrides?: CallOverrides): Promise<[string]>;
+
+    "operationsRegistry()"(overrides?: CallOverrides): Promise<[string]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -297,6 +301,16 @@ export class Authorization extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    setOperationsRegistry(
+      _operationsRegistry: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setOperationsRegistry(address)"(
+      _operationsRegistry: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     setPermissions(
       _permissions: string,
       overrides?: Overrides
@@ -317,23 +331,9 @@ export class Authorization extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    setTradingRegistry(
-      _tradingRegistry: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setTradingRegistry(address)"(
-      _tradingRegistry: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
     tradingLimit(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "tradingLimit()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    tradingRegistry(overrides?: CallOverrides): Promise<[string]>;
-
-    "tradingRegistry()"(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
       newOwner: string,
@@ -381,7 +381,7 @@ export class Authorization extends Contract {
   initialize(
     _permissions: string,
     _eurPriceFeed: string,
-    _tradingRegistry: string,
+    _operationsRegistry: string,
     _tradingLimit: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -389,7 +389,7 @@ export class Authorization extends Contract {
   "initialize(address,address,address,uint256)"(
     _permissions: string,
     _eurPriceFeed: string,
-    _tradingRegistry: string,
+    _operationsRegistry: string,
     _tradingLimit: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -409,6 +409,10 @@ export class Authorization extends Contract {
     _data: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  operationsRegistry(overrides?: CallOverrides): Promise<string>;
+
+  "operationsRegistry()"(overrides?: CallOverrides): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -432,6 +436,16 @@ export class Authorization extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  setOperationsRegistry(
+    _operationsRegistry: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setOperationsRegistry(address)"(
+    _operationsRegistry: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   setPermissions(
     _permissions: string,
     overrides?: Overrides
@@ -452,23 +466,9 @@ export class Authorization extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  setTradingRegistry(
-    _tradingRegistry: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setTradingRegistry(address)"(
-    _tradingRegistry: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
   tradingLimit(overrides?: CallOverrides): Promise<BigNumber>;
 
   "tradingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  tradingRegistry(overrides?: CallOverrides): Promise<string>;
-
-  "tradingRegistry()"(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
     newOwner: string,
@@ -516,7 +516,7 @@ export class Authorization extends Contract {
     initialize(
       _permissions: string,
       _eurPriceFeed: string,
-      _tradingRegistry: string,
+      _operationsRegistry: string,
       _tradingLimit: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -524,7 +524,7 @@ export class Authorization extends Contract {
     "initialize(address,address,address,uint256)"(
       _permissions: string,
       _eurPriceFeed: string,
-      _tradingRegistry: string,
+      _operationsRegistry: string,
       _tradingLimit: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -544,6 +544,10 @@ export class Authorization extends Contract {
       _data: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    operationsRegistry(overrides?: CallOverrides): Promise<string>;
+
+    "operationsRegistry()"(overrides?: CallOverrides): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -567,6 +571,16 @@ export class Authorization extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    setOperationsRegistry(
+      _operationsRegistry: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "setOperationsRegistry(address)"(
+      _operationsRegistry: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     setPermissions(
       _permissions: string,
       overrides?: CallOverrides
@@ -587,23 +601,9 @@ export class Authorization extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    setTradingRegistry(
-      _tradingRegistry: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "setTradingRegistry(address)"(
-      _tradingRegistry: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     tradingLimit(overrides?: CallOverrides): Promise<BigNumber>;
 
     "tradingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tradingRegistry(overrides?: CallOverrides): Promise<string>;
-
-    "tradingRegistry()"(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
       newOwner: string,
@@ -619,6 +619,8 @@ export class Authorization extends Contract {
   filters: {
     EurPriceFeedSetted(newEurPriceFeed: string | null): EventFilter;
 
+    OperationsRegistrySetted(newOperationsRegistry: string | null): EventFilter;
+
     OwnershipTransferred(
       previousOwner: string | null,
       newOwner: string | null
@@ -627,8 +629,6 @@ export class Authorization extends Contract {
     PermissionsSetted(newPermissions: string | null): EventFilter;
 
     TradingLimitSetted(newLimit: null): EventFilter;
-
-    TradingRegistrySetted(newTradingRegistry: string | null): EventFilter;
   };
 
   estimateGas: {
@@ -667,7 +667,7 @@ export class Authorization extends Contract {
     initialize(
       _permissions: string,
       _eurPriceFeed: string,
-      _tradingRegistry: string,
+      _operationsRegistry: string,
       _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -675,7 +675,7 @@ export class Authorization extends Contract {
     "initialize(address,address,address,uint256)"(
       _permissions: string,
       _eurPriceFeed: string,
-      _tradingRegistry: string,
+      _operationsRegistry: string,
       _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -695,6 +695,10 @@ export class Authorization extends Contract {
       _data: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    operationsRegistry(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "operationsRegistry()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -718,6 +722,16 @@ export class Authorization extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    setOperationsRegistry(
+      _operationsRegistry: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setOperationsRegistry(address)"(
+      _operationsRegistry: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     setPermissions(
       _permissions: string,
       overrides?: Overrides
@@ -738,23 +752,9 @@ export class Authorization extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    setTradingRegistry(
-      _tradingRegistry: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setTradingRegistry(address)"(
-      _tradingRegistry: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
     tradingLimit(overrides?: CallOverrides): Promise<BigNumber>;
 
     "tradingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    tradingRegistry(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "tradingRegistry()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
@@ -811,7 +811,7 @@ export class Authorization extends Contract {
     initialize(
       _permissions: string,
       _eurPriceFeed: string,
-      _tradingRegistry: string,
+      _operationsRegistry: string,
       _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -819,7 +819,7 @@ export class Authorization extends Contract {
     "initialize(address,address,address,uint256)"(
       _permissions: string,
       _eurPriceFeed: string,
-      _tradingRegistry: string,
+      _operationsRegistry: string,
       _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -837,6 +837,14 @@ export class Authorization extends Contract {
       _asset: string,
       _operation: BytesLike,
       _data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    operationsRegistry(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "operationsRegistry()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -862,6 +870,16 @@ export class Authorization extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    setOperationsRegistry(
+      _operationsRegistry: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setOperationsRegistry(address)"(
+      _operationsRegistry: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     setPermissions(
       _permissions: string,
       overrides?: Overrides
@@ -882,25 +900,9 @@ export class Authorization extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    setTradingRegistry(
-      _tradingRegistry: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setTradingRegistry(address)"(
-      _tradingRegistry: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
     tradingLimit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "tradingLimit()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    tradingRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "tradingRegistry()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: string,

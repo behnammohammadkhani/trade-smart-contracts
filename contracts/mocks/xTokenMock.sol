@@ -7,13 +7,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "../authorization/Authorizable.sol";
 
 import "../authorization/IAuthorization.sol";
-import "../authorization/ITradingRegistry.sol";
+import "../authorization/IOperationsRegistry.sol";
 
 import "hardhat/console.sol";
 
 // solhint-disable-next-line
 contract xTokenMock is ERC20, Ownable, Authorizable {
-    ITradingRegistry public tradingRegistry;
+    IOperationsRegistry public operationsRegistry;
 
     bytes4 public constant ERC20_TRANSFER = bytes4(keccak256("transfer(address,uint256)"));
 
@@ -21,15 +21,15 @@ contract xTokenMock is ERC20, Ownable, Authorizable {
         string memory name_,
         string memory symbol_,
         address authorization_,
-        address tradingRegistry_
+        address operationsRegistry_
     ) public ERC20(name_, symbol_) {
         authorization = IAuthorization(authorization_);
-        tradingRegistry = ITradingRegistry(tradingRegistry_);
+        operationsRegistry = IOperationsRegistry(operationsRegistry_);
     }
 
     function transfer(address recipient, uint256 amount) public override onlyAuthorized returns (bool) {
         super.transfer(recipient, amount);
-        tradingRegistry.addTrade(_msgSender(), msg.sig, amount);
+        operationsRegistry.addTrade(_msgSender(), msg.sig, amount);
     }
 
     function transferFrom(
@@ -38,16 +38,16 @@ contract xTokenMock is ERC20, Ownable, Authorizable {
         uint256 amount
     ) public override onlyAuthorized returns (bool) {
         super.transferFrom(sender, recipient, amount);
-        tradingRegistry.addTrade(sender, ERC20_TRANSFER, amount);
+        operationsRegistry.addTrade(sender, ERC20_TRANSFER, amount);
     }
 
     function mint(address account, uint256 amount) public onlyOwner onlyAuthorized {
         _mint(account, amount);
-        tradingRegistry.addTrade(account, msg.sig, amount);
+        operationsRegistry.addTrade(account, msg.sig, amount);
     }
 
     function burnFrom(address account, uint256 amount) public onlyOwner onlyAuthorized {
         _burn(account, amount);
-        tradingRegistry.addTrade(account, msg.sig, amount);
+        operationsRegistry.addTrade(account, msg.sig, amount);
     }
 }
