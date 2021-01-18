@@ -91,6 +91,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         ) {
             // Get user and amount based on the operation
             address user = _user;
+            bytes4 operation = _operation;
             uint256 operationAmount;
 
             if (_operation == ERC20_MINT || _operation == ERC20_BURN_FROM) {
@@ -109,9 +110,10 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
                 (address sender, address _, uint256 amount) = abi.decode(_data[4:], (address, address, uint256));
                 user = sender;
                 operationAmount = amount;
+                operation = ERC20_TRANSFER;
             }
 
-            return checkPermissions(user, _asset, _operation, operationAmount);
+            return checkPermissions(user, _asset, operation, operationAmount);
         }
 
         return false;
@@ -140,7 +142,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         }
 
         // If not Tier 2 but Tier 1, we need to check limits and actions
-        uint256 currentTradigBalace = ITradingRegistry(tradingRegistry).tradingBalanceByOperation(user, _operation);
+        uint256 currentTradigBalace = ITradingRegistry(tradingRegistry).tradingBalanceByOperation(_user, _operation);
         uint256 eurAmount = IEurPriceFeed(eurPriceFeed).calculateAmount(_asset, amount);
 
         if (permissionsBlance[0] > 0 && currentTradigBalace.add(eurAmount) <= tradingLimit) {

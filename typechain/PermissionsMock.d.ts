@@ -22,6 +22,8 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface PermissionsMockInterface extends ethers.utils.Interface {
   functions: {
+    "assingTier1(address)": FunctionFragment;
+    "assingTier2(address)": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
@@ -32,6 +34,8 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
     "uri(uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "assingTier1", values: [string]): string;
+  encodeFunctionData(functionFragment: "assingTier2", values: [string]): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [string, BigNumberish]
@@ -62,6 +66,14 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
 
+  decodeFunctionResult(
+    functionFragment: "assingTier1",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "assingTier2",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "balanceOfBatch",
@@ -116,6 +128,26 @@ export class PermissionsMock extends Contract {
   interface: PermissionsMockInterface;
 
   functions: {
+    assingTier1(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "assingTier1(address)"(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    assingTier2(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "assingTier2(address)"(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -217,6 +249,26 @@ export class PermissionsMock extends Contract {
       overrides?: CallOverrides
     ): Promise<[string]>;
   };
+
+  assingTier1(
+    _user: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "assingTier1(address)"(
+    _user: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  assingTier2(
+    _user: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "assingTier2(address)"(
+    _user: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   balanceOf(
     account: string,
@@ -320,6 +372,20 @@ export class PermissionsMock extends Contract {
   ): Promise<string>;
 
   callStatic: {
+    assingTier1(_user: string, overrides?: CallOverrides): Promise<void>;
+
+    "assingTier1(address)"(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    assingTier2(_user: string, overrides?: CallOverrides): Promise<void>;
+
+    "assingTier2(address)"(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -449,6 +515,20 @@ export class PermissionsMock extends Contract {
   };
 
   estimateGas: {
+    assingTier1(_user: string, overrides?: Overrides): Promise<BigNumber>;
+
+    "assingTier1(address)"(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    assingTier2(_user: string, overrides?: Overrides): Promise<BigNumber>;
+
+    "assingTier2(address)"(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -552,6 +632,26 @@ export class PermissionsMock extends Contract {
   };
 
   populateTransaction: {
+    assingTier1(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "assingTier1(address)"(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    assingTier2(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "assingTier2(address)"(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     balanceOf(
       account: string,
       id: BigNumberish,

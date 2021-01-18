@@ -5,8 +5,8 @@ const { provider } = ethers;
 export default class Reverter {
   snapshotId = 0;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async snapshot(): Promise<any> {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
     try {
       const result = await provider.send('evm_snapshot', []);
       this.snapshotId = result;
@@ -16,8 +16,8 @@ export default class Reverter {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async revert(): Promise<any> {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
     try {
       await provider.send('evm_revert', [this.snapshotId]);
       const stanpshot = await this.snapshot();

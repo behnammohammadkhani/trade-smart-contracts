@@ -9,6 +9,8 @@ import "../authorization/Authorizable.sol";
 import "../authorization/IAuthorization.sol";
 import "../authorization/ITradingRegistry.sol";
 
+import "hardhat/console.sol";
+
 // solhint-disable-next-line
 contract xTokenMock is ERC20, Ownable, Authorizable {
     ITradingRegistry public tradingRegistry;

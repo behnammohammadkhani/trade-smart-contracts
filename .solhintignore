@@ -6,4 +6,4 @@ node_modules/
 contracts/mocks/*
 contracts/test/*
 
-# contracts/authorization/Authorization.sol
+contracts/authorization/Authorization.sol

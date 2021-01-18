@@ -14,4 +14,4 @@ contracts/test/
 coverage.json
 package.json
 
-# contracts/authorization/Authorization.sol
+contracts/authorization/Authorization.sol

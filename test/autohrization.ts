@@ -7,15 +7,18 @@ import Reverter from './utils/reverter';
 const { BigNumber } = ethers;
 let deployer: Signer;
 let kakaroto: Signer;
-// let vegeta: Signer;
-// let karpincho: Signer;
+let vegeta: Signer;
+let karpincho: Signer;
 
 let deployerAddress: string;
-// let kakarotoAddress: string;
-// let vegetaAddress: string;
-// let karpinchoAddress: string;
+let kakarotoAddress: string;
+let vegetaAddress: string;
+let karpinchoAddress: string;
 
 let token: XTokenMock;
+let tokenKakaroto: XTokenMock;
+// let tokenVegeta: XTokenMock;
+let tokenKarpincho: XTokenMock;
 
 let eurPriceFeedContract: EurPriceFeedMock;
 let permissionsContract: PermissionsMock;
@@ -29,8 +32,13 @@ describe('Authorization', function () {
   const reverter = new Reverter();
 
   before(async () => {
-    [deployer, kakaroto] = await ethers.getSigners();
-    [deployerAddress] = await Promise.all([deployer.getAddress()]);
+    [deployer, kakaroto, vegeta, karpincho] = await ethers.getSigners();
+    [deployerAddress, kakarotoAddress, vegetaAddress, karpinchoAddress] = await Promise.all([
+      deployer.getAddress(),
+      kakaroto.getAddress(),
+      vegeta.getAddress(),
+      karpincho.getAddress(),
+    ]);
 
     const PermissionsMock = await ethers.getContractFactory('PermissionsMock');
     const Authorization = await ethers.getContractFactory('Authorization');
@@ -64,9 +72,11 @@ describe('Authorization', function () {
 
     await tradingRegistryContract.allowAsset(token.address);
 
-    await token.mint(await deployer.getAddress(), BigNumber.from(`${10e18}`));
+    authorizationContractKakaroto = authorizationContract.connect(kakaroto);
 
-    authorizationContractKakaroto = await authorizationContract.connect(kakaroto);
+    tokenKakaroto = token.connect(kakaroto);
+    // tokenVegeta = token.connect(vegeta);
+    tokenKarpincho = token.connect(karpincho);
 
     await reverter.snapshot();
   });
@@ -167,6 +177,177 @@ describe('Authorization', function () {
 
       const tradingLimitValue = await authorizationContract.tradingLimit();
       expect(tradingLimitValue).to.equal(tradingLimit.mul(2).toString());
+    });
+  });
+
+  describe('#isAuthorized', () => {
+    before(async () => {
+      await reverter.revert();
+
+      await permissionsContract.assingTier1(deployerAddress);
+      await permissionsContract.assingTier2(deployerAddress);
+
+      await permissionsContract.assingTier1(kakarotoAddress);
+
+      await permissionsContract.assingTier1(vegetaAddress);
+      await permissionsContract.assingTier2(vegetaAddress);
+
+      await reverter.snapshot();
+    });
+
+    describe('Tier 0 User', () => {
+      describe('ERC20 Operations', () => {
+        // mint
+        it('should not be able to wrap', async () => {
+          await expect(token.mint(karpinchoAddress, BigNumber.from(`${1}`))).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+        });
+
+        // burn
+        it('should not be able to unwrap', async () => {
+          await token.mint(deployerAddress, BigNumber.from(`${10}`));
+          await token.transfer(karpinchoAddress, BigNumber.from(`${10}`));
+
+          await expect(token.burnFrom(karpinchoAddress, BigNumber.from(`${10}`))).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+        });
+
+        // transfer
+        it('should not be able to transfer', async () => {
+          await expect(tokenKarpincho.transfer(deployerAddress, BigNumber.from(`${10}`))).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+        });
+
+        // transferFrom
+        it('should not be able to transferFrom', async () => {
+          await tokenKarpincho.approve(kakarotoAddress, '10');
+          await expect(tokenKakaroto.transferFrom(karpinchoAddress, deployerAddress, '10')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+        });
+      });
+    });
+
+    describe('Tier 1 User', () => {
+      describe('ERC20 Operations', () => {
+        before(async () => {
+          await reverter.revert();
+        });
+
+        // mint
+        it('should be able to wrap less than the allowed limit', async () => {
+          await token.mint(kakarotoAddress, '1');
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+
+          expect(kakarotoBalance).to.equal('1');
+        });
+
+        it('should be able to wrap up to allowed limit', async () => {
+          await token.mint(kakarotoAddress, '4999');
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+
+          expect(kakarotoBalance).to.equal('5000');
+        });
+
+        it('should not be able to wrap more than allowed limit', async () => {
+          await expect(token.mint(kakarotoAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal('5000');
+        });
+
+        // burn
+        it('should be able to unwrap less than the allowed limit', async () => {
+          await token.burnFrom(kakarotoAddress, '1');
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal('4999');
+        });
+
+        it('should be able to unwrap up to the allowed limit', async () => {
+          await token.burnFrom(kakarotoAddress, '4999');
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal('0');
+        });
+
+        it('should not be able to unwrap more than allowed limit', async () => {
+          await token.mint(deployerAddress, '1');
+          await token.transfer(kakarotoAddress, '1');
+
+          await expect(token.burnFrom(kakarotoAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal('1');
+        });
+
+        // transfer
+        it('should be able to transfer less than the allowed limit', async () => {
+          await token.mint(deployerAddress, '10000');
+          await token.transfer(kakarotoAddress, '10000');
+
+          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+
+          await tokenKakaroto.transfer(deployerAddress, '1');
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance.sub('1'));
+        });
+
+        it('should be able to transfer up to the allowed limit', async () => {
+          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+          await tokenKakaroto.transfer(deployerAddress, '4999');
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance.sub('4999'));
+        });
+
+        it('should not be able to transfer more than the allowed limit', async () => {
+          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+          await expect(tokenKakaroto.transfer(deployerAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
+        });
+
+        // transferFrom
+        it('should be able to transfer less than the allowed limit', async () => {
+          await reverter.revert();
+
+          await token.mint(deployerAddress, '10000');
+          await token.transfer(kakarotoAddress, '10000');
+
+          await tokenKakaroto.approve(deployerAddress, '10000');
+
+          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+
+          await token.transferFrom(kakarotoAddress, deployerAddress, '1');
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance.sub('1'));
+        });
+
+        it('should be able to transfer up to the allowed limit', async () => {
+          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+          await token.transferFrom(kakarotoAddress, deployerAddress, '4999');
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance.sub('4999'));
+        });
+
+        it('should not be able to transfer more than the allowed limit', async () => {
+          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+          await expect(token.transferFrom(kakarotoAddress, deployerAddress, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
+        });
+      });
     });
   });
 });
