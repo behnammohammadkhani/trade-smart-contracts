@@ -56,64 +56,61 @@ export class EurPriceFeedMock extends Contract {
 
   functions: {
     calculateAmount(
-      _: string,
+      arg0: string,
       _amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "calculateAmount(address,uint256)"(
-      _: string,
+      arg0: string,
       _amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    getPrice(
-      _asset: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+    getPrice(arg0: string, overrides?: Overrides): Promise<ContractTransaction>;
 
     "getPrice(address)"(
-      _asset: string,
+      arg0: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
 
   calculateAmount(
-    _: string,
+    arg0: string,
     _amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "calculateAmount(address,uint256)"(
-    _: string,
+    arg0: string,
     _amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  getPrice(_asset: string, overrides?: Overrides): Promise<ContractTransaction>;
+  getPrice(arg0: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "getPrice(address)"(
-    _asset: string,
+    arg0: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   callStatic: {
     calculateAmount(
-      _: string,
+      arg0: string,
       _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "calculateAmount(address,uint256)"(
-      _: string,
+      arg0: string,
       _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getPrice(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "getPrice(address)"(
-      _asset: string,
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -122,45 +119,45 @@ export class EurPriceFeedMock extends Contract {
 
   estimateGas: {
     calculateAmount(
-      _: string,
+      arg0: string,
       _amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "calculateAmount(address,uint256)"(
-      _: string,
+      arg0: string,
       _amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    getPrice(_asset: string, overrides?: Overrides): Promise<BigNumber>;
+    getPrice(arg0: string, overrides?: Overrides): Promise<BigNumber>;
 
     "getPrice(address)"(
-      _asset: string,
+      arg0: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     calculateAmount(
-      _: string,
+      arg0: string,
       _amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "calculateAmount(address,uint256)"(
-      _: string,
+      arg0: string,
       _amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     getPrice(
-      _asset: string,
+      arg0: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "getPrice(address)"(
-      _asset: string,
+      arg0: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };

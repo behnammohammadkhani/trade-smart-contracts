@@ -10,7 +10,7 @@ let kakaroto: Signer;
 // let karpincho: Signer;
 
 // let deployerAddress: string;
-// let kakarotoAddress: string;
+let kakarotoAddress: string;
 // let vegetaAddress: string;
 // let karpinchoAddress: string;
 
@@ -21,6 +21,9 @@ let tradingRegistryContractKakaroto: TradingRegistry;
 let allowedAssetContract: TradingRegistryAssetMock;
 let disallowedAssetContract: TradingRegistryAssetMock;
 
+let allowedAssetContractKakaroto: TradingRegistryAssetMock;
+let disallowedAssetContractKakaroto: TradingRegistryAssetMock;
+
 // const tradingLimit = ethers.constants.One.mul(5000);
 
 describe('TradingRegistry', function () {
@@ -28,7 +31,7 @@ describe('TradingRegistry', function () {
 
   before(async () => {
     kakaroto = (await ethers.getSigners())[1];
-    // [deployerAddress] = await Promise.all([deployer.getAddress()]);
+    [kakarotoAddress] = await Promise.all([kakaroto.getAddress()]);
 
     const TradingRegistry = await ethers.getContractFactory('TradingRegistry');
     const EurPriceFeed = await ethers.getContractFactory('EurPriceFeedMock');
@@ -52,6 +55,9 @@ describe('TradingRegistry', function () {
     await disallowedAssetContract.deployed();
 
     await tradingRegistryContract.allowAsset(allowedAssetContract.address);
+
+    allowedAssetContractKakaroto = allowedAssetContract.connect(kakaroto);
+    disallowedAssetContractKakaroto = disallowedAssetContract.connect(kakaroto);
 
     await reverter.snapshot();
   });
@@ -101,6 +107,33 @@ describe('TradingRegistry', function () {
     it('Should allow to allowed asset address to owner', async function () {
       await tradingRegistryContract.allowAsset(allowedAssetContract.address);
       expect(await tradingRegistryContract.allowedAssets(allowedAssetContract.address)).to.equal(true);
+    });
+  });
+
+  describe('#addTrade', () => {
+    before(async () => {
+      await reverter.revert();
+      await tradingRegistryContract.allowAsset(allowedAssetContract.address);
+    });
+
+    it('Should not allow to call addTrade from a not allowed asset', async function () {
+      await expect(disallowedAssetContractKakaroto.someFunction(1)).to.be.revertedWith('asset is not allowed');
+    });
+
+    it('Should allow to call addTrade from an allowed asset', async function () {
+      await allowedAssetContractKakaroto.someFunction(15);
+      let tradeBalance = await tradingRegistryContract.tradingBalanceByOperation(
+        kakarotoAddress,
+        allowedAssetContractKakaroto.interface.getSighash('someFunction'),
+      );
+      expect(tradeBalance).to.equal('15');
+      await allowedAssetContractKakaroto.someFunction(1);
+      await allowedAssetContractKakaroto.someFunction(7);
+      tradeBalance = await tradingRegistryContract.tradingBalanceByOperation(
+        kakarotoAddress,
+        allowedAssetContractKakaroto.interface.getSighash('someFunction'),
+      );
+      expect(tradeBalance).to.equal('23');
     });
   });
 });
