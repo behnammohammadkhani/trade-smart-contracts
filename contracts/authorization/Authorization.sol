@@ -221,19 +221,19 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
             uint256 operationAmount;
 
             if (_operation == ERC20_MINT || _operation == ERC20_BURN_FROM) {
-                // (address account, uint256 amount) = abi.decode(_data[4:], (address, uint256));
+                (address account, uint256 amount) = abi.decode(_data[4:], (address, uint256));
                 user = account;
                 operationAmount = amount;
             }
 
             if (_operation == ERC20_TRANSFER) {
-                // (address _, uint256 amount) = abi.decode(_data[4:], (address, uint256));
+                (address _, uint256 amount) = abi.decode(_data[4:], (address, uint256));
                 operationAmount = amount;
             }
 
             if (_operation == ERC20_TRANSFER_FROM) {
                 // solhint-disable-next-line no-unused-vars
-                // (address sender, address _, uint256 amount) = abi.decode(_data[4:], (address, address, uint256));
+                (address sender, address _, uint256 amount) = abi.decode(_data[4:], (address, address, uint256));
                 user = sender;
                 operationAmount = amount;
                 operation = ERC20_TRANSFER;

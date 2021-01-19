@@ -55,7 +55,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_prermissions",
+        name: "_eurPriceFeed",
         type: "address",
       },
     ],
@@ -74,7 +74,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_prermissions",
+        name: "_operationsRegistry",
         type: "address",
       },
     ],
@@ -93,7 +93,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_prermissions",
+        name: "_permissions",
         type: "address",
       },
     ],

@@ -13,21 +13,21 @@ interface IAuthorization {
      *
      * @param _permissions The address of the new Pemissions module.
      */
-    function setPermissions(address _prermissions) external returns (bool);
+    function setPermissions(address _permissions) external returns (bool);
 
     /**
      * @dev Sets `_eurPriceFeed` as the new EUR Price feed module.
      *
      * @param _eurPriceFeed The address of the new EUR Price feed module.
      */
-    function setEurPriceFeed(address _prermissions) external returns (bool);
+    function setEurPriceFeed(address _eurPriceFeed) external returns (bool);
 
     /**
      * @dev Sets `_operationsRegistry` as the new OperationsRegistry module.
      *
      * @param _operationsRegistry The address of the new OperationsRegistry module.
      */
-    function setOperationsRegistry(address _prermissions) external returns (bool);
+    function setOperationsRegistry(address _operationsRegistry) external returns (bool);
 
     /**
      * @dev Sets `_tradingLimit` as the new traiding limit.

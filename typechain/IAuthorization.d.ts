@@ -105,32 +105,32 @@ export class IAuthorization extends Contract {
     ): Promise<ContractTransaction>;
 
     setEurPriceFeed(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setEurPriceFeed(address)"(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setOperationsRegistry(
-      _prermissions: string,
+      _operationsRegistry: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setOperationsRegistry(address)"(
-      _prermissions: string,
+      _operationsRegistry: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setPermissions(
-      _prermissions: string,
+      _permissions: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setPermissions(address)"(
-      _prermissions: string,
+      _permissions: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -162,32 +162,32 @@ export class IAuthorization extends Contract {
   ): Promise<ContractTransaction>;
 
   setEurPriceFeed(
-    _prermissions: string,
+    _eurPriceFeed: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setEurPriceFeed(address)"(
-    _prermissions: string,
+    _eurPriceFeed: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setOperationsRegistry(
-    _prermissions: string,
+    _operationsRegistry: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setOperationsRegistry(address)"(
-    _prermissions: string,
+    _operationsRegistry: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setPermissions(
-    _prermissions: string,
+    _permissions: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setPermissions(address)"(
-    _prermissions: string,
+    _permissions: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -219,32 +219,32 @@ export class IAuthorization extends Contract {
     ): Promise<boolean>;
 
     setEurPriceFeed(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     "setEurPriceFeed(address)"(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     setOperationsRegistry(
-      _prermissions: string,
+      _operationsRegistry: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     "setOperationsRegistry(address)"(
-      _prermissions: string,
+      _operationsRegistry: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     setPermissions(
-      _prermissions: string,
+      _permissions: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     "setPermissions(address)"(
-      _prermissions: string,
+      _permissions: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -279,32 +279,32 @@ export class IAuthorization extends Contract {
     ): Promise<BigNumber>;
 
     setEurPriceFeed(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setEurPriceFeed(address)"(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     setOperationsRegistry(
-      _prermissions: string,
+      _operationsRegistry: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setOperationsRegistry(address)"(
-      _prermissions: string,
+      _operationsRegistry: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     setPermissions(
-      _prermissions: string,
+      _permissions: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setPermissions(address)"(
-      _prermissions: string,
+      _permissions: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -337,32 +337,32 @@ export class IAuthorization extends Contract {
     ): Promise<PopulatedTransaction>;
 
     setEurPriceFeed(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setEurPriceFeed(address)"(
-      _prermissions: string,
+      _eurPriceFeed: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setOperationsRegistry(
-      _prermissions: string,
+      _operationsRegistry: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setOperationsRegistry(address)"(
-      _prermissions: string,
+      _operationsRegistry: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setPermissions(
-      _prermissions: string,
+      _permissions: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setPermissions(address)"(
-      _prermissions: string,
+      _permissions: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
