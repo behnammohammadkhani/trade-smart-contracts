@@ -234,7 +234,7 @@ describe('Authorization', function () {
       await reverter.snapshot();
     });
 
-    describe('Tier 0 User - Unpaused', () => {
+    describe('Tier 0 User - Protocol Unpaused', () => {
       describe('ERC20 Operations', () => {
         // mint
         it('should not be able to wrap', async () => {
@@ -270,7 +270,7 @@ describe('Authorization', function () {
       });
     });
 
-    describe('Tier 1 User - Unpaused', () => {
+    describe('Tier 1 User - Protocol Unpaused', () => {
       describe('ERC20 Operations', () => {
         before(async () => {
           await reverter.revert();
@@ -389,7 +389,7 @@ describe('Authorization', function () {
       });
     });
 
-    describe('Tier 2 User - Unpaused', () => {
+    describe('Tier 2 User - Protocol Unpaused', () => {
       describe('ERC20 Operations', () => {
         before(async () => {
           await reverter.revert();
@@ -504,7 +504,7 @@ describe('Authorization', function () {
       });
     });
 
-    describe('Tier 1 User - Paused', () => {
+    describe('Tier 1 User - Protocol Paused', () => {
       describe('ERC20 Operations', () => {
         before(async () => {
           await reverter.revert();
@@ -556,7 +556,7 @@ describe('Authorization', function () {
       });
     });
 
-    describe('Tier 2 User - Paused', () => {
+    describe('Tier 2 User - Protocol Paused', () => {
       describe('ERC20 Operations', () => {
         before(async () => {
           await reverter.revert();
@@ -604,6 +604,162 @@ describe('Authorization', function () {
 
           const vegetaBalance = await token.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance);
+        });
+      });
+    });
+
+    describe('Tier 1 User - Paused User', () => {
+      describe('ERC20 Operations', () => {
+        before(async () => {
+          await reverter.revert();
+
+          await token.mint(deployerAddress, '30');
+          await token.transfer(vegetaAddress, '15');
+          await token.transfer(kakarotoAddress, '15');
+
+          await permissionsContract.pauseUser(kakarotoAddress);
+        });
+
+        // mint
+        it('should not be able to wrap', async () => {
+          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+          await expect(token.mint(kakarotoAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
+
+          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+          await token.mint(vegetaAddress, '1');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance.add('1'));
+        });
+
+        // burn
+        it('should not be able to unwrap more than allowed limit', async () => {
+          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+          await expect(token.burnFrom(kakarotoAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
+
+          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+          await token.burnFrom(vegetaAddress, '1');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('1'));
+        });
+
+        // transfer
+        it('should not be able to transfer', async () => {
+          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+          await expect(tokenKakaroto.transfer(deployerAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
+
+          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+          await tokenVegeta.transfer(deployerAddress, '1');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('1'));
+        });
+
+        // transferFrom
+        it('should not be able to transferFrom', async () => {
+          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+          await tokenKakaroto.approve(deployerAddress, kakarotoInitialBalance);
+          await expect(token.transferFrom(kakarotoAddress, deployerAddress, kakarotoInitialBalance)).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
+
+          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+          await tokenVegeta.approve(deployerAddress, vegetaInitialBalance);
+          await token.transferFrom(vegetaAddress, deployerAddress, vegetaInitialBalance);
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal('0');
+        });
+      });
+    });
+
+    describe('Tier 2 User - Paused User', () => {
+      describe('ERC20 Operations', () => {
+        before(async () => {
+          await reverter.revert();
+
+          await token.mint(deployerAddress, '30');
+          await token.transfer(vegetaAddress, '15');
+          await token.transfer(kakarotoAddress, '15');
+
+          await permissionsContract.pauseUser(vegetaAddress);
+        });
+
+        // mint
+        it('should not be able to wrap', async () => {
+          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+          await expect(token.mint(vegetaAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance);
+
+          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+          await token.mint(kakarotoAddress, '1');
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance.add('1'));
+        });
+
+        // burn
+        it('should not be able to unwrap more than allowed limit', async () => {
+          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+          await expect(token.burnFrom(vegetaAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance);
+
+          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+          await token.burnFrom(kakarotoAddress, '1');
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance.sub('1'));
+        });
+
+        // transfer
+        it('should not be able to transfer', async () => {
+          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+          await expect(tokenVegeta.transfer(deployerAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance);
+
+          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+          await tokenKakaroto.transfer(deployerAddress, '1');
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance.sub('1'));
+        });
+
+        // transferFrom
+        it('should not be able to transferFrom', async () => {
+          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+          await tokenVegeta.approve(deployerAddress, vegetaInitialBalance);
+          await expect(token.transferFrom(vegetaAddress, deployerAddress, vegetaInitialBalance)).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance);
+
+          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+          await tokenKakaroto.approve(deployerAddress, kakarotoInitialBalance);
+          await token.transferFrom(kakarotoAddress, deployerAddress, kakarotoInitialBalance);
+
+          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal('0');
         });
       });
     });

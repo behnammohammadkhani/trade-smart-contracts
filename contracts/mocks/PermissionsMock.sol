@@ -14,4 +14,8 @@ contract PermissionsMock is ERC1155 {
     function assingTier2(address _user) public {
         _mint(_user, 2, 1, "");
     }
+
+    function pauseUser(address _user) public {
+        _mint(_user, 3, 1, "");
+    }
 }

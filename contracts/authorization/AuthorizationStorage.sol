@@ -22,4 +22,5 @@ abstract contract AuthorizationStorage {
 
     uint256 public constant TIER_1_ID = 1;
     uint256 public constant TIER_2_ID = 2;
+    uint256 public constant PAUSED_USER_ID = 3;
 }

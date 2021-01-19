@@ -20,8 +20,8 @@ export type { IEurPriceFeed } from "./IEurPriceFeed";
 export type { IOperationsRegistry } from "./IOperationsRegistry";
 export type { OperationsRegistry } from "./OperationsRegistry";
 export type { EurPriceFeedMock } from "./EurPriceFeedMock";
-export type { PermissionsMock } from "./PermissionsMock";
 export type { OperationsRegistryAssetMock } from "./OperationsRegistryAssetMock";
+export type { PermissionsMock } from "./PermissionsMock";
 export type { XTokenMock } from "./XTokenMock";
 
 export { OwnableUpgradeable__factory } from "./factories/OwnableUpgradeable__factory";
@@ -43,6 +43,6 @@ export { IEurPriceFeed__factory } from "./factories/IEurPriceFeed__factory";
 export { IOperationsRegistry__factory } from "./factories/IOperationsRegistry__factory";
 export { OperationsRegistry__factory } from "./factories/OperationsRegistry__factory";
 export { EurPriceFeedMock__factory } from "./factories/EurPriceFeedMock__factory";
-export { PermissionsMock__factory } from "./factories/PermissionsMock__factory";
 export { OperationsRegistryAssetMock__factory } from "./factories/OperationsRegistryAssetMock__factory";
+export { PermissionsMock__factory } from "./factories/PermissionsMock__factory";
 export { XTokenMock__factory } from "./factories/XTokenMock__factory";

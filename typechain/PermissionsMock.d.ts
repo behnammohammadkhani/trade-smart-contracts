@@ -27,6 +27,7 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
+    "pauseUser(address)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
@@ -48,6 +49,7 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
+  encodeFunctionData(functionFragment: "pauseUser", values: [string]): string;
   encodeFunctionData(
     functionFragment: "safeBatchTransferFrom",
     values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
@@ -83,6 +85,7 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "pauseUser", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "safeBatchTransferFrom",
     data: BytesLike
@@ -183,6 +186,16 @@ export class PermissionsMock extends Contract {
       operator: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    pauseUser(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "pauseUser(address)"(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     safeBatchTransferFrom(
       from: string,
@@ -306,6 +319,13 @@ export class PermissionsMock extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  pauseUser(_user: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  "pauseUser(address)"(
+    _user: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   safeBatchTransferFrom(
     from: string,
     to: string,
@@ -421,6 +441,13 @@ export class PermissionsMock extends Contract {
       operator: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    pauseUser(_user: string, overrides?: CallOverrides): Promise<void>;
+
+    "pauseUser(address)"(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     safeBatchTransferFrom(
       from: string,
@@ -565,6 +592,13 @@ export class PermissionsMock extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    pauseUser(_user: string, overrides?: Overrides): Promise<BigNumber>;
+
+    "pauseUser(address)"(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     safeBatchTransferFrom(
       from: string,
       to: string,
@@ -686,6 +720,16 @@ export class PermissionsMock extends Contract {
       account: string,
       operator: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    pauseUser(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "pauseUser(address)"(
+      _user: string,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     safeBatchTransferFrom(
