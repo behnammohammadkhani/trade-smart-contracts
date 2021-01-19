@@ -30,10 +30,12 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     "TIER_1_ID()": FunctionFragment;
     "TIER_2_ID()": FunctionFragment;
     "eurPriceFeed()": FunctionFragment;
-    "initialize(address,address,address,uint256)": FunctionFragment;
+    "initialize(address,address,address,uint256,bool)": FunctionFragment;
     "isAuthorized(address,address,bytes4,bytes)": FunctionFragment;
     "operationsRegistry()": FunctionFragment;
     "owner()": FunctionFragment;
+    "pause()": FunctionFragment;
+    "paused()": FunctionFragment;
     "permissions()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setEurPriceFeed(address)": FunctionFragment;
@@ -42,6 +44,7 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     "setTradingLimint(uint256)": FunctionFragment;
     "tradingLimit()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "unpause()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -72,7 +75,7 @@ interface AuthorizationInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, string, BigNumberish]
+    values: [string, string, string, BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "isAuthorized",
@@ -83,6 +86,8 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "permissions",
     values?: undefined
@@ -115,6 +120,7 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(
     functionFragment: "ERC20_APPROVE",
@@ -149,6 +155,8 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "permissions",
     data: BytesLike
@@ -181,20 +189,25 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
     "EurPriceFeedSetted(address)": EventFragment;
     "OperationsRegistrySetted(address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "Paused(address)": EventFragment;
     "PermissionsSetted(address)": EventFragment;
     "TradingLimitSetted(uint256)": EventFragment;
+    "Unpaused(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "EurPriceFeedSetted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OperationsRegistrySetted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PermissionsSetted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TradingLimitSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
 export class Authorization extends Contract {
@@ -248,14 +261,16 @@ export class Authorization extends Contract {
       _eurPriceFeed: string,
       _operationsRegistry: string,
       _tradingLimit: BigNumberish,
+      _paused: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "initialize(address,address,address,uint256)"(
+    "initialize(address,address,address,uint256,bool)"(
       _permissions: string,
       _eurPriceFeed: string,
       _operationsRegistry: string,
       _tradingLimit: BigNumberish,
+      _paused: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -282,6 +297,14 @@ export class Authorization extends Contract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     "owner()"(overrides?: CallOverrides): Promise<[string]>;
+
+    pause(overrides?: Overrides): Promise<ContractTransaction>;
+
+    "pause()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "paused()"(overrides?: CallOverrides): Promise<[boolean]>;
 
     permissions(overrides?: CallOverrides): Promise<[string]>;
 
@@ -344,6 +367,10 @@ export class Authorization extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    unpause(overrides?: Overrides): Promise<ContractTransaction>;
+
+    "unpause()"(overrides?: Overrides): Promise<ContractTransaction>;
   };
 
   ERC20_APPROVE(overrides?: CallOverrides): Promise<string>;
@@ -383,14 +410,16 @@ export class Authorization extends Contract {
     _eurPriceFeed: string,
     _operationsRegistry: string,
     _tradingLimit: BigNumberish,
+    _paused: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "initialize(address,address,address,uint256)"(
+  "initialize(address,address,address,uint256,bool)"(
     _permissions: string,
     _eurPriceFeed: string,
     _operationsRegistry: string,
     _tradingLimit: BigNumberish,
+    _paused: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -417,6 +446,14 @@ export class Authorization extends Contract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   "owner()"(overrides?: CallOverrides): Promise<string>;
+
+  pause(overrides?: Overrides): Promise<ContractTransaction>;
+
+  "pause()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+  paused(overrides?: CallOverrides): Promise<boolean>;
+
+  "paused()"(overrides?: CallOverrides): Promise<boolean>;
 
   permissions(overrides?: CallOverrides): Promise<string>;
 
@@ -480,6 +517,10 @@ export class Authorization extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  unpause(overrides?: Overrides): Promise<ContractTransaction>;
+
+  "unpause()"(overrides?: Overrides): Promise<ContractTransaction>;
+
   callStatic: {
     ERC20_APPROVE(overrides?: CallOverrides): Promise<string>;
 
@@ -518,14 +559,16 @@ export class Authorization extends Contract {
       _eurPriceFeed: string,
       _operationsRegistry: string,
       _tradingLimit: BigNumberish,
+      _paused: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "initialize(address,address,address,uint256)"(
+    "initialize(address,address,address,uint256,bool)"(
       _permissions: string,
       _eurPriceFeed: string,
       _operationsRegistry: string,
       _tradingLimit: BigNumberish,
+      _paused: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -552,6 +595,14 @@ export class Authorization extends Contract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     "owner()"(overrides?: CallOverrides): Promise<string>;
+
+    pause(overrides?: CallOverrides): Promise<void>;
+
+    "pause()"(overrides?: CallOverrides): Promise<void>;
+
+    paused(overrides?: CallOverrides): Promise<boolean>;
+
+    "paused()"(overrides?: CallOverrides): Promise<boolean>;
 
     permissions(overrides?: CallOverrides): Promise<string>;
 
@@ -614,6 +665,10 @@ export class Authorization extends Contract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    unpause(overrides?: CallOverrides): Promise<void>;
+
+    "unpause()"(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -626,9 +681,13 @@ export class Authorization extends Contract {
       newOwner: string | null
     ): EventFilter;
 
+    Paused(account: null): EventFilter;
+
     PermissionsSetted(newPermissions: string | null): EventFilter;
 
     TradingLimitSetted(newLimit: null): EventFilter;
+
+    Unpaused(account: null): EventFilter;
   };
 
   estimateGas: {
@@ -669,14 +728,16 @@ export class Authorization extends Contract {
       _eurPriceFeed: string,
       _operationsRegistry: string,
       _tradingLimit: BigNumberish,
+      _paused: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "initialize(address,address,address,uint256)"(
+    "initialize(address,address,address,uint256,bool)"(
       _permissions: string,
       _eurPriceFeed: string,
       _operationsRegistry: string,
       _tradingLimit: BigNumberish,
+      _paused: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -703,6 +764,14 @@ export class Authorization extends Contract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pause(overrides?: Overrides): Promise<BigNumber>;
+
+    "pause()"(overrides?: Overrides): Promise<BigNumber>;
+
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "paused()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     permissions(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -765,6 +834,10 @@ export class Authorization extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    unpause(overrides?: Overrides): Promise<BigNumber>;
+
+    "unpause()"(overrides?: Overrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -813,14 +886,16 @@ export class Authorization extends Contract {
       _eurPriceFeed: string,
       _operationsRegistry: string,
       _tradingLimit: BigNumberish,
+      _paused: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "initialize(address,address,address,uint256)"(
+    "initialize(address,address,address,uint256,bool)"(
       _permissions: string,
       _eurPriceFeed: string,
       _operationsRegistry: string,
       _tradingLimit: BigNumberish,
+      _paused: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -851,6 +926,14 @@ export class Authorization extends Contract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "owner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pause(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "pause()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "paused()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     permissions(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -913,5 +996,9 @@ export class Authorization extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    unpause(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "unpause()"(overrides?: Overrides): Promise<PopulatedTransaction>;
   };
 }

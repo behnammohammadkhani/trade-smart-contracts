@@ -12,6 +12,8 @@ abstract contract AuthorizationStorage {
     address public operationsRegistry;
     uint256 public tradingLimit;
 
+    bool public paused;
+
     bytes4 public constant ERC20_TRANSFER = bytes4(keccak256("transfer(address,uint256)"));
     bytes4 public constant ERC20_TRANSFER_FROM = bytes4(keccak256("transferFrom(address,address,uint256)"));
     bytes4 public constant ERC20_APPROVE = bytes4(keccak256("approve(address,uint256)"));

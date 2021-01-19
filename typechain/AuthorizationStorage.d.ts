@@ -30,6 +30,7 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     "TIER_2_ID()": FunctionFragment;
     "eurPriceFeed()": FunctionFragment;
     "operationsRegistry()": FunctionFragment;
+    "paused()": FunctionFragment;
     "permissions()": FunctionFragment;
     "tradingLimit()": FunctionFragment;
   };
@@ -64,6 +65,7 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     functionFragment: "operationsRegistry",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "permissions",
     values?: undefined
@@ -100,6 +102,7 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     functionFragment: "operationsRegistry",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "permissions",
     data: BytesLike
@@ -162,6 +165,10 @@ export class AuthorizationStorage extends Contract {
 
     "operationsRegistry()"(overrides?: CallOverrides): Promise<[string]>;
 
+    paused(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "paused()"(overrides?: CallOverrides): Promise<[boolean]>;
+
     permissions(overrides?: CallOverrides): Promise<[string]>;
 
     "permissions()"(overrides?: CallOverrides): Promise<[string]>;
@@ -207,6 +214,10 @@ export class AuthorizationStorage extends Contract {
 
   "operationsRegistry()"(overrides?: CallOverrides): Promise<string>;
 
+  paused(overrides?: CallOverrides): Promise<boolean>;
+
+  "paused()"(overrides?: CallOverrides): Promise<boolean>;
+
   permissions(overrides?: CallOverrides): Promise<string>;
 
   "permissions()"(overrides?: CallOverrides): Promise<string>;
@@ -251,6 +262,10 @@ export class AuthorizationStorage extends Contract {
     operationsRegistry(overrides?: CallOverrides): Promise<string>;
 
     "operationsRegistry()"(overrides?: CallOverrides): Promise<string>;
+
+    paused(overrides?: CallOverrides): Promise<boolean>;
+
+    "paused()"(overrides?: CallOverrides): Promise<boolean>;
 
     permissions(overrides?: CallOverrides): Promise<string>;
 
@@ -299,6 +314,10 @@ export class AuthorizationStorage extends Contract {
     operationsRegistry(overrides?: CallOverrides): Promise<BigNumber>;
 
     "operationsRegistry()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "paused()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     permissions(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -357,6 +376,10 @@ export class AuthorizationStorage extends Contract {
     "operationsRegistry()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "paused()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     permissions(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

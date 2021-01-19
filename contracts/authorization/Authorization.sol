@@ -22,11 +22,22 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
     event TradingLimitSetted(uint256 newLimit);
     event EurPriceFeedSetted(address indexed newEurPriceFeed);
 
+    /**
+     * @dev Emitted when the pause is triggered by `account`.
+     */
+    event Paused(address account);
+
+    /**
+     * @dev Emitted when the pause is lifted by `account`.
+     */
+    event Unpaused(address account);
+
     function initialize(
         address _permissions,
         address _eurPriceFeed,
         address _operationsRegistry,
-        uint256 _tradingLimit
+        uint256 _tradingLimit,
+        bool _paused
     ) public initializer {
         require(_permissions != address(0), "new permissions is the zero address");
         require(_eurPriceFeed != address(0), "eur price feed is the zero address");
@@ -35,6 +46,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         eurPriceFeed = _eurPriceFeed;
         operationsRegistry = _operationsRegistry;
         tradingLimit = _tradingLimit;
+        paused = _paused;
 
         __Ownable_init();
 
@@ -76,12 +88,43 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         return true;
     }
 
+    /**
+     * @dev Triggers stopped state.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     */
+    function pause() external onlyOwner {
+        require(!paused, "paused");
+        paused = true;
+        emit Paused(_msgSender());
+    }
+
+    /**
+     * @dev Returns to normal state.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
+     */
+    function unpause() external onlyOwner {
+        require(paused, "not paused");
+        paused = false;
+        emit Unpaused(_msgSender());
+    }
+
     function isAuthorized(
         address _user,
         address _asset,
         bytes4 _operation,
         bytes calldata _data // solhint-disable-line
     ) public view override returns (bool) {
+        // The protocol is paused
+        if (paused) {
+            return false;
+        }
+
         // Only allowed operations
         if (
             _operation == ERC20_TRANSFER ||
@@ -142,7 +185,8 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         }
 
         // If not Tier 2 but Tier 1, we need to check limits and actions
-        uint256 currentTradigBalace = IOperationsRegistry(operationsRegistry).tradingBalanceByOperation(_user, _operation);
+        uint256 currentTradigBalace =
+            IOperationsRegistry(operationsRegistry).tradingBalanceByOperation(_user, _operation);
         uint256 eurAmount = IEurPriceFeed(eurPriceFeed).calculateAmount(_asset, amount);
 
         if (permissionsBlance[0] > 0 && currentTradigBalace.add(eurAmount) <= tradingLimit) {

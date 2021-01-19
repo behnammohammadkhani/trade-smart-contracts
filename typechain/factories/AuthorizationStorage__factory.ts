@@ -140,6 +140,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "paused",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "permissions",
     outputs: [
       {
