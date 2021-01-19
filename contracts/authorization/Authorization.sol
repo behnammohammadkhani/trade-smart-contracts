@@ -14,12 +14,34 @@ import "./IOperationsRegistry.sol";
 
 import "hardhat/console.sol";
 
+/**
+ * @title Authorization
+ * @author Protofire
+ * @dev Contract module which provides an authorization mechanism.
+ *
+ * This contract should be called by an Authorizable contract through its `onlyAuthorized` modifier.
+ */
 contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, AuthorizationStorage {
     using SafeMathUpgradeable for uint256;
 
+    /**
+     * @dev Emitted when `permissions` address is setted.
+     */
     event PermissionsSetted(address indexed newPermissions);
+
+    /**
+     * @dev Emitted when `operationsRegistry` address is setted.
+     */
     event OperationsRegistrySetted(address indexed newOperationsRegistry);
+
+    /**
+     * @dev Emitted when `tradingLimit` value is setted.
+     */
     event TradingLimitSetted(uint256 newLimit);
+
+    /**
+     * @dev Emitted when `eurPriceFeed` address is setted.
+     */
     event EurPriceFeedSetted(address indexed newEurPriceFeed);
 
     /**
@@ -32,6 +54,17 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      */
     event Unpaused(address account);
 
+    /**
+     * @dev Initalize the contract.
+     *
+     * Sets ownership to the account that deploys the contract.
+     *
+     * @param _permissions Permissions module address
+     * @param _eurPriceFeed EurPriceFeed module address
+     * @param _operationsRegistry OperationsRegistry address
+     * @param _tradingLimit Traiding limit value
+     * @param _paused Pause protocol
+     */
     function initialize(
         address _permissions,
         address _eurPriceFeed,
@@ -39,8 +72,9 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         uint256 _tradingLimit,
         bool _paused
     ) public initializer {
-        require(_permissions != address(0), "new permissions is the zero address");
+        require(_permissions != address(0), "permissions is the zero address");
         require(_eurPriceFeed != address(0), "eur price feed is the zero address");
+        require(_operationsRegistry != address(0), "operation registry is the zero address");
         require(_tradingLimit != 0, "trading limit is 0");
         permissions = _permissions;
         eurPriceFeed = _eurPriceFeed;
@@ -56,14 +90,34 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         emit TradingLimitSetted(_tradingLimit);
     }
 
+    /**
+     * @dev Sets `_permissions` as the new Permissions module.
+     *
+     * Requirements:
+     *
+     * - the caller must have be the owner.
+     * - `_permissions` should not be the zero address.
+     *
+     * @param _permissions The address of the new Pemissions module.
+     */
     function setPermissions(address _permissions) public override onlyOwner returns (bool) {
-        require(_permissions != address(0), "new permissions is the zero address");
+        require(_permissions != address(0), "permissions is the zero address");
         emit PermissionsSetted(_permissions);
         permissions = _permissions;
 
         return true;
     }
 
+    /**
+     * @dev Sets `_eurPriceFeed` as the new EUR Price feed module.
+     *
+     * Requirements:
+     *
+     * - the caller must have be the owner.
+     * - `_eurPriceFeed` should not be the zero address.
+     *
+     * @param _eurPriceFeed The address of the new EUR Price feed module.
+     */
     function setEurPriceFeed(address _eurPriceFeed) public override onlyOwner returns (bool) {
         require(_eurPriceFeed != address(0), "eur price feed is the zero address");
         emit EurPriceFeedSetted(_eurPriceFeed);
@@ -72,6 +126,16 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         return true;
     }
 
+    /**
+     * @dev Sets `_tradingLimit` as the new traiding limit for T1 users.
+     *
+     * Requirements:
+     *
+     * - the caller must have be the owner.
+     * - `_eurPriceFeed` should not be 0.
+     *
+     * @param _tradingLimit The value of the new traiding limit for T1 users.
+     */
     function setTradingLimint(uint256 _tradingLimit) public override onlyOwner returns (bool) {
         require(_tradingLimit != 0, "trading limit is 0");
         emit TradingLimitSetted(_tradingLimit);
@@ -80,8 +144,18 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         return true;
     }
 
+    /**
+     * @dev Sets `_operationsRegistry` as the new OperationsRegistry module.
+     *
+     * Requirements:
+     *
+     * - the caller must have be the owner.
+     * - `_operationsRegistry` should not be the zero address.
+     *
+     * @param _operationsRegistry The address of the new OperationsRegistry module.
+     */
     function setOperationsRegistry(address _operationsRegistry) public override onlyOwner returns (bool) {
-        require(_operationsRegistry != address(0), "trading registry is the zero address");
+        require(_operationsRegistry != address(0), "operation registry is the zero address");
         emit OperationsRegistrySetted(_operationsRegistry);
         operationsRegistry = _operationsRegistry;
 
@@ -114,6 +188,15 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         emit Unpaused(_msgSender());
     }
 
+    /**
+     * @dev Determins if a user is allowed to perform an operation.
+     *
+     * @param _user msg.sender from function using Authorizable `onlyAuthorized` modifier.
+     * @param _asset address of the contract using Authorizable `onlyAuthorized` modifier.
+     * @param _operation msg.sig from function using Authorizable `onlyAuthorized` modifier.
+     * @param _data msg.data from function using Authorizable `onlyAuthorized` modifier.
+     * @return a boolean signaling the authorization.
+     */
     function isAuthorized(
         address _user,
         address _asset,
@@ -138,31 +221,39 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
             uint256 operationAmount;
 
             if (_operation == ERC20_MINT || _operation == ERC20_BURN_FROM) {
-                (address account, uint256 amount) = abi.decode(_data[4:], (address, uint256));
+                // (address account, uint256 amount) = abi.decode(_data[4:], (address, uint256));
                 user = account;
                 operationAmount = amount;
             }
 
             if (_operation == ERC20_TRANSFER) {
-                (address _, uint256 amount) = abi.decode(_data[4:], (address, uint256));
+                // (address _, uint256 amount) = abi.decode(_data[4:], (address, uint256));
                 operationAmount = amount;
             }
 
             if (_operation == ERC20_TRANSFER_FROM) {
                 // solhint-disable-next-line no-unused-vars
-                (address sender, address _, uint256 amount) = abi.decode(_data[4:], (address, address, uint256));
+                // (address sender, address _, uint256 amount) = abi.decode(_data[4:], (address, address, uint256));
                 user = sender;
                 operationAmount = amount;
                 operation = ERC20_TRANSFER;
             }
 
-            return checkPermissions(user, _asset, operation, operationAmount);
+            return checkPermissionsByAmount(user, _asset, operation, operationAmount);
         }
 
         return false;
     }
 
-    function checkPermissions(
+    /**
+     * @dev Checks user permissions for amount limited operations.
+     *
+     * @param _user user's address.
+     * @param _asset address of the contract where `_operation` comes from.
+     * @param _operation operation to authorized.
+     * @param amount operation amount.
+     */
+    function checkPermissionsByAmount(
         address _user,
         address _asset,
         bytes4 _operation,

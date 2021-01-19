@@ -72,7 +72,7 @@
 <text text-anchor="middle" x="825.2377" y="-319.1" font-family="Times,serif" font-size="14.00" fill="#000000"> </text>
 <polyline fill="none" stroke="#000000" points="456.2379,-310.9 1194.2375,-310.9 "/>
 <text text-anchor="start" x="464.2379" y="-294.3" font-family="Times,serif" font-size="14.00" fill="#000000">Internal:</text>
-<text text-anchor="start" x="464.2379" y="-277.5" font-family="Times,serif" font-size="14.00" fill="#000000"> &#160;&#160;&#160;checkPermissions(_user: address, _asset: address, _operation: bytes4, amount: uint256): bool</text>
+<text text-anchor="start" x="464.2379" y="-277.5" font-family="Times,serif" font-size="14.00" fill="#000000"> &#160;&#160;&#160;checkPermissionsByAmount(_user: address, _asset: address, _operation: bytes4, amount: uint256): bool</text>
 <text text-anchor="start" x="464.2379" y="-260.7" font-family="Times,serif" font-size="14.00" fill="#000000">External:</text>
 <text text-anchor="start" x="464.2379" y="-243.9" font-family="Times,serif" font-size="14.00" fill="#000000"> &#160;&#160;&#160;pause()</text>
 <text text-anchor="start" x="464.2379" y="-227.1" font-family="Times,serif" font-size="14.00" fill="#000000"> &#160;&#160;&#160;unpause()</text>

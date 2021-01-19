@@ -6,6 +6,15 @@ pragma solidity ^0.7.0;
  * New storage must be appended to the end
  * Never remove items from this list
  */
+/**
+ * @title AuthorizationStorage
+ * @author Protofire
+ * @dev Storage structure used by Authorization contract.
+ *
+ * All storage must be declared here
+ * New storage must be appended to the end
+ * Never remove items from this list
+ */
 abstract contract AuthorizationStorage {
     address public permissions;
     address public eurPriceFeed;
