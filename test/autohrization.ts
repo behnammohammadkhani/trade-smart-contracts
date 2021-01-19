@@ -17,7 +17,7 @@ let karpinchoAddress: string;
 
 let token: XTokenMock;
 let tokenKakaroto: XTokenMock;
-// let tokenVegeta: XTokenMock;
+let tokenVegeta: XTokenMock;
 let tokenKarpincho: XTokenMock;
 
 let eurPriceFeedContract: EurPriceFeedMock;
@@ -75,7 +75,7 @@ describe('Authorization', function () {
     authorizationContractKakaroto = authorizationContract.connect(kakaroto);
 
     tokenKakaroto = token.connect(kakaroto);
-    // tokenVegeta = token.connect(vegeta);
+    tokenVegeta = token.connect(vegeta);
     tokenKarpincho = token.connect(karpincho);
 
     await reverter.snapshot();
@@ -346,6 +346,121 @@ describe('Authorization', function () {
 
           const kakarotoBalance = await token.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
+        });
+      });
+    });
+
+    describe('Tier 2 User', () => {
+      describe('ERC20 Operations', () => {
+        before(async () => {
+          await reverter.revert();
+        });
+
+        // mint
+        it('should be able to wrap less than the allowed limit', async () => {
+          await token.mint(vegetaAddress, '1');
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+
+          expect(vegetaBalance).to.equal('1');
+        });
+
+        it('should be able to wrap up to allowed limit', async () => {
+          await token.mint(vegetaAddress, '4999');
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+
+          expect(vegetaBalance).to.equal('5000');
+        });
+
+        it('should be able to wrap more than allowed limit', async () => {
+          await token.mint(vegetaAddress, '1');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal('5001');
+        });
+
+        // burn
+        it('should be able to unwrap less than the allowed limit', async () => {
+          await token.burnFrom(vegetaAddress, '1');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal('5000');
+        });
+
+        it('should be able to unwrap up to the allowed limit', async () => {
+          await token.burnFrom(vegetaAddress, '4999');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal('1');
+        });
+
+        it('should be able to unwrap more than allowed limit', async () => {
+          await token.burnFrom(vegetaAddress, '1');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal('0');
+        });
+
+        // transfer
+        it('should be able to transfer less than the allowed limit', async () => {
+          await token.mint(deployerAddress, '10000');
+          await token.transfer(vegetaAddress, '10000');
+
+          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+
+          await tokenVegeta.transfer(deployerAddress, '1');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('1'));
+        });
+
+        it('should be able to transfer up to the allowed limit', async () => {
+          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+          await tokenVegeta.transfer(deployerAddress, '4999');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('4999'));
+        });
+
+        it('should be able to transfer more than the allowed limit', async () => {
+          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+          await tokenVegeta.transfer(deployerAddress, '1');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('1'));
+        });
+
+        // transferFrom
+        it('should be able to transfer less than the allowed limit', async () => {
+          await reverter.revert();
+
+          await token.mint(deployerAddress, '10000');
+          await token.transfer(vegetaAddress, '10000');
+
+          await tokenVegeta.approve(deployerAddress, '10000');
+
+          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+
+          await token.transferFrom(vegetaAddress, deployerAddress, '1');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('1'));
+        });
+
+        it('should be able to transfer up to the allowed limit', async () => {
+          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+          await token.transferFrom(vegetaAddress, deployerAddress, '4999');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('4999'));
+        });
+
+        it('should be able to transfer more than the allowed limit', async () => {
+          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+
+          await token.transferFrom(vegetaAddress, deployerAddress, '1');
+
+          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('1'));
         });
       });
     });
