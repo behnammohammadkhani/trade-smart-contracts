@@ -11,6 +11,7 @@
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@openzeppelin/contracts": "^3.3.0",
     "@openzeppelin/contracts-upgradeable": "^3.3.0",
+    "@openzeppelin/hardhat-upgrades": "^1.4.3",
     "@typechain/ethers-v5": "^5.0.0",
     "@types/chai": "^4.2.14",
     "@types/fs-extra": "^9.0.6",
@@ -32,9 +33,13 @@
     "prettier": "^2.2.1",
     "prettier-plugin-solidity": "^1.0.0-beta.3",
     "shelljs": "^0.8.4",
+    "sol2uml": "^1.1.25",
     "solc": "^0.8.0",
+    "solc-0.7": "npm:solc@^0.7.0",
+    "solhint": "^3.3.2",
     "solhint-plugin-prettier": "^0.0.5",
     "solidity-coverage": "^0.7.13",
+    "solidity-docgen": "^0.5.11",
     "ts-generator": "^0.1.1",
     "ts-node": "^9.1.1",
     "typechain": "^4.0.1",
@@ -46,7 +51,7 @@
     "compile": "hardhat compile",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles \"./test/**/*.ts\"",
     "lint": "yarn run lint:sol && yarn run lint:ts && yarn run prettier:list-different",
-    "lint:sol": "solhint --config ./.solhint.json --max-warnings 0 \"contracts/**/*.sol\"",
+    "lint:sol": "solhint --max-warnings 0 \"contracts/**/*.sol\"",
     "lint:sol:fix": "yarn lint:sol --fix",
     "lint:ts": "eslint --config ./.eslintrc.yaml --ignore-path ./.eslintignore --ext .js,.ts .",
     "lint:ts:fix": "yarn lint:ts --fix",
@@ -56,7 +61,9 @@
     "prettier": "yarn prettier:sol && yarn prettier:ts",
     "prettier:list-different": "prettier --config .prettierrc --list-different \"**/*.{js,sol,ts}\"",
     "test": "hardhat test",
-    "typechain": "hardhat typechain"
+    "typechain": "hardhat typechain",
+    "doc:uml": "sol2uml ./contracts -i mocks -f png -o ./docs/uml/swarm-markets.png",
+    "docify": "node docify.js"
   },
   "husky": {
     "hooks": {

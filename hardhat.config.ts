@@ -10,6 +10,7 @@ import './tasks/clean';
 import '@nomiclabs/hardhat-waffle';
 import 'hardhat-typechain';
 import 'solidity-coverage';
+import '@openzeppelin/hardhat-upgrades';
 
 const chainIds = {
   ganache: 1337,
