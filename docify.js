@@ -31,7 +31,7 @@ function scan(pathName, indentation) {
         else if (pathName.endsWith(".sol")) {
             const text = path.basename(pathName).slice(0, -4);
             const link = pathName.slice(INPUT_DIR.length, -4);
-            fs.appendFileSync(SUMMARY_FILE, indentation + "* [" + text + "](" + relativePath + link + ".md)\n");
+            fs.appendFileSync(SUMMARY_FILE, indentation + "* [" + text + "](" + relativePath + link.toLowerCase() + ".md)\n");
         }
     }
 }

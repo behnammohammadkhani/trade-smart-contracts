@@ -1,12 +1,12 @@
 # Summary
 * contracts
   * authorization
-    * [Authorizable](docs/contracts/authorization/Authorizable.md)
-    * [AuthorizableUpgradeable](docs/contracts/authorization/AuthorizableUpgradeable.md)
-    * [Authorization](docs/contracts/authorization/Authorization.md)
-    * [AuthorizationStorage](docs/contracts/authorization/AuthorizationStorage.md)
-    * [IAuthorization](docs/contracts/authorization/IAuthorization.md)
-    * [IEurPriceFeed](docs/contracts/authorization/IEurPriceFeed.md)
-    * [IOperationsRegistry](docs/contracts/authorization/IOperationsRegistry.md)
-    * [OperationsRegistry](docs/contracts/authorization/OperationsRegistry.md)
+    * [Authorizable](docs/contracts/authorization/authorizable.md)
+    * [AuthorizableUpgradeable](docs/contracts/authorization/authorizableupgradeable.md)
+    * [Authorization](docs/contracts/authorization/authorization.md)
+    * [AuthorizationStorage](docs/contracts/authorization/authorizationstorage.md)
+    * [IAuthorization](docs/contracts/authorization/iauthorization.md)
+    * [IEurPriceFeed](docs/contracts/authorization/ieurpricefeed.md)
+    * [IOperationsRegistry](docs/contracts/authorization/ioperationsregistry.md)
+    * [OperationsRegistry](docs/contracts/authorization/operationsregistry.md)
   * common
