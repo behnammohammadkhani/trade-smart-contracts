@@ -5,3 +5,5 @@
 # swarm-smart-contracts
 
 ![](docs/uml/swarm-markets.png?raw=true)
+
+- [Smart contracts documentation](SUMMARY.md)
