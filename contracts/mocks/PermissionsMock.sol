@@ -16,6 +16,6 @@ contract PermissionsMock is ERC1155 {
     }
 
     function pauseUser(address _user) public {
-        _mint(_user, 3, 1, "");
+        _mint(_user, 0, 1, "");
     }
 }
