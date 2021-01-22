@@ -64,10 +64,6 @@
     }
   },
   "lint-staged": {
-    "contracts/**/*.sol": [
-      "yarn prettier:sol",
-      "yarn lint:sol:fix"
-    ],
     "**/*.{js,ts}": [
       "yarn prettier:ts",
       "yarn lint:ts:fix"
