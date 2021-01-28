@@ -132,7 +132,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      * Requirements:
      *
      * - the caller must have be the owner.
-     * - `_eurPriceFeed` should not be 0.
+     * - `_tradingLimit` should not be 0.
      *
      * @param _tradingLimit The value of the new traiding limit for T1 users.
      */
@@ -286,6 +286,11 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         uint256 currentTradigBalace =
             IOperationsRegistry(operationsRegistry).tradingBalanceByOperation(_user, _operation);
         uint256 eurAmount = IEurPriceFeed(eurPriceFeed).calculateAmount(_asset, amount);
+
+        // Something wrong with proce feed
+        if (eurAmount == 0) {
+            return false;
+        }
 
         if (permissionsBlance[0] > 0 && currentTradigBalace.add(eurAmount) <= tradingLimit) {
             return true;

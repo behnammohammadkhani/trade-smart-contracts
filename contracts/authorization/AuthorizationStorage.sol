@@ -29,7 +29,7 @@ abstract contract AuthorizationStorage {
     bytes4 public constant ERC20_MINT = bytes4(keccak256("mint(address,uint256)"));
     bytes4 public constant ERC20_BURN_FROM = bytes4(keccak256("burnFrom(address,uint256)"));
 
+    uint256 public constant PAUSED_USER_ID = 0;
     uint256 public constant TIER_1_ID = 1;
     uint256 public constant TIER_2_ID = 2;
-    uint256 public constant PAUSED_USER_ID = 3;
 }
