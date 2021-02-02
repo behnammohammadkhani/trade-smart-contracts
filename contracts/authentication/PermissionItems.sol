@@ -8,7 +8,8 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
  * @title PermissionItems
  * @author Protofire
  * @dev Contract module which provides a permissioning mechanism.
- * It inherits from standar ERC1155 and extends functionality for role based acces control.
+ * It inherits from standar ERC1155 and extends functionality for
+ * role based acces control and makes tokens non-transferables.
  */
 contract PermissionItems is ERC1155, AccessControl {
     // Constants for roles asignments
@@ -19,8 +20,10 @@ contract PermissionItems is ERC1155, AccessControl {
      * @dev Grants the contract deployer the default admin role.
      *
      */
-    constructor() public ERC1155("") {
+    constructor(address admin) public ERC1155("") {
+        require(admin != address(0), "admin is the zero address");
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        setAdmin(admin);
     }
 
     /**
@@ -108,7 +111,7 @@ contract PermissionItems is ERC1155, AccessControl {
         uint256 id,
         uint256 value
     ) public {
-        require(hasRole(BURNER_ROLE, _msgSender()), "ERC1155PresetMinterPauser: must have burner role to burn");
+        require(hasRole(BURNER_ROLE, _msgSender()), "PermissionItems: must have burner role to burn");
         super._burn(account, id, value);
     }
 
@@ -124,7 +127,7 @@ contract PermissionItems is ERC1155, AccessControl {
         uint256[] memory ids,
         uint256[] memory values
     ) public {
-        require(hasRole(BURNER_ROLE, _msgSender()), "ERC1155PresetMinterPauser: must have burner role to burn");
+        require(hasRole(BURNER_ROLE, _msgSender()), "PermissionItems: must have burner role to burn");
         super._burnBatch(account, ids, values);
     }
 
