@@ -48,7 +48,6 @@
   },
   "scripts": {
     "clean": "hardhat clean",
-    "commit": "git-cz",
     "compile": "hardhat compile",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles \"./test/**/*.ts\"",
     "lint": "yarn run lint:sol && yarn run lint:ts && yarn run prettier:list-different",
@@ -72,6 +71,10 @@
     }
   },
   "lint-staged": {
+    "contracts/**/*.sol": [
+      "yarn prettier:sol",
+      "yarn lint:sol:fix"
+    ],
     "**/*.{js,ts}": [
       "yarn prettier:ts",
       "yarn lint:ts:fix"

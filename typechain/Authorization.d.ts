@@ -27,7 +27,7 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     "ERC20_MINT()": FunctionFragment;
     "ERC20_TRANSFER()": FunctionFragment;
     "ERC20_TRANSFER_FROM()": FunctionFragment;
-    "PAUSED_USER_ID()": FunctionFragment;
+    "SUSPENDED_ID()": FunctionFragment;
     "TIER_1_ID()": FunctionFragment;
     "TIER_2_ID()": FunctionFragment;
     "eurPriceFeed()": FunctionFragment;
@@ -69,7 +69,7 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "PAUSED_USER_ID",
+    functionFragment: "SUSPENDED_ID",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "TIER_1_ID", values?: undefined): string;
@@ -145,7 +145,7 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "PAUSED_USER_ID",
+    functionFragment: "SUSPENDED_ID",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "TIER_1_ID", data: BytesLike): Result;
@@ -253,9 +253,9 @@ export class Authorization extends Contract {
 
     "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<[string]>;
 
-    PAUSED_USER_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
+    SUSPENDED_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "PAUSED_USER_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     TIER_1_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -406,9 +406,9 @@ export class Authorization extends Contract {
 
   "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<string>;
 
-  PAUSED_USER_ID(overrides?: CallOverrides): Promise<BigNumber>;
+  SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "PAUSED_USER_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   TIER_1_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -559,9 +559,9 @@ export class Authorization extends Contract {
 
     "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<string>;
 
-    PAUSED_USER_ID(overrides?: CallOverrides): Promise<BigNumber>;
+    SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "PAUSED_USER_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     TIER_1_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -732,9 +732,9 @@ export class Authorization extends Contract {
 
     "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    PAUSED_USER_ID(overrides?: CallOverrides): Promise<BigNumber>;
+    SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "PAUSED_USER_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     TIER_1_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -894,11 +894,9 @@ export class Authorization extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    PAUSED_USER_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    SUSPENDED_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "PAUSED_USER_ID()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     TIER_1_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

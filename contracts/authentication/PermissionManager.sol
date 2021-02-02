@@ -3,24 +3,33 @@ pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "./IPermissionManager.sol";
+
 import "./PermissionItems.sol";
-import "@openzeppelin/contracts/token/ERC1155/ERC1155Burnable.sol";
+import "./PermissionManagerStorage.sol";
+import "../common/Constants.sol";
 
 /**
  * @title PermissionManager
  * @author Protofire
  * @dev Provide tier based permissions asignments and revoking functions
  */
-contract PermissionManager is IPermissionManager, Initializable, OwnableUpgradeable {
-    address public permissionItems;
-
+contract PermissionManager is Initializable, OwnableUpgradeable, Constants, PermissionManagerStorage {
     /**
      * @dev Emitted when `permissionItems` address is setted.
      */
-
     event PermissionItemsSetted(address indexed newPermissions);
 
+    /**
+     * @dev Initalize the contract.
+     *
+     * Sets ownership to the account that deploys the contract.
+     *
+     * Requirements:
+     *
+     * - `_permissionItems` should not be the zero address.
+     *
+     * @param _permissionItems The address of the new Pemissions module.
+     */
     function initialize(address _permissionItems) public initializer {
         require(_permissionItems != address(0), "_permissionItems is the zero address");
         permissionItems = _permissionItems;
@@ -35,12 +44,12 @@ contract PermissionManager is IPermissionManager, Initializable, OwnableUpgradea
      *
      * Requirements:
      *
-     * - the caller must have be the owner.
+     * - the caller must be the owner.
      * - `_permissionItems` should not be the zero address.
      *
      * @param _permissionItems The address of the new Pemissions module.
      */
-    function setPermissionItems(address _permissionItems) public override onlyOwner returns (bool) {
+    function setPermissionItems(address _permissionItems) public onlyOwner returns (bool) {
         require(_permissionItems != address(0), "_permissionItems is the zero address");
         emit PermissionItemsSetted(_permissionItems);
         permissionItems = _permissionItems;
@@ -48,54 +57,93 @@ contract PermissionManager is IPermissionManager, Initializable, OwnableUpgradea
     }
 
     /**
-     * @dev assign Tier1 to `_user`.
+     * @dev assign Tier1 permission to `_user`.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - `_user` should not have Tier1 already assigned.
+     *
+     * @param _user The address of the user.
      */
-    function assingTier1(address _user) public override {
-        require(_user != address(0), "_user is the zero address");
-        require(!_hasItem(_user, 1), "PermissionManager: User already has tier 1 assigned");
-        PermissionItems(permissionItems).mint(_user, 1, 1, "");
+    function assingTier1(address _user) public onlyOwner {
+        require(!hasTier1(_user), "PermissionManager: User already has tier 1 assigned");
+        PermissionItems(permissionItems).mint(_user, TIER_1_ID, 1, "");
     }
 
     /**
-     * @dev assign Tier2 to `_user`.
+     * @dev assign Tier2 permission to `_user`.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - `_user` should not have Tier2 already assigned.
+     *
+     * @param _user The address of the user.
      */
-    function assingTier2(address _user) public override {
-        require(_user != address(0), "_user is the zero address");
-        require(!_hasItem(_user, 2), "PermissionManager: User already has tier 2 assigned");
-        PermissionItems(permissionItems).mint(_user, 2, 1, "");
+    function assingTier2(address _user) public onlyOwner {
+        require(!hasTier2(_user), "PermissionManager: User already has tier 2 assigned");
+        PermissionItems(permissionItems).mint(_user, TIER_2_ID, 1, "");
     }
 
     /**
      * @dev suspend pemissions effects on `_user`.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - `_user` should not be already suspended.
+     *
+     * @param _user The address of the user.
      */
-    function suspendUser(address _user) public override {
-        require(_user != address(0), "_user is the zero address");
-        require(!_hasItem(_user, 0), "PermissionManager: User is already suspended");
-        PermissionItems(permissionItems).mint(_user, 0, 1, "");
+    function suspendUser(address _user) public onlyOwner {
+        require(!isSuspended(_user), "PermissionManager: User is already suspended");
+        PermissionItems(permissionItems).mint(_user, SUSPENDED_ID, 1, "");
     }
 
     /**
-     * @dev remove Tier1 from `_user`.
+     * @dev remove Tier1 permission from `_user`.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - `_user` should have Tier1 assigned.
+     *
+     * @param _user The address of the user.
      */
-    function revokeTier1(address _user) public override {
-        require(_hasItem(_user, 1), "PermissionManager: User doens't has tier 1 assigned");
-        PermissionItems(permissionItems).burn(_user, 1, 1);
+    function revokeTier1(address _user) public onlyOwner {
+        require(hasTier1(_user), "PermissionManager: User doens't has tier 1 assigned");
+        PermissionItems(permissionItems).burn(_user, TIER_1_ID, 1);
     }
 
     /**
-     * @dev remove Tier2 from `_user`.
+     * @dev remove Tier2 permission from `_user`.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - `_user` should have Tier2 assigned.
+     *
+     * @param _user The address of the user.
      */
-    function revokeTier2(address _user) public override {
-        require(_hasItem(_user, 2), "PermissionManager: User doesn't has tier 2 assigned");
-        PermissionItems(permissionItems).burn(_user, 2, 1);
+    function revokeTier2(address _user) public onlyOwner {
+        require(hasTier2(_user), "PermissionManager: User doesn't has tier 2 assigned");
+        PermissionItems(permissionItems).burn(_user, TIER_2_ID, 1);
     }
 
     /**
      * @dev re-activate pemissions effects on `_user`.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - `_user` should be suspended.
+     *
+     * @param _user The address of the user.
      */
-    function unsuspendUser(address _user) public override {
-        require(_hasItem(_user, 0), "PermissionManager: User is not currently suspended");
-        PermissionItems(permissionItems).burn(_user, 0, 1);
+    function unsuspendUser(address _user) public onlyOwner {
+        require(isSuspended(_user), "PermissionManager: User is not currently suspended");
+        PermissionItems(permissionItems).burn(_user, SUSPENDED_ID, 1);
     }
 
     function _hasItem(address _user, uint256 itemId) internal returns (bool) {
@@ -106,23 +154,29 @@ contract PermissionManager is IPermissionManager, Initializable, OwnableUpgradea
     }
 
     /**
-     * @dev checks if Tier1 had been asigned to _user
+     * @dev Returns `true` if `_user` has been assigned Tier1 permission.
+     *
+     * @param _user The address of the user.
      */
-    function hasTier1(address _user) public override returns (bool) {
-        return _hasItem(_user, 1);
+    function hasTier1(address _user) public returns (bool) {
+        return _hasItem(_user, TIER_1_ID);
     }
 
     /**
-     * @dev checks if Tier2 had been asigned to _user
+     * @dev Returns `true` if `_user` has been assigned Tier2 permission .
+     *
+     * @param _user The address of the user.
      */
-    function hasTier2(address _user) public override returns (bool) {
-        return _hasItem(_user, 2);
+    function hasTier2(address _user) public returns (bool) {
+        return _hasItem(_user, TIER_2_ID);
     }
 
     /**
-     * @dev checks if pemissions effects are suspended _user
+     * @dev Returns `true` if `_user` has been Suspended.
+     *
+     * @param _user The address of the user.
      */
-    function isSuspended(address _user) public override returns (bool) {
-        return _hasItem(_user, 0);
+    function isSuspended(address _user) public returns (bool) {
+        return _hasItem(_user, SUSPENDED_ID);
     }
 }

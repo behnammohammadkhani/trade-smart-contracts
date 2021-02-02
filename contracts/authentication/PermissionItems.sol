@@ -3,35 +3,68 @@ pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/token/ERC1155/ERC1155Burnable.sol";
 
 /**
  * @title PermissionItems
  * @author Protofire
- * @dev Contract module which provides an authorization mechanism.
- * This module is used through inheritance. It inherits from standar ERC1155 and
- * extends functionality for role based acces control.
+ * @dev Contract module which provides a permissioning mechanism.
+ * It inherits from standar ERC1155 and extends functionality for role based acces control.
  */
-contract PermissionItems is ERC1155, ERC1155Burnable, AccessControl {
+contract PermissionItems is ERC1155, AccessControl {
     // Constants for roles asignments
-    bytes32 public constant TRANSFERER_ROLE = keccak256("TRANSFER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
-    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
-    // Constants for item ID
-    uint256 public constant SUSPENDED = 0;
-    uint256 public constant TIER1 = 1;
-    uint256 public constant TIER2 = 2;
-
-
+    /**
+     * @dev Grants the contract deployer the default admin role.
+     *
+     */
     constructor() public ERC1155("") {
-        _setupRole(TRANSFERER_ROLE, msg.sender);
-        _setupRole(MINTER_ROLE, msg.sender);
-        _setupRole(BURNER_ROLE, msg.sender);
-        _setupRole(PAUSER_ROLE, msg.sender);
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
+    /**
+     * @dev Grants TRANSFER role to `account`.
+     *
+     * Grants MINTER role to `account`.
+     * Grants BURNER role to `account`.
+     *
+     * Requirements:
+     *
+     * - the caller must have ``role``'s admin role.
+     */
+    function setAdmin(address account) public {
+        grantRole(MINTER_ROLE, account);
+        grantRole(BURNER_ROLE, account);
+    }
+
+    /**
+     * @dev Revokes TRANSFER role to `account`.
+     *
+     * Revokes MINTER role to `account`.
+     * Revokes BURNER role to `account`.
+     *
+     * Requirements:
+     *
+     * - the caller must have ``role``'s admin role.
+     */
+    function revokeAdmin(address account) public {
+        revokeRole(MINTER_ROLE, account);
+        revokeRole(BURNER_ROLE, account);
+    }
+
+    /**
+     * @dev Creates `amount` tokens of token type `id`, and assigns them to `account`.
+     *
+     * Emits a {TransferSingle} event.
+     *
+     * Requirements:
+     *
+     * - the caller must have MINTER role.
+     * - `account` cannot be the zero address.
+     * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the
+     * acceptance magic value.
+     */
     function mint(
         address to,
         uint256 id,
@@ -45,6 +78,10 @@ contract PermissionItems is ERC1155, ERC1155Burnable, AccessControl {
 
     /**
      * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] variant of {mint}.
+     *
+     * Requirements:
+     *
+     * - `ids` and `amounts` must have the same length.
      */
     function mintBatch(
         address to,
@@ -57,46 +94,65 @@ contract PermissionItems is ERC1155, ERC1155Burnable, AccessControl {
         super._mintBatch(to, ids, amounts, data);
     }
 
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes memory data
-    ) public virtual override {
-        require(hasRole(TRANSFERER_ROLE, _msgSender()), "PermissionItems: Must have transferer role to transfer");
-        super.safeTransferFrom(from, to, id, amount, data);
-    }
-
     /**
-     * @dev See {IERC1155-safeBatchTransferFrom}.
+     * @dev Destroys `amount` tokens of token type `id` from `account`
+     *
+     * Requirements:
+     *
+     * - the caller must have BURNER role.
+     * - `account` cannot be the zero address.
+     * - `account` must have at least `amount` tokens of token type `id`.
      */
-    function safeBatchTransferFrom(
-        address from,
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-    ) public override {
-        require(hasRole(TRANSFERER_ROLE, _msgSender()), "PermissionItems: must have trasnferer role to transfer");
-        super.safeBatchTransferFrom(from, to, ids, amounts, data);
-    }
-
     function burn(
         address account,
         uint256 id,
         uint256 value
-    ) public override {
+    ) public {
         require(hasRole(BURNER_ROLE, _msgSender()), "ERC1155PresetMinterPauser: must have burner role to burn");
-        super.burn(account, id, value);
+        super._burn(account, id, value);
     }
 
+    /**
+     * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {burn}.
+     *
+     * Requirements:
+     *
+     * - `ids` and `amounts` must have the same length.
+     */
     function burnBatch(
         address account,
         uint256[] memory ids,
         uint256[] memory values
-    ) public override {
+    ) public {
         require(hasRole(BURNER_ROLE, _msgSender()), "ERC1155PresetMinterPauser: must have burner role to burn");
-        super.burnBatch(account, ids, values);
+        super._burnBatch(account, ids, values);
+    }
+
+    /**
+     * @dev Disabled safeTransferFrom function.
+     *
+     */
+    function safeTransferFrom(
+        address from, // solhint-disable-line
+        address to, // solhint-disable-line
+        uint256 id, // solhint-disable-line
+        uint256 amount, // solhint-disable-line
+        bytes memory data // solhint-disable-line
+    ) public virtual override {
+        revert("disabled");
+    }
+
+    /**
+     * @dev Disabled safeBatchTransferFrom function.
+     *
+     */
+    function safeBatchTransferFrom(
+        address from, // solhint-disable-line
+        address to, // solhint-disable-line
+        uint256[] memory ids, // solhint-disable-line
+        uint256[] memory amounts, // solhint-disable-line
+        bytes memory data // solhint-disable-line
+    ) public override {
+        revert("disabled");
     }
 }
