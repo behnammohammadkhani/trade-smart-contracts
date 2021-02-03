@@ -40,7 +40,7 @@ Grants BURNER role to `account`.
 
 Requirements:
 
-- the caller must have `role`'s admin role.
+- the caller must have ``role``'s admin role.
 
 ### Function `revokeAdmin(address account) public`
 
@@ -52,7 +52,7 @@ Revokes BURNER role to `account`.
 
 Requirements:
 
-- the caller must have `role`'s admin role.
+- the caller must have ``role``'s admin role.
 
 ### Function `mint(address to, uint256 id, uint256 amount, bytes data) public`
 
