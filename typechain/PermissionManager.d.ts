@@ -189,25 +189,19 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    hasTier1(
-      _user: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+    hasTier1(_user: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     "hasTier1(address)"(
       _user: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-    hasTier2(
-      _user: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+    hasTier2(_user: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     "hasTier2(address)"(
       _user: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     initialize(
       _permissionItems: string,
@@ -219,15 +213,12 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    isSuspended(
-      _user: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+    isSuspended(_user: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     "isSuspended(address)"(
       _user: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -334,19 +325,19 @@ export class PermissionManager extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  hasTier1(_user: string, overrides?: Overrides): Promise<ContractTransaction>;
+  hasTier1(_user: string, overrides?: CallOverrides): Promise<boolean>;
 
   "hasTier1(address)"(
     _user: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
-  hasTier2(_user: string, overrides?: Overrides): Promise<ContractTransaction>;
+  hasTier2(_user: string, overrides?: CallOverrides): Promise<boolean>;
 
   "hasTier2(address)"(
     _user: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   initialize(
     _permissionItems: string,
@@ -358,15 +349,12 @@ export class PermissionManager extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  isSuspended(
-    _user: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+  isSuspended(_user: string, overrides?: CallOverrides): Promise<boolean>;
 
   "isSuspended(address)"(
     _user: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -595,18 +583,18 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    hasTier1(_user: string, overrides?: Overrides): Promise<BigNumber>;
+    hasTier1(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "hasTier1(address)"(
       _user: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    hasTier2(_user: string, overrides?: Overrides): Promise<BigNumber>;
+    hasTier2(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "hasTier2(address)"(
       _user: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     initialize(
@@ -619,11 +607,11 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    isSuspended(_user: string, overrides?: Overrides): Promise<BigNumber>;
+    isSuspended(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "isSuspended(address)"(
       _user: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
@@ -722,22 +710,22 @@ export class PermissionManager extends Contract {
 
     hasTier1(
       _user: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "hasTier1(address)"(
       _user: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     hasTier2(
       _user: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "hasTier2(address)"(
       _user: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     initialize(
@@ -752,12 +740,12 @@ export class PermissionManager extends Contract {
 
     isSuspended(
       _user: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "isSuspended(address)"(
       _user: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;

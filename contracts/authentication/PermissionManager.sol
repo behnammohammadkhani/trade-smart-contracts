@@ -8,6 +8,8 @@ import "./PermissionItems.sol";
 import "./PermissionManagerStorage.sol";
 import "../common/Constants.sol";
 
+import "hardhat/console.sol";
+
 /**
  * @title PermissionManager
  * @author Protofire
@@ -67,7 +69,7 @@ contract PermissionManager is Initializable, OwnableUpgradeable, Constants, Perm
      * @param _user The address of the user.
      */
     function assingTier1(address _user) public onlyOwner {
-        require(!hasTier1(_user), "PermissionManager: User already has tier 1 assigned");
+        require(!hasTier1(_user), "PermissionManager: User already has Tier 1 assigned");
         PermissionItems(permissionItems).mint(_user, TIER_1_ID, 1, "");
     }
 
@@ -82,7 +84,7 @@ contract PermissionManager is Initializable, OwnableUpgradeable, Constants, Perm
      * @param _user The address of the user.
      */
     function assingTier2(address _user) public onlyOwner {
-        require(!hasTier2(_user), "PermissionManager: User already has tier 2 assigned");
+        require(!hasTier2(_user), "PermissionManager: User already has Tier 2 assigned");
         PermissionItems(permissionItems).mint(_user, TIER_2_ID, 1, "");
     }
 
@@ -112,7 +114,7 @@ contract PermissionManager is Initializable, OwnableUpgradeable, Constants, Perm
      * @param _user The address of the user.
      */
     function revokeTier1(address _user) public onlyOwner {
-        require(hasTier1(_user), "PermissionManager: User doens't has tier 1 assigned");
+        require(hasTier1(_user), "PermissionManager: User doesn't has Tier 1 assigned");
         PermissionItems(permissionItems).burn(_user, TIER_1_ID, 1);
     }
 
@@ -127,7 +129,7 @@ contract PermissionManager is Initializable, OwnableUpgradeable, Constants, Perm
      * @param _user The address of the user.
      */
     function revokeTier2(address _user) public onlyOwner {
-        require(hasTier2(_user), "PermissionManager: User doesn't has tier 2 assigned");
+        require(hasTier2(_user), "PermissionManager: User doesn't has Tier 2 assigned");
         PermissionItems(permissionItems).burn(_user, TIER_2_ID, 1);
     }
 
@@ -146,7 +148,7 @@ contract PermissionManager is Initializable, OwnableUpgradeable, Constants, Perm
         PermissionItems(permissionItems).burn(_user, SUSPENDED_ID, 1);
     }
 
-    function _hasItem(address _user, uint256 itemId) internal returns (bool) {
+    function _hasItem(address _user, uint256 itemId) internal view returns (bool) {
         if (PermissionItems(permissionItems).balanceOf(_user, itemId) == 0) {
             return false;
         }
@@ -158,7 +160,7 @@ contract PermissionManager is Initializable, OwnableUpgradeable, Constants, Perm
      *
      * @param _user The address of the user.
      */
-    function hasTier1(address _user) public returns (bool) {
+    function hasTier1(address _user) public view returns (bool) {
         return _hasItem(_user, TIER_1_ID);
     }
 
@@ -167,7 +169,7 @@ contract PermissionManager is Initializable, OwnableUpgradeable, Constants, Perm
      *
      * @param _user The address of the user.
      */
-    function hasTier2(address _user) public returns (bool) {
+    function hasTier2(address _user) public view returns (bool) {
         return _hasItem(_user, TIER_2_ID);
     }
 
@@ -176,7 +178,7 @@ contract PermissionManager is Initializable, OwnableUpgradeable, Constants, Perm
      *
      * @param _user The address of the user.
      */
-    function isSuspended(address _user) public returns (bool) {
+    function isSuspended(address _user) public view returns (bool) {
         return _hasItem(_user, SUSPENDED_ID);
     }
 }
