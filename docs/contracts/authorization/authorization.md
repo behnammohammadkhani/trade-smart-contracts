@@ -92,7 +92,7 @@ Requirements:
 
 - the caller must have be the owner.
 
-- `_eurPriceFeed` should not be 0.
+- `_tradingLimit` should not be 0.
 
 #### Parameters:
 
