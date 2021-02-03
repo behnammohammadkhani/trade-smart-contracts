@@ -20,10 +20,8 @@ contract PermissionItems is ERC1155, AccessControl {
      * @dev Grants the contract deployer the default admin role.
      *
      */
-    constructor(address admin) public ERC1155("") {
-        require(admin != address(0), "admin is the zero address");
+    constructor() public ERC1155("") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        setAdmin(admin);
     }
 
     /**

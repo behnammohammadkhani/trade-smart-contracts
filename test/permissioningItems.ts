@@ -1,15 +1,15 @@
 import { ethers } from 'hardhat';
 import { Signer, ContractFactory } from 'ethers';
-import { expect, assert } from 'chai';
+import { expect } from 'chai';
 import { PermissionItems } from '../typechain';
 import Reverter from './utils/reverter';
 
-// let deployer: Signer;
+let deployer: Signer;
 let kakaroto: Signer;
 let vegeta: Signer;
 let karpincho: Signer;
 
-// let deployerAddress: string;
+let deployerAddress: string;
 let kakarotoAddress: string;
 let vegetaAddress: string;
 let karpinchoAddress: string;
@@ -23,13 +23,15 @@ let PermissionItemsFactory: ContractFactory;
 
 let MINTER_ROLE: string;
 let BURNER_ROLE: string;
+let DEFAULT_ADMIN_ROLE: string;
 
 describe('OperationsRegistry', function () {
   const reverter = new Reverter();
 
   before(async () => {
-    [, kakaroto, vegeta, karpincho] = await ethers.getSigners();
-    [kakarotoAddress, vegetaAddress, karpinchoAddress] = await Promise.all([
+    [deployer, kakaroto, vegeta, karpincho] = await ethers.getSigners();
+    [deployerAddress, kakarotoAddress, vegetaAddress, karpinchoAddress] = await Promise.all([
+      deployer.getAddress(),
       kakaroto.getAddress(),
       vegeta.getAddress(),
       karpincho.getAddress(),
@@ -41,31 +43,26 @@ describe('OperationsRegistry', function () {
   });
 
   describe('deployment', () => {
-    it('should not allow to deploy with as zero address as admin', async () => {
-      await expect(PermissionItemsFactory.deploy(ethers.constants.AddressZero)).to.be.revertedWith(
-        'admin is the zero address',
-      );
-    });
+    it('should deploy and set deployer as DEFAULT_ADMIN_ROLE', async () => {
+      permissionItemsContract = (await PermissionItemsFactory.deploy()) as PermissionItems;
+      await permissionItemsContract.deployed();
 
-    it('should allow to deploy with non zero address as admin', async () => {
-      try {
-        permissionItemsContract = (await PermissionItemsFactory.deploy(kakarotoAddress)) as PermissionItems;
-        await permissionItemsContract.deployed();
-      } catch (error) {
-        assert(false, 'revert');
-      }
-      expect(true).to.equal(true);
+      DEFAULT_ADMIN_ROLE = await permissionItemsContract.DEFAULT_ADMIN_ROLE();
+      expect(await permissionItemsContract.hasRole(DEFAULT_ADMIN_ROLE, deployerAddress)).to.equal(true);
     });
   });
 
   describe('#setAdmin - #revokeAdmin', () => {
     before(async () => {
-      await reverter.snapshot();
+      await permissionItemsContract.setAdmin(kakarotoAddress);
+
       permissionItemsContractKakaroto = permissionItemsContract.connect(kakaroto);
       permissionItemsContractVegeta = permissionItemsContract.connect(vegeta);
 
       MINTER_ROLE = await permissionItemsContract.MINTER_ROLE();
       BURNER_ROLE = await permissionItemsContract.BURNER_ROLE();
+
+      await reverter.snapshot();
     });
 
     it('should not allow to call setAdmin to a non role admin', async () => {
