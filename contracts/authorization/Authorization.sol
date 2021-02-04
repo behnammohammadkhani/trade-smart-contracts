@@ -11,7 +11,6 @@ import "./AuthorizationStorage.sol";
 import "./IAuthorization.sol";
 import "./IEurPriceFeed.sol";
 import "./IOperationsRegistry.sol";
-import "../common/Constants.sol";
 
 import "hardhat/console.sol";
 
@@ -22,7 +21,7 @@ import "hardhat/console.sol";
  *
  * This contract should be called by an Authorizable contract through its `onlyAuthorized` modifier.
  */
-contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Constants, AuthorizationStorage {
+contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, AuthorizationStorage {
     using SafeMathUpgradeable for uint256;
 
     /**

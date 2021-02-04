@@ -6,7 +6,6 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import "./PermissionItems.sol";
 import "./PermissionManagerStorage.sol";
-import "../common/Constants.sol";
 
 import "hardhat/console.sol";
 
@@ -15,7 +14,7 @@ import "hardhat/console.sol";
  * @author Protofire
  * @dev Provide tier based permissions asignments and revoking functions
  */
-contract PermissionManager is Initializable, OwnableUpgradeable, Constants, PermissionManagerStorage {
+contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManagerStorage {
     /**
      * @dev Emitted when `permissionItems` address is setted.
      */

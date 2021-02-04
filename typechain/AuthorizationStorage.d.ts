@@ -26,6 +26,9 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     "ERC20_MINT()": FunctionFragment;
     "ERC20_TRANSFER()": FunctionFragment;
     "ERC20_TRANSFER_FROM()": FunctionFragment;
+    "SUSPENDED_ID()": FunctionFragment;
+    "TIER_1_ID()": FunctionFragment;
+    "TIER_2_ID()": FunctionFragment;
     "eurPriceFeed()": FunctionFragment;
     "operationsRegistry()": FunctionFragment;
     "paused()": FunctionFragment;
@@ -53,6 +56,12 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     functionFragment: "ERC20_TRANSFER_FROM",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "SUSPENDED_ID",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "TIER_1_ID", values?: undefined): string;
+  encodeFunctionData(functionFragment: "TIER_2_ID", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "eurPriceFeed",
     values?: undefined
@@ -88,6 +97,12 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     functionFragment: "ERC20_TRANSFER_FROM",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "SUSPENDED_ID",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "TIER_1_ID", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "TIER_2_ID", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "eurPriceFeed",
     data: BytesLike
@@ -143,6 +158,18 @@ export class AuthorizationStorage extends Contract {
 
     "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<[string]>;
 
+    SUSPENDED_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    TIER_1_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "TIER_1_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    TIER_2_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "TIER_2_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     eurPriceFeed(overrides?: CallOverrides): Promise<[string]>;
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<[string]>;
@@ -184,6 +211,18 @@ export class AuthorizationStorage extends Contract {
 
   "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<string>;
 
+  SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  TIER_1_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "TIER_1_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  TIER_2_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
   eurPriceFeed(overrides?: CallOverrides): Promise<string>;
 
   "eurPriceFeed()"(overrides?: CallOverrides): Promise<string>;
@@ -224,6 +263,18 @@ export class AuthorizationStorage extends Contract {
     ERC20_TRANSFER_FROM(overrides?: CallOverrides): Promise<string>;
 
     "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<string>;
+
+    SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TIER_1_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "TIER_1_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TIER_2_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     eurPriceFeed(overrides?: CallOverrides): Promise<string>;
 
@@ -268,6 +319,18 @@ export class AuthorizationStorage extends Contract {
     ERC20_TRANSFER_FROM(overrides?: CallOverrides): Promise<BigNumber>;
 
     "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TIER_1_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "TIER_1_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TIER_2_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     eurPriceFeed(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -318,6 +381,18 @@ export class AuthorizationStorage extends Contract {
     "ERC20_TRANSFER_FROM()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    SUSPENDED_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    TIER_1_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "TIER_1_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    TIER_2_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "TIER_2_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     eurPriceFeed(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

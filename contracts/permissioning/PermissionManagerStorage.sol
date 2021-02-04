@@ -12,4 +12,9 @@ pragma solidity ^0.7.0;
  */
 abstract contract PermissionManagerStorage {
     address public permissionItems;
+
+    // Constants for Permissions ID
+    uint256 public constant SUSPENDED_ID = 0;
+    uint256 public constant TIER_1_ID = 1;
+    uint256 public constant TIER_2_ID = 2;
 }

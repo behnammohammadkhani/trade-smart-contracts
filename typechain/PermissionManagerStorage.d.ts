@@ -21,14 +21,29 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface PermissionManagerStorageInterface extends ethers.utils.Interface {
   functions: {
+    "SUSPENDED_ID()": FunctionFragment;
+    "TIER_1_ID()": FunctionFragment;
+    "TIER_2_ID()": FunctionFragment;
     "permissionItems()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "SUSPENDED_ID",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "TIER_1_ID", values?: undefined): string;
+  encodeFunctionData(functionFragment: "TIER_2_ID", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "permissionItems",
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "SUSPENDED_ID",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "TIER_1_ID", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "TIER_2_ID", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "permissionItems",
     data: BytesLike
@@ -51,16 +66,52 @@ export class PermissionManagerStorage extends Contract {
   interface: PermissionManagerStorageInterface;
 
   functions: {
+    SUSPENDED_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    TIER_1_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "TIER_1_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    TIER_2_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "TIER_2_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     permissionItems(overrides?: CallOverrides): Promise<[string]>;
 
     "permissionItems()"(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  TIER_1_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "TIER_1_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  TIER_2_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   permissionItems(overrides?: CallOverrides): Promise<string>;
 
   "permissionItems()"(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TIER_1_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "TIER_1_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TIER_2_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     permissionItems(overrides?: CallOverrides): Promise<string>;
 
     "permissionItems()"(overrides?: CallOverrides): Promise<string>;
@@ -69,12 +120,36 @@ export class PermissionManagerStorage extends Contract {
   filters: {};
 
   estimateGas: {
+    SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TIER_1_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "TIER_1_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    TIER_2_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     permissionItems(overrides?: CallOverrides): Promise<BigNumber>;
 
     "permissionItems()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    SUSPENDED_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    TIER_1_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "TIER_1_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    TIER_2_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "TIER_2_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     permissionItems(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "permissionItems()"(
