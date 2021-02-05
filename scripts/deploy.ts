@@ -58,8 +58,7 @@ async function read(): Promise<any> {
   const deploymentsFile = await getDeploymentFile();
 
   try {
-    const data = JSON.parse(await fs.readFile(deploymentsFile, 'utf8'));
-    return data;
+    return JSON.parse(await fs.readFile(deploymentsFile, 'utf8'));
   } catch (e) {
     if (e.code === 'ENOENT') {
       return {};

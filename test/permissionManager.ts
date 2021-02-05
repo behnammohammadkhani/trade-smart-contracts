@@ -4,14 +4,9 @@ import { expect } from 'chai';
 import { PermissionItems, PermissionManager } from '../typechain';
 import Reverter from './utils/reverter';
 
-// let deployer: Signer;
 let kakaroto: Signer;
-// let vegeta: Signer;
 let karpincho: Signer;
 
-// let deployerAddress: string;
-// let kakarotoAddress: string;
-// let vegetaAddress: string;
 let karpinchoAddress: string;
 
 let permissionManagerContract: PermissionManager;
@@ -20,9 +15,6 @@ let permissionItemsContract: PermissionItems;
 
 let PermissionItemsFactory: ContractFactory;
 let PermissionManagerFactory: ContractFactory;
-
-let MINTER_ROLE: string;
-let BURNER_ROLE: string;
 
 describe('OperationsRegistry', function () {
   const reverter = new Reverter();
@@ -81,8 +73,6 @@ describe('OperationsRegistry', function () {
     before('', async () => {
       permissionItems2Contract = (await PermissionItemsFactory.deploy()) as PermissionItems;
       await permissionItems2Contract.deployed();
-
-      console.log('permissionItems2Contract', permissionItems2Contract.address);
 
       permissionManagerContractKakaroto = permissionManagerContract.connect(kakaroto);
 

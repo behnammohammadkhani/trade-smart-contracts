@@ -8,11 +8,11 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
  * @title PermissionItems
  * @author Protofire
  * @dev Contract module which provides a permissioning mechanism.
- * It inherits from standar ERC1155 and extends functionality for
- * role based acces control and makes tokens non-transferables.
+ * It inherits from standard ERC1155 and extends functionality for
+ * role based access control and makes tokens non-transferable.
  */
 contract PermissionItems is ERC1155, AccessControl {
-    // Constants for roles asignments
+    // Constants for roles assignments
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
 
@@ -130,15 +130,23 @@ contract PermissionItems is ERC1155, AccessControl {
     }
 
     /**
+     * @dev Disabled setApprovalForAll function.
+     *
+     */
+    function setApprovalForAll(address, bool) public virtual override {
+        revert("disabled");
+    }
+
+    /**
      * @dev Disabled safeTransferFrom function.
      *
      */
     function safeTransferFrom(
-        address from, // solhint-disable-line
-        address to, // solhint-disable-line
-        uint256 id, // solhint-disable-line
-        uint256 amount, // solhint-disable-line
-        bytes memory data // solhint-disable-line
+        address,
+        address,
+        uint256,
+        uint256,
+        bytes memory
     ) public virtual override {
         revert("disabled");
     }
@@ -148,11 +156,11 @@ contract PermissionItems is ERC1155, AccessControl {
      *
      */
     function safeBatchTransferFrom(
-        address from, // solhint-disable-line
-        address to, // solhint-disable-line
-        uint256[] memory ids, // solhint-disable-line
-        uint256[] memory amounts, // solhint-disable-line
-        bytes memory data // solhint-disable-line
+        address,
+        address,
+        uint256[] memory,
+        uint256[] memory,
+        bytes memory
     ) public override {
         revert("disabled");
     }

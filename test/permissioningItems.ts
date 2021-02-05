@@ -168,6 +168,18 @@ describe('OperationsRegistry', function () {
       permissionItemsContractKarpincho = permissionItemsContract.connect(karpincho);
     });
 
+    it('should not allow to call setApprovalForAll', async () => {
+      const approved = await permissionItemsContract.isApprovedForAll(karpinchoAddress, vegetaAddress);
+      expect(approved).to.equal(false);
+
+      await expect(permissionItemsContractKarpincho.setApprovalForAll(vegetaAddress, true)).to.be.revertedWith(
+        'disabled',
+      );
+
+      const approvedAfter = await permissionItemsContract.isApprovedForAll(karpinchoAddress, vegetaAddress);
+      expect(approvedAfter).to.equal(false);
+    });
+
     it('should not allow to call safeTransferFrom', async () => {
       const balance = await permissionItemsContract.balanceOf(karpinchoAddress, 1);
       expect(balance).to.equal('1');

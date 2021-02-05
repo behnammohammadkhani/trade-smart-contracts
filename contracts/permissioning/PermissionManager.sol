@@ -12,7 +12,7 @@ import "hardhat/console.sol";
 /**
  * @title PermissionManager
  * @author Protofire
- * @dev Provide tier based permissions asignments and revoking functions
+ * @dev Provide tier based permissions assignments and revoking functions
  */
 contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManagerStorage {
     /**
