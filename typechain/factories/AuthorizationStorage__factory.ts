@@ -88,7 +88,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "PAUSED_USER_ID",
+    name: "SUSPENDED_ID",
     outputs: [
       {
         internalType: "uint256",

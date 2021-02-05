@@ -201,7 +201,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         address _user,
         address _asset,
         bytes4 _operation,
-        bytes calldata _data // solhint-disable-line
+        bytes calldata _data
     ) public view override returns (bool) {
         // The protocol is paused
         if (paused) {
@@ -268,7 +268,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         uint256[] memory ids = new uint256[](3);
         ids[0] = TIER_1_ID;
         ids[1] = TIER_2_ID;
-        ids[2] = PAUSED_USER_ID;
+        ids[2] = SUSPENDED_ID;
 
         uint256[] memory permissionsBlance = IERC1155(permissions).balanceOfBatch(accounts, ids);
 

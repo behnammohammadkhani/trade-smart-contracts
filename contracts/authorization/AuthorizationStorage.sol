@@ -2,11 +2,6 @@
 pragma solidity ^0.7.0;
 
 /**
- * All storage must be declared here
- * New storage must be appended to the end
- * Never remove items from this list
- */
-/**
  * @title AuthorizationStorage
  * @author Protofire
  * @dev Storage structure used by Authorization contract.
@@ -29,7 +24,8 @@ abstract contract AuthorizationStorage {
     bytes4 public constant ERC20_MINT = bytes4(keccak256("mint(address,uint256)"));
     bytes4 public constant ERC20_BURN_FROM = bytes4(keccak256("burnFrom(address,uint256)"));
 
-    uint256 public constant PAUSED_USER_ID = 0;
+    // Constants for Permissions ID
+    uint256 public constant SUSPENDED_ID = 0;
     uint256 public constant TIER_1_ID = 1;
     uint256 public constant TIER_2_ID = 2;
 }
