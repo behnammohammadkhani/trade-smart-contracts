@@ -5,14 +5,14 @@
 import { Contract, Signer } from "ethers";
 import { Provider } from "@ethersproject/providers";
 
-import type { Authorizable } from "../Authorizable";
+import type { Pausable } from "../Pausable";
 
-export class Authorizable__factory {
+export class Pausable__factory {
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): Authorizable {
-    return new Contract(address, _abi, signerOrProvider) as Authorizable;
+  ): Pausable {
+    return new Contract(address, _abi, signerOrProvider) as Pausable;
   }
 }
 
@@ -21,23 +21,36 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
-        name: "newAuthorization",
+        name: "account",
         type: "address",
       },
     ],
-    name: "AuthorizationSetted",
+    name: "Paused",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "Unpaused",
     type: "event",
   },
   {
     inputs: [],
-    name: "authorization",
+    name: "paused",
     outputs: [
       {
-        internalType: "contract IAuthorization",
+        internalType: "bool",
         name: "",
-        type: "address",
+        type: "bool",
       },
     ],
     stateMutability: "view",
