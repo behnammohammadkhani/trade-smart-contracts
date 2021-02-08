@@ -1,6 +1,6 @@
 # `PermissionManager`
 
-Provide tier based permissions asignments and revoking functions
+Provide tier based permissions assignments and revoking functions
 
 ## Functions:
 

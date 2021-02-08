@@ -4,7 +4,7 @@ const CONFIG_DIR = 'docs';
 const OUTPUT_DIR = 'docs/contracts';
 const README_FILE = 'README.md';
 const SUMMARY_FILE = 'SUMMARY.md';
-const EXCLUDE_LIST = ['packages', 'interfaces', 'mocks', 'tests'];
+const EXCLUDE_LIST = ['packages', 'interfaces', 'mocks', 'test'];
 
 const fs = require('fs');
 const path = require('path');

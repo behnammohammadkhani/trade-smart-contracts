@@ -2,9 +2,9 @@
 
 Contract module which provides a permissioning mechanism.
 
-It inherits from standar ERC1155 and extends functionality for
+It inherits from standard ERC1155 and extends functionality for
 
-role based acces control and makes tokens non-transferables.
+role based access control and makes tokens non-transferable.
 
 ## Functions:
 
@@ -22,9 +22,11 @@ role based acces control and makes tokens non-transferables.
 
 - `burnBatch(address account, uint256[] ids, uint256[] values) (public)`
 
-- `safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes data) (public)`
+- `setApprovalForAll(address, bool) (public)`
 
-- `safeBatchTransferFrom(address from, address to, uint256[] ids, uint256[] amounts, bytes data) (public)`
+- `safeTransferFrom(address, address, uint256, uint256, bytes) (public)`
+
+- `safeBatchTransferFrom(address, address, uint256[], uint256[], bytes) (public)`
 
 ### Function `constructor() public`
 
@@ -98,10 +100,14 @@ Requirements:
 
 - `ids` and `amounts` must have the same length.
 
-### Function `safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes data) public`
+### Function `setApprovalForAll(address, bool) public`
+
+Disabled setApprovalForAll function.
+
+### Function `safeTransferFrom(address, address, uint256, uint256, bytes) public`
 
 Disabled safeTransferFrom function.
 
-### Function `safeBatchTransferFrom(address from, address to, uint256[] ids, uint256[] amounts, bytes data) public`
+### Function `safeBatchTransferFrom(address, address, uint256[], uint256[], bytes) public`
 
 Disabled safeBatchTransferFrom function.
