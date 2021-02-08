@@ -13,6 +13,7 @@ import {
 import {
   Contract,
   ContractTransaction,
+  Overrides,
   CallOverrides,
 } from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
@@ -31,7 +32,11 @@ interface OperationsRegistryMockInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(functionFragment: "addTrade", data: BytesLike): Result;
 
-  events: {};
+  events: {
+    "AddTrade(address,bytes4,uint256)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "AddTrade"): EventFragment;
 }
 
 export class OperationsRegistryMock extends Contract {
@@ -49,81 +54,83 @@ export class OperationsRegistryMock extends Contract {
 
   functions: {
     addTrade(
-      arg0: string,
-      arg1: BytesLike,
-      arg2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
+      user: string,
+      operation: BytesLike,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     "addTrade(address,bytes4,uint256)"(
-      arg0: string,
-      arg1: BytesLike,
-      arg2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
+      user: string,
+      operation: BytesLike,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
   };
 
   addTrade(
-    arg0: string,
-    arg1: BytesLike,
-    arg2: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<void>;
+    user: string,
+    operation: BytesLike,
+    amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   "addTrade(address,bytes4,uint256)"(
-    arg0: string,
-    arg1: BytesLike,
-    arg2: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<void>;
+    user: string,
+    operation: BytesLike,
+    amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     addTrade(
-      arg0: string,
-      arg1: BytesLike,
-      arg2: BigNumberish,
+      user: string,
+      operation: BytesLike,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "addTrade(address,bytes4,uint256)"(
-      arg0: string,
-      arg1: BytesLike,
-      arg2: BigNumberish,
+      user: string,
+      operation: BytesLike,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
-  filters: {};
+  filters: {
+    AddTrade(user: null, operation: null, amount: null): EventFilter;
+  };
 
   estimateGas: {
     addTrade(
-      arg0: string,
-      arg1: BytesLike,
-      arg2: BigNumberish,
-      overrides?: CallOverrides
+      user: string,
+      operation: BytesLike,
+      amount: BigNumberish,
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "addTrade(address,bytes4,uint256)"(
-      arg0: string,
-      arg1: BytesLike,
-      arg2: BigNumberish,
-      overrides?: CallOverrides
+      user: string,
+      operation: BytesLike,
+      amount: BigNumberish,
+      overrides?: Overrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     addTrade(
-      arg0: string,
-      arg1: BytesLike,
-      arg2: BigNumberish,
-      overrides?: CallOverrides
+      user: string,
+      operation: BytesLike,
+      amount: BigNumberish,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "addTrade(address,bytes4,uint256)"(
-      arg0: string,
-      arg1: BytesLike,
-      arg2: BigNumberish,
-      overrides?: CallOverrides
+      user: string,
+      operation: BytesLike,
+      amount: BigNumberish,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };
 }

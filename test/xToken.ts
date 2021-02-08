@@ -12,6 +12,7 @@ let vegetaAddress: string;
 
 let xTokenContract: XToken;
 let xTokenContractVegeta: XToken;
+let xTokenContractKakaroto: XToken;
 let authorizationContract: AuthorizationMock;
 let operationsRegistryContract: OperationsRegistryMock;
 
@@ -110,6 +111,7 @@ describe('xToken', function () {
       await reverter.snapshot();
 
       xTokenContractVegeta = xTokenContract.connect(vegeta);
+      xTokenContractKakaroto = xTokenContract.connect(kakaroto);
     });
   });
 
@@ -193,6 +195,146 @@ describe('xToken', function () {
 
       const kya = await xTokenContractVegeta.kya();
       expect(kya).to.equal('a different kya');
+    });
+  });
+
+  describe('#mint', () => {
+    before(async () => {
+      await reverter.revert();
+    });
+
+    it('non owner should not be able to call mint', async function () {
+      await expect(xTokenContract.mint(kakarotoAddress, 1000)).to.be.revertedWith('Ownable: caller is not the owner');
+    });
+
+    it('owner should not be able to call mint if the operation is not authorized', async function () {
+      await authorizationContract.setAuthorized(false);
+
+      await expect(xTokenContractVegeta.mint(kakarotoAddress, 1000)).to.be.revertedWith('Authorizable: not authorized');
+    });
+
+    it('owner should be able to call mint if the operation is authorized', async function () {
+      await authorizationContract.setAuthorized(true);
+      const mitnTx = xTokenContractVegeta.mint(kakarotoAddress, 1000);
+
+      await expect(mitnTx)
+        .to.emit(operationsRegistryContract, 'AddTrade')
+        .withArgs(kakarotoAddress, xTokenContractVegeta.interface.getSighash('mint'), 1000);
+      expect(await xTokenContract.balanceOf(kakarotoAddress)).to.eq('1000');
+
+      await reverter.snapshot();
+    });
+  });
+
+  describe('#burFrom', () => {
+    before(async () => {
+      await reverter.revert();
+    });
+
+    it('non owner should not be able to call burnFrom', async function () {
+      await expect(xTokenContract.burnFrom(kakarotoAddress, 1000)).to.be.revertedWith(
+        'Ownable: caller is not the owner',
+      );
+    });
+
+    it('owner should not be able to call burnFrom if the operation is not authorized', async function () {
+      await authorizationContract.setAuthorized(false);
+
+      await expect(xTokenContractVegeta.burnFrom(kakarotoAddress, 1000)).to.be.revertedWith(
+        'Authorizable: not authorized',
+      );
+    });
+
+    it('owner should be able to call burnFrom if the operation is authorized', async function () {
+      await authorizationContract.setAuthorized(true);
+      const mitnTx = xTokenContractVegeta.burnFrom(kakarotoAddress, 10);
+
+      await expect(mitnTx)
+        .to.emit(operationsRegistryContract, 'AddTrade')
+        .withArgs(kakarotoAddress, xTokenContractVegeta.interface.getSighash('burnFrom'), 10);
+      expect(await xTokenContract.balanceOf(kakarotoAddress)).to.eq('990');
+    });
+  });
+
+  describe('#transfer', () => {
+    before(async () => {
+      await reverter.revert();
+    });
+
+    it('user should not be able to call transfer if the operation is not authorized', async function () {
+      await authorizationContract.setAuthorized(false);
+
+      await expect(xTokenContractKakaroto.transfer(vegetaAddress, 5)).to.be.revertedWith(
+        'Authorizable: not authorized',
+      );
+    });
+
+    it('user should be able to call transfer if the operation is authorized', async function () {
+      await authorizationContract.setAuthorized(true);
+      const mitnTx = xTokenContractKakaroto.transfer(vegetaAddress, 5);
+
+      await expect(mitnTx)
+        .to.emit(operationsRegistryContract, 'AddTrade')
+        .withArgs(kakarotoAddress, xTokenContractKakaroto.interface.getSighash('transfer'), 5);
+      expect(await xTokenContract.balanceOf(kakarotoAddress)).to.eq('995');
+      expect(await xTokenContract.balanceOf(vegetaAddress)).to.eq('5');
+    });
+  });
+
+  describe('#transferFrom', () => {
+    before(async () => {
+      await reverter.revert();
+    });
+
+    it('user should not be able to call transferFrom if the operation is not authorized', async function () {
+      await authorizationContract.setAuthorized(false);
+
+      await expect(xTokenContractVegeta.transferFrom(kakarotoAddress, vegetaAddress, 5)).to.be.revertedWith(
+        'Authorizable: not authorized',
+      );
+    });
+
+    it('user should be able to call transferFrom if the operation is authorized', async function () {
+      await authorizationContract.setAuthorized(true);
+      await xTokenContractKakaroto.approve(vegetaAddress, 5);
+      const mitnTx = xTokenContractVegeta.transferFrom(kakarotoAddress, vegetaAddress, 5);
+
+      await expect(mitnTx)
+        .to.emit(operationsRegistryContract, 'AddTrade')
+        .withArgs(kakarotoAddress, xTokenContractKakaroto.interface.getSighash('transfer'), 5);
+      expect(await xTokenContract.balanceOf(kakarotoAddress)).to.eq('995');
+      expect(await xTokenContract.balanceOf(vegetaAddress)).to.eq('5');
+    });
+  });
+
+  describe('paused', () => {
+    before(async () => {
+      await xTokenContractVegeta.pause();
+      await authorizationContract.setAuthorized(true);
+    });
+
+    it('owner should not be able to call mint if the token is paused', async function () {
+      await expect(xTokenContractVegeta.mint(kakarotoAddress, 1000)).to.be.revertedWith(
+        'ERC20Pausable: token transfer while paused',
+      );
+    });
+
+    it('owner should not be able to call burnFrom if the token is paused', async function () {
+      await expect(xTokenContractVegeta.burnFrom(kakarotoAddress, 1000)).to.be.revertedWith(
+        'ERC20Pausable: token transfer while paused',
+      );
+    });
+
+    it('user should not be able to call transfer if the token is paused', async function () {
+      await expect(xTokenContractKakaroto.transfer(vegetaAddress, 5)).to.be.revertedWith(
+        'ERC20Pausable: token transfer while paused',
+      );
+    });
+
+    it('user should not be able to call transferFrom if the token is paused', async function () {
+      await expect(xTokenContractVegeta.transferFrom(kakarotoAddress, vegetaAddress, 5)).to.be.revertedWith(
+        'ERC20Pausable: token transfer while paused',
+      );
     });
   });
 });

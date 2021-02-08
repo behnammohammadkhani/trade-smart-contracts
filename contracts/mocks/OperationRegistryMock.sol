@@ -2,11 +2,13 @@
 pragma solidity ^0.7.0;
 
 contract OperationsRegistryMock {
+    event AddTrade(address user, bytes4 operation, uint256 amount);
+
     function addTrade(
-        address,
-        bytes4,
-        uint256
-    ) public pure {
-        true;
+        address user,
+        bytes4 operation,
+        uint256 amount
+    ) public {
+        emit AddTrade(user, operation, amount);
     }
 }

@@ -227,13 +227,12 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
             }
 
             if (_operation == ERC20_TRANSFER) {
-                (address _, uint256 amount) = abi.decode(_data[4:], (address, uint256));
+                (, uint256 amount) = abi.decode(_data[4:], (address, uint256));
                 operationAmount = amount;
             }
 
             if (_operation == ERC20_TRANSFER_FROM) {
-                // solhint-disable-next-line no-unused-vars
-                (address sender, address _, uint256 amount) = abi.decode(_data[4:], (address, address, uint256));
+                (address sender, , uint256 amount) = abi.decode(_data[4:], (address, address, uint256));
                 user = sender;
                 operationAmount = amount;
                 operation = ERC20_TRANSFER;

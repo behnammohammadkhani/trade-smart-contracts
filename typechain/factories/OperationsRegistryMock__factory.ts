@@ -39,29 +39,54 @@ export class OperationsRegistryMock__factory extends ContractFactory {
 
 const _abi = [
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "bytes4",
+        name: "operation",
+        type: "bytes4",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "AddTrade",
+    type: "event",
+  },
+  {
     inputs: [
       {
         internalType: "address",
-        name: "",
+        name: "user",
         type: "address",
       },
       {
         internalType: "bytes4",
-        name: "",
+        name: "operation",
         type: "bytes4",
       },
       {
         internalType: "uint256",
-        name: "",
+        name: "amount",
         type: "uint256",
       },
     ],
     name: "addTrade",
     outputs: [],
-    stateMutability: "pure",
+    stateMutability: "nonpayable",
     type: "function",
   },
 ];
 
 const _bytecode =
-  "0x6080604052348015600f57600080fd5b5060a38061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c8063dd561ae414602d575b600080fd5b606660048036036060811015604157600080fd5b506001600160a01b03813516906001600160e01b031960208201351690604001356068565b005b50505056fea2646970667358221220ab21fa3b9eedbac99ea1384dfb4129aafcf53a17eb1b50144a455dac5d60a42164736f6c63430007040033";
+  "0x6080604052348015600f57600080fd5b5060f58061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c8063dd561ae414602d575b600080fd5b606660048036036060811015604157600080fd5b506001600160a01b03813516906001600160e01b031960208201351690604001356068565b005b604080516001600160a01b03851681526001600160e01b03198416602082015280820183905290517fe80ec9f91d1f83dbb683dde1549001e03c729ac8d73c711d20879234bfa01f829181900360600190a150505056fea2646970667358221220573c0612ab5781fdd2d2553f564b0d15fba3ac4962e4b553360675accf0a74b964736f6c63430007040033";

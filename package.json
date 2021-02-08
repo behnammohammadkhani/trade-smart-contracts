@@ -61,7 +61,7 @@
     "prettier:json:md": "prettier --config .prettierrc --write \"**/*.{json,md}\"",
     "prettier": "yarn prettier:sol && yarn prettier:ts",
     "prettier:list-different": "prettier --config .prettierrc --list-different \"**/*.{js,sol,ts}\"",
-    "test": "hardhat test",
+    "test": "hardhat test /Users/lisandro/Protofire/Swarm/swarm-smart-contracts/test/xToken.ts",
     "typechain": "hardhat typechain",
     "doc:uml": "sol2uml ./contracts -i mocks,test -f png -o ./docs/uml/swarm-markets.png",
     "docify": "node docify.js",
