@@ -11,7 +11,7 @@ import "../authorization/IOperationsRegistry.sol";
 
 import "hardhat/console.sol";
 
-contract xToken is ERC20Pausable, Ownable, Authorizable {
+contract XToken is ERC20Pausable, Ownable, Authorizable {
     IOperationsRegistry public operationsRegistry;
     string public kya;
 

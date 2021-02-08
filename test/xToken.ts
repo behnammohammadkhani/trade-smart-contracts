@@ -27,7 +27,7 @@ describe('xToken', function () {
 
     kakarotoAddress;
 
-    xTokenFactory = await ethers.getContractFactory('xToken');
+    xTokenFactory = await ethers.getContractFactory('XToken');
     const AuthorizationFactory = await ethers.getContractFactory('AuthorizationMock');
     const OperationsRegistryFactory = await ethers.getContractFactory('OperationsRegistryMock');
 
