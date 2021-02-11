@@ -3,7 +3,7 @@ import { resolve } from 'path';
 dotenvConfig({ path: resolve(__dirname, './.env') });
 
 import { HardhatUserConfig } from 'hardhat/config';
-// import { HardhatNetworkUserConfig } from 'hardhat/types/config';
+import { HardhatNetworkUserConfig } from 'hardhat/types/config';
 import { NetworkUserConfig } from 'hardhat/types';
 import './tasks/accounts';
 import './tasks/clean';
@@ -38,17 +38,20 @@ if (!process.env.INFURA_API_KEY) {
   infuraApiKey = process.env.INFURA_API_KEY;
 }
 
-// let hardHatNetwork: HardhatNetworkUserConfig = { chainId: chainIds.hardhat };
-// if (process.env.FORK_RPC_URL) {
-//   hardHatNetwork = {
-//     chainId: chainIds.hardhat,
-//     forking: {
-//       url: process.env.FORK_RPC_URL,
-//     },
-//     gas: 'auto',
-//     throwOnCallFailures: false,
-//   }
-// }
+let hardHatNetwork: HardhatNetworkUserConfig = { chainId: chainIds.hardhat };
+if (process.env.FORK_RPC_URL) {
+  hardHatNetwork = {
+    chainId: chainIds.hardhat,
+    forking: {
+      url: process.env.FORK_RPC_URL,
+    },
+    gas: 'auto',
+    throwOnCallFailures: false,
+    accounts: {
+      accountsBalance: '10000000000000000000000000000000000',
+    },
+  };
+}
 
 function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig {
   const url: string = 'https://' + network + '.infura.io/v3/' + infuraApiKey;
@@ -67,9 +70,7 @@ function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   networks: {
-    hardhat: {
-      chainId: chainIds.hardhat,
-    },
+    hardhat: hardHatNetwork,
     goerli: createTestnetConfig('goerli'),
     kovan: createTestnetConfig('kovan'),
     rinkeby: createTestnetConfig('rinkeby'),

@@ -5,12 +5,14 @@ import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 
 import "./AuthorizationStorage.sol";
 
 import "./IAuthorization.sol";
 import "./IEurPriceFeed.sol";
 import "./IOperationsRegistry.sol";
+import "../interfaces/IGnosisSafe.sol";
 
 import "hardhat/console.sol";
 
@@ -23,6 +25,7 @@ import "hardhat/console.sol";
  */
 contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, AuthorizationStorage {
     using SafeMathUpgradeable for uint256;
+    using AddressUpgradeable for address;
 
     /**
      * @dev Emitted when `permissions` address is setted.
@@ -220,13 +223,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
             bytes4 operation = _operation;
             uint256 operationAmount;
 
-            if (_operation == ERC20_MINT || _operation == ERC20_BURN_FROM) {
-                (address account, uint256 amount) = abi.decode(_data[4:], (address, uint256));
-                user = account;
-                operationAmount = amount;
-            }
-
-            if (_operation == ERC20_TRANSFER) {
+            if (_operation == ERC20_MINT || _operation == ERC20_BURN_FROM || _operation == ERC20_TRANSFER) {
                 (, uint256 amount) = abi.decode(_data[4:], (address, uint256));
                 operationAmount = amount;
             }

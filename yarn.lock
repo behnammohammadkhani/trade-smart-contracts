@@ -913,6 +913,13 @@
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.14.tgz#44d2dd0b5de6185089375d976b4ec5caf6861193"
   integrity sha512-G+ITQPXkwTrslfG5L/BksmbLUA0M1iybEsmCWPqzSxsRRhJZimBKJkoMi8fr/CPygPTj4zO5pJH7I2/cm9M7SQ==
 
+"@types/contract-proxy-kit@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@types/contract-proxy-kit/-/contract-proxy-kit-1.0.1.tgz#2426fffb2ca89a98414cb0efb45002c286006f47"
+  integrity sha512-Ty1mlhmlL04GM7KowufxDxlEeCbv7eHMB9yuEFOQdfKppI8qgo2IfdayR98zdMahZsIYXj+eM4X6MFW5ZHTzFg==
+  dependencies:
+    ethers "^4.0.43"
+
 "@types/fs-extra@^9.0.6":
   version "9.0.6"
   resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-9.0.6.tgz#488e56b77299899a608b8269719c1d133027a6ab"
@@ -2825,6 +2832,11 @@ content-type@~1.0.4:
   resolved "https://registry.yarnpkg.com/content-type/-/content-type-1.0.4.tgz#e138cc75e040c727b1966fe5e5f8c9aee256fe3b"
   integrity sha512-hIP3EEPs8tB9AT1L+NUqtwOAps4mk2Zob89MWXMHjHWg9milF/j4osnnQLXBCBFBk/tvIG/tUc9mOUJiPBhPXA==
 
+contract-proxy-kit@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/contract-proxy-kit/-/contract-proxy-kit-1.1.2.tgz#bf34eef2b39a525ff4e04c8174ae7164790dcba6"
+  integrity sha512-yIiXEFsebMdK09eWFk2pbP6uwVBUgXdWr2fQxrQypyeMw3hnVbhE+sgwuE6aUyM96H7/RZgYS82onSVnE+5Dtg==
+
 convert-source-map@^1.5.1:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-1.7.0.tgz#17a2cb882d7f77d3490585e2ce6c524424a3a442"
@@ -4131,7 +4143,7 @@ ethereumjs-wallet@0.6.5:
     utf8 "^3.0.0"
     uuid "^3.3.2"
 
-ethers@^4.0.0-beta.1, ethers@^4.0.32, ethers@^4.0.45:
+ethers@^4.0.0-beta.1, ethers@^4.0.32, ethers@^4.0.43, ethers@^4.0.45:
   version "4.0.48"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-4.0.48.tgz#330c65b8133e112b0613156e57e92d9009d8fbbe"
   integrity sha512-sZD5K8H28dOrcidzx9f8KYh8083n5BexIO3+SbE4jK83L85FxtpXZBCQdXb8gkg+7sBqomcLhhkU7UHL+F7I2g==

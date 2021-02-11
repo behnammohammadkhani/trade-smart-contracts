@@ -7,6 +7,7 @@ import Reverter from './utils/reverter';
 let kakaroto: Signer;
 let karpincho: Signer;
 
+let kakarotoAddress: string;
 let karpinchoAddress: string;
 
 let permissionManagerContract: PermissionManager;
@@ -16,12 +17,14 @@ let permissionItemsContract: PermissionItems;
 let PermissionItemsFactory: ContractFactory;
 let PermissionManagerFactory: ContractFactory;
 
+const karpinchoProxyAddress: string = '0xe3d92305784cfE42433Dbc51CBFD61ee95565D09';
+
 describe('OperationsRegistry', function () {
   const reverter = new Reverter();
 
   before(async () => {
     [, kakaroto, , karpincho] = await ethers.getSigners();
-    [karpinchoAddress] = await Promise.all([karpincho.getAddress()]);
+    [kakarotoAddress, karpinchoAddress] = await Promise.all([kakaroto.getAddress(), karpincho.getAddress()]);
 
     PermissionItemsFactory = await ethers.getContractFactory('PermissionItems');
     permissionItemsContract = (await PermissionItemsFactory.deploy()) as PermissionItems;
@@ -116,23 +119,39 @@ describe('OperationsRegistry', function () {
     });
 
     it('non owner should not be able to call assingTier1', async () => {
-      await expect(permissionManagerContractKakaroto.assingTier1(karpinchoAddress)).to.be.revertedWith(
-        'Ownable: caller is not the owner',
-      );
+      await expect(
+        permissionManagerContractKakaroto.assingTier1(karpinchoAddress, ethers.constants.AddressZero),
+      ).to.be.revertedWith('Ownable: caller is not the owner');
     });
 
-    it('owner should be able to call assingTier1', async () => {
-      await permissionManagerContract.assingTier1(karpinchoAddress);
+    it('owner should be able to call assingTier1 with only user address', async () => {
+      await permissionManagerContract.assingTier1(karpinchoAddress, ethers.constants.AddressZero);
 
       expect(await permissionManagerContract.hasTier1(karpinchoAddress)).to.eq(true);
+    });
+
+    it('owner should be able to call assingTier1 with user address and proxy', async () => {
+      await permissionManagerContract.assingTier1(karpinchoAddress, karpinchoProxyAddress);
+
+      expect(await permissionManagerContract.hasTier1(karpinchoAddress)).to.eq(true);
+      expect(await permissionManagerContract.hasTier1(karpinchoProxyAddress)).to.eq(true);
     });
 
     it('owner should not be able to call assingTier1 for the same user twice', async () => {
-      await permissionManagerContract.assingTier1(karpinchoAddress);
+      await permissionManagerContract.assingTier1(karpinchoAddress, karpinchoProxyAddress);
       expect(await permissionManagerContract.hasTier1(karpinchoAddress)).to.eq(true);
 
-      await expect(permissionManagerContract.assingTier1(karpinchoAddress)).to.be.revertedWith(
-        'PermissionManager: User already has Tier 1 assigned',
+      await expect(permissionManagerContract.assingTier1(karpinchoAddress, karpinchoProxyAddress)).to.be.revertedWith(
+        'PermissionManager: Address already has Tier 1 assigned',
+      );
+    });
+
+    it('owner should not be able to call assingTier1 for the same proxy twice', async () => {
+      await permissionManagerContract.assingTier1(karpinchoAddress, karpinchoProxyAddress);
+      expect(await permissionManagerContract.hasTier1(karpinchoAddress)).to.eq(true);
+
+      await expect(permissionManagerContract.assingTier1(kakarotoAddress, karpinchoProxyAddress)).to.be.revertedWith(
+        'PermissionManager: Proxy already has Tier 1 assigned',
       );
     });
   });
@@ -143,23 +162,39 @@ describe('OperationsRegistry', function () {
     });
 
     it('non owner should not be able to call assingTier2', async () => {
-      await expect(permissionManagerContractKakaroto.assingTier2(karpinchoAddress)).to.be.revertedWith(
-        'Ownable: caller is not the owner',
-      );
+      await expect(
+        permissionManagerContractKakaroto.assingTier2(karpinchoAddress, ethers.constants.AddressZero),
+      ).to.be.revertedWith('Ownable: caller is not the owner');
     });
 
-    it('owner should be able to call assingTier2', async () => {
-      await permissionManagerContract.assingTier2(karpinchoAddress);
+    it('owner should be able to call assingTier2 with only user address', async () => {
+      await permissionManagerContract.assingTier2(karpinchoAddress, ethers.constants.AddressZero);
 
       expect(await permissionManagerContract.hasTier2(karpinchoAddress)).to.eq(true);
+    });
+
+    it('owner should be able to call assingTier2 with user address and proxy', async () => {
+      await permissionManagerContract.assingTier2(karpinchoAddress, karpinchoProxyAddress);
+
+      expect(await permissionManagerContract.hasTier2(karpinchoAddress)).to.eq(true);
+      expect(await permissionManagerContract.hasTier2(karpinchoProxyAddress)).to.eq(true);
     });
 
     it('owner should not be able to call assingTier2 for the same user twice', async () => {
-      await permissionManagerContract.assingTier2(karpinchoAddress);
+      await permissionManagerContract.assingTier2(karpinchoAddress, karpinchoProxyAddress);
       expect(await permissionManagerContract.hasTier2(karpinchoAddress)).to.eq(true);
 
-      await expect(permissionManagerContract.assingTier2(karpinchoAddress)).to.be.revertedWith(
-        'PermissionManager: User already has Tier 2 assigned',
+      await expect(permissionManagerContract.assingTier2(karpinchoAddress, karpinchoProxyAddress)).to.be.revertedWith(
+        'PermissionManager: Address already has Tier 2 assigned',
+      );
+    });
+
+    it('owner should not be able to call assingTier2 for the same proxy twice', async () => {
+      await permissionManagerContract.assingTier2(karpinchoAddress, karpinchoProxyAddress);
+      expect(await permissionManagerContract.hasTier2(karpinchoAddress)).to.eq(true);
+
+      await expect(permissionManagerContract.assingTier2(kakarotoAddress, karpinchoProxyAddress)).to.be.revertedWith(
+        'PermissionManager: Proxy already has Tier 2 assigned',
       );
     });
   });
@@ -170,23 +205,39 @@ describe('OperationsRegistry', function () {
     });
 
     it('non owner should not be able to call suspendUser', async () => {
-      await expect(permissionManagerContractKakaroto.suspendUser(karpinchoAddress)).to.be.revertedWith(
-        'Ownable: caller is not the owner',
-      );
+      await expect(
+        permissionManagerContractKakaroto.suspendUser(karpinchoAddress, ethers.constants.AddressZero),
+      ).to.be.revertedWith('Ownable: caller is not the owner');
     });
 
     it('owner should be able to call suspendUser', async () => {
-      await permissionManagerContract.suspendUser(karpinchoAddress);
+      await permissionManagerContract.suspendUser(karpinchoAddress, ethers.constants.AddressZero);
 
       expect(await permissionManagerContract.isSuspended(karpinchoAddress)).to.eq(true);
     });
 
+    it('owner should be able to call suspendUser for user and proxy', async () => {
+      await permissionManagerContract.suspendUser(karpinchoAddress, karpinchoProxyAddress);
+
+      expect(await permissionManagerContract.isSuspended(karpinchoAddress)).to.eq(true);
+      expect(await permissionManagerContract.isSuspended(karpinchoProxyAddress)).to.eq(true);
+    });
+
     it('owner should not be able to call suspendUser for the same user twice', async () => {
-      await permissionManagerContract.suspendUser(karpinchoAddress);
+      await permissionManagerContract.suspendUser(karpinchoAddress, ethers.constants.AddressZero);
       expect(await permissionManagerContract.isSuspended(karpinchoAddress)).to.eq(true);
 
-      await expect(permissionManagerContract.suspendUser(karpinchoAddress)).to.be.revertedWith(
-        'PermissionManager: User is already suspended',
+      await expect(
+        permissionManagerContract.suspendUser(karpinchoAddress, ethers.constants.AddressZero),
+      ).to.be.revertedWith('PermissionManager: Address is already suspended');
+    });
+
+    it('owner should not be able to call suspendUser for the same proxy twice', async () => {
+      await permissionManagerContract.suspendUser(karpinchoAddress, karpinchoProxyAddress);
+      expect(await permissionManagerContract.isSuspended(karpinchoAddress)).to.eq(true);
+
+      await expect(permissionManagerContract.suspendUser(kakarotoAddress, karpinchoProxyAddress)).to.be.revertedWith(
+        'PermissionManager: Proxy is already suspended',
       );
     });
   });
@@ -195,7 +246,7 @@ describe('OperationsRegistry', function () {
     before('', async () => {
       await reverter.revert();
 
-      await permissionManagerContract.assingTier1(karpinchoAddress);
+      await permissionManagerContract.assingTier1(karpinchoAddress, karpinchoProxyAddress);
 
       await reverter.snapshot();
     });
@@ -205,23 +256,35 @@ describe('OperationsRegistry', function () {
     });
 
     it('non owner should not be able to call revokeTier1', async () => {
-      await expect(permissionManagerContractKakaroto.revokeTier1(karpinchoAddress)).to.be.revertedWith(
-        'Ownable: caller is not the owner',
-      );
+      await expect(
+        permissionManagerContractKakaroto.revokeTier1(karpinchoAddress, karpinchoProxyAddress),
+      ).to.be.revertedWith('Ownable: caller is not the owner');
     });
 
-    it('owner should be able to call revokeTier1', async () => {
-      await permissionManagerContract.revokeTier1(karpinchoAddress);
+    it('owner should be able to call revokeTier1 for user', async () => {
+      await permissionManagerContract.revokeTier1(karpinchoAddress, ethers.constants.AddressZero);
 
       expect(await permissionManagerContract.hasTier1(karpinchoAddress)).to.eq(false);
+      expect(await permissionManagerContract.hasTier1(karpinchoProxyAddress)).to.eq(true);
     });
 
     it('owner should not be able to call revokeTier1 for the same user twice', async () => {
-      await permissionManagerContract.revokeTier1(karpinchoAddress);
+      await permissionManagerContract.revokeTier1(karpinchoAddress, ethers.constants.AddressZero);
       expect(await permissionManagerContract.hasTier1(karpinchoAddress)).to.eq(false);
 
-      await expect(permissionManagerContract.revokeTier1(karpinchoAddress)).to.be.revertedWith(
-        "PermissionManager: User doesn't has Tier 1 assigned",
+      await expect(
+        permissionManagerContract.revokeTier1(karpinchoAddress, ethers.constants.AddressZero),
+      ).to.be.revertedWith("PermissionManager: Address doesn't has Tier 1 assigned");
+    });
+
+    it('owner should not be able to call revokeTier1 for the same proxy twice', async () => {
+      await permissionManagerContract.revokeTier1(karpinchoAddress, karpinchoProxyAddress);
+      expect(await permissionManagerContract.hasTier1(karpinchoAddress)).to.eq(false);
+      expect(await permissionManagerContract.hasTier1(karpinchoProxyAddress)).to.eq(false);
+
+      await permissionManagerContract.assingTier1(kakarotoAddress, ethers.constants.AddressZero);
+      await expect(permissionManagerContract.revokeTier1(kakarotoAddress, karpinchoProxyAddress)).to.be.revertedWith(
+        "PermissionManager: Proxy doesn't has Tier 1 assigned",
       );
     });
   });
@@ -230,7 +293,7 @@ describe('OperationsRegistry', function () {
     before('', async () => {
       await reverter.revert();
 
-      await permissionManagerContract.assingTier2(karpinchoAddress);
+      await permissionManagerContract.assingTier2(karpinchoAddress, karpinchoProxyAddress);
 
       await reverter.snapshot();
     });
@@ -240,58 +303,35 @@ describe('OperationsRegistry', function () {
     });
 
     it('non owner should not be able to call revokeTier2', async () => {
-      await expect(permissionManagerContractKakaroto.revokeTier2(karpinchoAddress)).to.be.revertedWith(
-        'Ownable: caller is not the owner',
-      );
+      await expect(
+        permissionManagerContractKakaroto.revokeTier2(karpinchoAddress, karpinchoProxyAddress),
+      ).to.be.revertedWith('Ownable: caller is not the owner');
     });
 
-    it('owner should be able to call revokeTier2', async () => {
-      await permissionManagerContract.revokeTier2(karpinchoAddress);
+    it('owner should be able to call revokeTier2 for user', async () => {
+      await permissionManagerContract.revokeTier2(karpinchoAddress, ethers.constants.AddressZero);
 
       expect(await permissionManagerContract.hasTier2(karpinchoAddress)).to.eq(false);
+      expect(await permissionManagerContract.hasTier2(karpinchoProxyAddress)).to.eq(true);
     });
 
     it('owner should not be able to call revokeTier2 for the same user twice', async () => {
-      await permissionManagerContract.revokeTier2(karpinchoAddress);
+      await permissionManagerContract.revokeTier2(karpinchoAddress, ethers.constants.AddressZero);
       expect(await permissionManagerContract.hasTier2(karpinchoAddress)).to.eq(false);
 
-      await expect(permissionManagerContract.revokeTier2(karpinchoAddress)).to.be.revertedWith(
-        "PermissionManager: User doesn't has Tier 2 assigned",
-      );
-    });
-  });
-
-  describe('#unsuspendUser', () => {
-    before('', async () => {
-      await reverter.revert();
-
-      await permissionManagerContract.suspendUser(karpinchoAddress);
-
-      await reverter.snapshot();
+      await expect(
+        permissionManagerContract.revokeTier2(karpinchoAddress, ethers.constants.AddressZero),
+      ).to.be.revertedWith("PermissionManager: Address doesn't has Tier 2 assigned");
     });
 
-    beforeEach(async () => {
-      await reverter.revert();
-    });
+    it('owner should not be able to call revokeTier2 for the same proxy twice', async () => {
+      await permissionManagerContract.revokeTier2(karpinchoAddress, karpinchoProxyAddress);
+      expect(await permissionManagerContract.hasTier2(karpinchoAddress)).to.eq(false);
+      expect(await permissionManagerContract.hasTier2(karpinchoProxyAddress)).to.eq(false);
 
-    it('non owner should not be able to call unsuspendUser', async () => {
-      await expect(permissionManagerContractKakaroto.unsuspendUser(karpinchoAddress)).to.be.revertedWith(
-        'Ownable: caller is not the owner',
-      );
-    });
-
-    it('owner should be able to call unsuspendUser', async () => {
-      await permissionManagerContract.unsuspendUser(karpinchoAddress);
-
-      expect(await permissionManagerContract.isSuspended(karpinchoAddress)).to.eq(false);
-    });
-
-    it('owner should not be able to call unsuspendUser for the same user twice', async () => {
-      await permissionManagerContract.unsuspendUser(karpinchoAddress);
-      expect(await permissionManagerContract.isSuspended(karpinchoAddress)).to.eq(false);
-
-      await expect(permissionManagerContract.unsuspendUser(karpinchoAddress)).to.be.revertedWith(
-        'PermissionManager: User is not currently suspended',
+      await permissionManagerContract.assingTier2(kakarotoAddress, ethers.constants.AddressZero);
+      await expect(permissionManagerContract.revokeTier2(kakarotoAddress, karpinchoProxyAddress)).to.be.revertedWith(
+        "PermissionManager: Proxy doesn't has Tier 2 assigned",
       );
     });
   });

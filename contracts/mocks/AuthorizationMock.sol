@@ -3,6 +3,8 @@ pragma solidity ^0.7.0;
 
 import "../authorization/IAuthorization.sol";
 
+import "hardhat/console.sol";
+
 contract AuthorizationMock is IAuthorization {
     bool public authorized;
 
