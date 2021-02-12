@@ -69,6 +69,7 @@ contract XTokenWrapper is AccessControl {
         }
 
         uint256 amount = _token != ETH_TOKEN_ADDRESS ? _amount : msg.value;
+
         require(amount > 0, "amount to wrap should be positive");
 
         // Mint - if user is calling this through its CPK then the xTokens are sended to the CPK

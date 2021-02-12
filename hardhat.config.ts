@@ -44,6 +44,7 @@ if (process.env.FORK_RPC_URL) {
     chainId: chainIds.hardhat,
     forking: {
       url: process.env.FORK_RPC_URL,
+      blockNumber: 11843408,
     },
     gas: 'auto',
     throwOnCallFailures: false,
