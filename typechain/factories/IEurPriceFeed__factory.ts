@@ -60,4 +60,40 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_asset",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_feed",
+        type: "address",
+      },
+    ],
+    name: "setAssetFeed",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "_assets",
+        type: "address[]",
+      },
+      {
+        internalType: "address[]",
+        name: "_feeds",
+        type: "address[]",
+      },
+    ],
+    name: "setAssetsFeeds",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];

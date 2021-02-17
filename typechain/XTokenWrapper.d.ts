@@ -34,6 +34,7 @@ interface XTokenWrapperInterface extends ethers.utils.Interface {
     "registerToken(address,address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
+    "setRegistryManager(address)": FunctionFragment;
     "tokenToXToken(address)": FunctionFragment;
     "unwrap(address,uint256)": FunctionFragment;
     "wrap(address,uint256)": FunctionFragment;
@@ -83,6 +84,10 @@ interface XTokenWrapperInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "revokeRole",
     values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setRegistryManager",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "tokenToXToken",
@@ -136,6 +141,10 @@ interface XTokenWrapperInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setRegistryManager",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "tokenToXToken",
     data: BytesLike
@@ -272,6 +281,16 @@ export class XTokenWrapper extends Contract {
     "revokeRole(bytes32,address)"(
       role: BytesLike,
       account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setRegistryManager(
+      _registryManager: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setRegistryManager(address)"(
+      _registryManager: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -415,6 +434,16 @@ export class XTokenWrapper extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  setRegistryManager(
+    _registryManager: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setRegistryManager(address)"(
+    _registryManager: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   tokenToXToken(arg0: string, overrides?: CallOverrides): Promise<string>;
 
   "tokenToXToken(address)"(
@@ -552,6 +581,16 @@ export class XTokenWrapper extends Contract {
     "revokeRole(bytes32,address)"(
       role: BytesLike,
       account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setRegistryManager(
+      _registryManager: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setRegistryManager(address)"(
+      _registryManager: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -721,6 +760,16 @@ export class XTokenWrapper extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    setRegistryManager(
+      _registryManager: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setRegistryManager(address)"(
+      _registryManager: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     tokenToXToken(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "tokenToXToken(address)"(
@@ -872,6 +921,16 @@ export class XTokenWrapper extends Contract {
     "revokeRole(bytes32,address)"(
       role: BytesLike,
       account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setRegistryManager(
+      _registryManager: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setRegistryManager(address)"(
+      _registryManager: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 

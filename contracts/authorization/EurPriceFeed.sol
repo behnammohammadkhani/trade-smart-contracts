@@ -2,7 +2,7 @@
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol";
 
 import "./IEurPriceFeed.sol";
@@ -19,8 +19,10 @@ interface IDecimals {
  * @dev Contract module to retrieve EUR price per asset.
  *
  */
-contract EurPriceFeed is IEurPriceFeed, Ownable {
+contract EurPriceFeed is IEurPriceFeed, AccessControl {
     using SafeMath for uint256;
+
+    bytes32 public constant FEEDS_MANAGER_ROLE = keccak256("FEEDS_MANAGER_ROLE");
 
     /// @dev mapping between an asset and its feed. It returs how many USD is 1eAssetDecimal asset.
     mapping(address => address) public assetEthFeed;
@@ -49,7 +51,7 @@ contract EurPriceFeed is IEurPriceFeed, Ownable {
     /**
      * @dev Sets the values for {eurUsdFeed}, {ethUsdFeed} and {assetUsdFeed}.
      *
-     * Sets ownership to the account that deploys the contract.
+     * Grants the contract deployer the default admin role.
      *
      */
     constructor(
@@ -67,7 +69,28 @@ contract EurPriceFeed is IEurPriceFeed, Ownable {
         ethUsdFeed = _ethUsdFeed;
         emit EthUsdFeedSetted(_ethUsdFeed);
 
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+
         _setAssetsFeeds(_assets, _feeds);
+    }
+
+    /**
+     * @dev Throws if called by some address with FEEDS_MANAGER_ROLE.
+     */
+    modifier onlyFeedsManager() {
+        require(hasRole(FEEDS_MANAGER_ROLE, _msgSender()), "must have feeds manager role");
+        _;
+    }
+
+    /**
+     * @dev Grants FEEDS_MANAGER_ROLE to `_account`.
+     *
+     * Requirements:
+     *
+     * - the caller must have ``role``'s admin role.
+     */
+    function setFeedsManager(address _account) external {
+        grantRole(FEEDS_MANAGER_ROLE, _account);
     }
 
     /**
@@ -80,7 +103,7 @@ contract EurPriceFeed is IEurPriceFeed, Ownable {
      *
      * @param _eurUsdFeed The address of the new ERU/USD feed.
      */
-    function setEurUsdFeed(address _eurUsdFeed) public onlyOwner {
+    function setEurUsdFeed(address _eurUsdFeed) public onlyFeedsManager {
         require(_eurUsdFeed != address(0), "eur/usd price feed is the zero address");
         emit EurUsdFeedSetted(_eurUsdFeed);
         eurUsdFeed = _eurUsdFeed;
@@ -96,7 +119,7 @@ contract EurPriceFeed is IEurPriceFeed, Ownable {
      *
      * @param _ethUsdFeed The address of the new ERU/USD feed.
      */
-    function setEthUsdFeed(address _ethUsdFeed) public onlyOwner {
+    function setEthUsdFeed(address _ethUsdFeed) public onlyFeedsManager {
         require(_ethUsdFeed != address(0), "eth/usd price feed is the zero address");
         emit EthUsdFeedSetted(_ethUsdFeed);
         ethUsdFeed = _ethUsdFeed;
@@ -115,8 +138,24 @@ contract EurPriceFeed is IEurPriceFeed, Ownable {
      * @param _assets Array of assets addresses.
      * @param _feeds Array of asset/ETH price feeds.
      */
-    function setAssetsFeeds(address[] memory _assets, address[] memory _feeds) external onlyOwner {
+    function setAssetsFeeds(address[] memory _assets, address[] memory _feeds) external override onlyFeedsManager {
         _setAssetsFeeds(_assets, _feeds);
+    }
+
+    /**
+     * @dev Sets feed addresses for a given assets.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - `_asset` should not be the zero address .
+     * - `_feed` should not be the zero address .
+     *
+     * @param _asset Asset address.
+     * @param _feed Asset/ETH price feed.
+     */
+    function setAssetFeed(address _asset, address _feed) external override onlyFeedsManager {
+        _setAssetFeed(_asset, _feed);
     }
 
     /**
@@ -148,11 +187,15 @@ contract EurPriceFeed is IEurPriceFeed, Ownable {
         require(_assets.length == _feeds.length, "assets and feeds lengths not match");
 
         for (uint256 i = 0; i < _assets.length; i++) {
-            require(_assets[i] != address(0), "asset is the zero address");
-            require(_feeds[i] != address(0), "asset feed is the zero address");
-            emit AssetEthFeedSetted(_assets[i], _feeds[i]);
-            assetEthFeed[_assets[i]] = _feeds[i];
+            _setAssetFeed(_assets[i], _feeds[i]);
         }
+    }
+
+    function _setAssetFeed(address _asset, address _feed) internal {
+        require(_asset != address(0), "asset is the zero address");
+        require(_feed != address(0), "asset feed is the zero address");
+        emit AssetEthFeedSetted(_asset, _feed);
+        assetEthFeed[_asset] = _feed;
     }
 
     /**

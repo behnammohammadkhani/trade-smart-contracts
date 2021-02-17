@@ -41,8 +41,18 @@ contract XTokenWrapper is AccessControl {
      * @dev Grants the contract deployer the default admin role.
      *
      */
-    constructor(address _registryManager) public {
+    constructor() public {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    }
+
+    /**
+     * @dev Grants REGISTRY_MANAGER_ROLE to `_registryManager`.
+     *
+     * Requirements:
+     *
+     * - the caller must have ``role``'s admin role.
+     */
+    function setRegistryManager(address _registryManager) external {
         grantRole(REGISTRY_MANAGER_ROLE, _registryManager);
     }
 

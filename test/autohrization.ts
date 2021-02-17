@@ -67,6 +67,9 @@ describe('Authorization', function () {
     operationsRegistryContract = (await OperationsRegistry.deploy(eurPriceFeedContract.address)) as OperationsRegistry;
     await operationsRegistryContract.deployed();
 
+    await (await operationsRegistryContract.setAssetsManager(deployerAddress)).wait();
+    await (await operationsRegistryContract.setFeedManager(deployerAddress)).wait();
+
     authorizationContract = (await upgrades.deployProxy(Authorization, [
       permissionsContract.address,
       eurPriceFeedContract.address,

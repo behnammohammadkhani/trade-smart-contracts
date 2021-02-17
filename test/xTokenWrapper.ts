@@ -14,12 +14,12 @@ import {
 } from '../typechain';
 import Reverter from './utils/reverter';
 
-// let deployer: Signer;
+let deployer: Signer;
 let kakaroto: Signer;
 // let vegeta: Signer;
 let karpincho: Signer;
 
-// let deployerAddress: string;
+let deployerAddress: string;
 let kakarotoAddress: string;
 // let vegetaAddress: string;
 let karpinchoAddress: string;
@@ -49,6 +49,7 @@ let usdcToken: ERC20Detailed;
 let daiToken: ERC20Detailed;
 let daiTokenKakaroto: ERC20Detailed;
 
+let DEFAULT_ADMIN_ROLE: string;
 let REGISTRY_MANAGER_ROLE: string;
 let ETH_TOKEN_ADDRESS: string;
 
@@ -58,14 +59,14 @@ describe('xTokenWrapper', function () {
   const reverter = new Reverter();
 
   before(async () => {
-    [, kakaroto, , karpincho] = await ethers.getSigners();
+    [deployer, kakaroto, , karpincho] = await ethers.getSigners();
     [
-      //deployerAddress,
+      deployerAddress,
       kakarotoAddress,
       // vegetaAddress,
       karpinchoAddress,
     ] = await Promise.all([
-      //deployer.getAddress(),
+      deployer.getAddress(),
       kakaroto.getAddress(),
       // vegeta.getAddress(),
       karpincho.getAddress(),
@@ -123,7 +124,7 @@ describe('xTokenWrapper', function () {
     // xTokenDaiContractVegeta = xTokenDaiContract.connect(vegeta);
     // xTokenDaiContractKarpincho = xTokenDaiContract.connect(karpincho);
 
-    xTokenWrapperContract = (await XTokenWrapperFactory.deploy(karpinchoAddress)) as XTokenWrapper;
+    xTokenWrapperContract = (await XTokenWrapperFactory.deploy()) as XTokenWrapper;
     await xTokenWrapperContract.deployed();
 
     ETH_TOKEN_ADDRESS = await xTokenWrapperContract.ETH_TOKEN_ADDRESS();
@@ -143,7 +144,23 @@ describe('xTokenWrapper', function () {
 
   describe('Deployment', () => {
     it('should set admin and registry manager', async () => {
+      DEFAULT_ADMIN_ROLE = await xTokenWrapperContract.DEFAULT_ADMIN_ROLE();
+
+      expect(await xTokenWrapperContract.hasRole(DEFAULT_ADMIN_ROLE, deployerAddress)).to.equal(true);
+    });
+  });
+
+  describe('#setRegistryManager', () => {
+    it('non admin should not be able to set registry manager', async () => {
+      await expect(xTokenWrapperContractKakaroto.setRegistryManager(karpinchoAddress)).to.be.revertedWith(
+        'AccessControl: sender must be an admin to grant',
+      );
+    });
+
+    it('admin should be able to register  set registry manager', async () => {
       REGISTRY_MANAGER_ROLE = await xTokenWrapperContract.REGISTRY_MANAGER_ROLE();
+
+      await xTokenWrapperContract.setRegistryManager(karpinchoAddress);
 
       expect(await xTokenWrapperContract.hasRole(REGISTRY_MANAGER_ROLE, karpinchoAddress)).to.equal(true);
     });
@@ -263,7 +280,7 @@ describe('xTokenWrapper', function () {
   describe('#unwrap', () => {
     let unRegisteredXToken: XToken;
     before(async () => {
-      const xTokenFactory = await ethers.getContractFactory('XToken');
+      const xTokenFactory = await ethers.getContractFactory('XToken', karpincho);
 
       unRegisteredXToken = (await xTokenFactory.deploy(
         'some x token',
