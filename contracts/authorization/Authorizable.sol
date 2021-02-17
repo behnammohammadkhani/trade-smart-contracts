@@ -26,7 +26,7 @@ abstract contract Authorizable is Context {
     modifier onlyAuthorized() {
         // It uses tx.origin because user may use a CPK for interacting with the protocol
         require(
-            // solium-disable-next-line security/no-tx-origin
+            // solhint-disable-next-line avoid-tx-origin
             authorization.isAuthorized(tx.origin, address(this), msg.sig, _msgData()),
             "Authorizable: not authorized"
         );

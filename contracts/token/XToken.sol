@@ -175,7 +175,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
         super.transfer(recipient, amount);
 
         // It uses tx.origin because user may use a CPK for interacting with the protocol
-        // solium-disable-next-line security/no-tx-origin
+        // solhint-disable-next-line avoid-tx-origin
         operationsRegistry.addTrade(tx.origin, msg.sig, amount);
         return true;
     }
@@ -223,7 +223,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
         _mint(account, amount);
 
         // It uses tx.origin because user may use a CPK for interacting with the protocol
-        // solium-disable-next-line security/no-tx-origin
+        // solhint-disable-next-line avoid-tx-origin
         operationsRegistry.addTrade(tx.origin, msg.sig, amount);
     }
 
@@ -246,7 +246,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
         _burn(account, amount);
 
         // It uses tx.origin because user may use a CPK for interacting with the protocol
-        // solium-disable-next-line security/no-tx-origin
+        // solhint-disable-next-line avoid-tx-origin
         operationsRegistry.addTrade(tx.origin, msg.sig, amount);
     }
 }

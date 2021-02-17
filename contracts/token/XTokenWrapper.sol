@@ -64,7 +64,7 @@ contract XTokenWrapper is AccessControl {
             // It uses tx.origin because user may use a CPK for interacting with the protocol.
             // This way it saves having to transfer first the tokens to the CPK
 
-            // solium-disable-next-line security/no-tx-origin
+            // solhint-disable-next-line avoid-tx-origin
             IERC20(_token).safeTransferFrom(tx.origin, address(this), _amount);
         }
 
@@ -91,10 +91,10 @@ contract XTokenWrapper is AccessControl {
         // It uses tx.origin because user may use a CPK for interacting with the
         // protocol so collateral is sended to the user
         if (tokenAddress != ETH_TOKEN_ADDRESS) {
-            // solium-disable-next-line security/no-tx-origin
+            // solhint-disable-next-line avoid-tx-origin
             IERC20(tokenAddress).safeTransfer(tx.origin, _amount);
         } else {
-            // solium-disable-next-line security/no-tx-origin
+            // solhint-disable-next-line
             (bool sent, ) = tx.origin.call{ value: _amount }("");
             require(sent, "Failed to send Ether");
         }
