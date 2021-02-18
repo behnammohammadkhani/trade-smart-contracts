@@ -46,6 +46,18 @@ contract XTokenWrapper is AccessControl {
         grantRole(REGISTRY_MANAGER_ROLE, _registryManager);
     }
 
+    /**
+     * @dev Registers a new xToken associated to the ERC20 which it will be wrapping.
+     *
+     * Requirements:
+     *
+     * - the caller must have REGISTRY_MANAGER_ROLE.
+     * - `_token` cannot be the zero address.
+     * - `_xToken` cannot be the zero address.
+     *
+     * @param _token The address of the ERC20 being wrapped.
+     * @param _xToken The address of xToken.
+     */
     function registerToken(address _token, address _xToken) external {
         require(hasRole(REGISTRY_MANAGER_ROLE, _msgSender()), "must have registry manager role");
         require(_token != address(0), "token is the zero address");
@@ -56,6 +68,21 @@ contract XTokenWrapper is AccessControl {
         xTokenToToken[_xToken] = _token;
     }
 
+    /**
+     * @dev Wraps `_token` into its associated xToken.
+     *
+     * It requires prior approval.
+     * It gets the ERC20 (or ETH) amount from the tx.origin and send the xToken to the msg.sender
+     * allowing the use a UserProxy.
+     *
+     * Requirements:
+     *
+     * - `_token` should be registered.
+     *
+     * @param _token The address of the ERC20 being wrapped.
+     *               {ETH_TOKEN_ADDRESS} in case of wrapping ETH
+     * @param _amount The amount to wrap.
+     */
     function wrap(address _token, uint256 _amount) external payable returns (bool) {
         address xTokenAddress = tokenToXToken[_token];
         require(xTokenAddress != address(0), "token is not registered");
@@ -79,6 +106,20 @@ contract XTokenWrapper is AccessControl {
         return true;
     }
 
+    /**
+     * @dev Unwraps `_xToken`.
+     *
+     * It burns the xToken amount from the msg.sender and sends the associated ERC20 (or ETH)
+     * to the tx.origin allowing the use a UserProxy.
+     *
+     * Requirements:
+     *
+     * - `_xToken` should be registered.
+     * - `_amonut` should be gt 0.
+     *
+     * @param _xToken The address of the ERC20 being wrapped.
+     * @param _amount The amount to unwrap.
+     */
     function unwrap(address _xToken, uint256 _amount) external returns (bool) {
         address tokenAddress = xTokenToToken[_xToken];
         require(tokenAddress != address(0), "xToken is not registered");
