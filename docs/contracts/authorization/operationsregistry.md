@@ -6,9 +6,15 @@ Contract module to keep track of the EUR amount being tradded for each user by o
 
 - `onlyAllowedAsset()`
 
+- `onlyAssetsManager()`
+
 ## Functions:
 
 - `constructor(address _eurPriceFeed) (public)`
+
+- `setFeedManager(address _account) (external)`
+
+- `setAssetsManager(address _account) (external)`
 
 - `setEurPriceFeed(address _eurPriceFeed) (public)`
 
@@ -30,11 +36,31 @@ Contract module to keep track of the EUR amount being tradded for each user by o
 
 Throws if called by any asset not allowed.
 
+### Modifier `onlyAssetsManager()`
+
+Throws if called by some address with ASSETS_MANAGER_ROLE.
+
 ### Function `constructor(address _eurPriceFeed) public`
 
 Sets the values for {eurPriceFeed}.
 
-Sets ownership to the account that deploys the contract.
+Grants the contract deployer the default admin role.
+
+### Function `setFeedManager(address _account) external`
+
+Grants FEED_MANAGER_ROLE to `_account`.
+
+Requirements:
+
+- the caller must have ``role``'s admin role.
+
+### Function `setAssetsManager(address _account) external`
+
+Grants ASSETS_MANAGER_ROLE to `_account`.
+
+Requirements:
+
+- the caller must have ``role``'s admin role.
 
 ### Function `setEurPriceFeed(address _eurPriceFeed) → bool public`
 
@@ -42,7 +68,7 @@ Sets `_eurPriceFeed` as the new EUR Price feed module.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have FEED_MANAGER_ROLE.
 
 - `_eurPriceFeed` should not be the zero address.
 
@@ -56,7 +82,7 @@ Sets `_asset` as allowed for calling `addTrade`.
 
 Requirements:
 
-- the caller mustbe the owner.
+- the caller must have ASSETS_MANAGER.
 
 - `_asset` should not be the zero address.
 
