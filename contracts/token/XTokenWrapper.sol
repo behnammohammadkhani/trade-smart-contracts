@@ -56,6 +56,18 @@ contract XTokenWrapper is AccessControl {
         grantRole(REGISTRY_MANAGER_ROLE, _registryManager);
     }
 
+    /**
+     * @dev Registers a new xToken associated to the ERC20 which it will be wrapping.
+     *
+     * Requirements:
+     *
+     * - the caller must have REGISTRY_MANAGER_ROLE.
+     * - `_token` cannot be the zero address.
+     * - `_xToken` cannot be the zero address.
+     *
+     * @param _token The address of the ERC20 being wrapped.
+     * @param _xToken The address of xToken.
+     */
     function registerToken(address _token, address _xToken) external {
         require(hasRole(REGISTRY_MANAGER_ROLE, _msgSender()), "must have registry manager role");
         require(_token != address(0), "token is the zero address");
@@ -66,16 +78,25 @@ contract XTokenWrapper is AccessControl {
         xTokenToToken[_xToken] = _token;
     }
 
+    /**
+     * @dev Wraps `_token` into its associated xToken.
+     *
+     * It requires prior approval.
+     *
+     * Requirements:
+     *
+     * - `_token` should be registered.
+     *
+     * @param _token The address of the ERC20 being wrapped.
+     *               {ETH_TOKEN_ADDRESS} in case of wrapping ETH
+     * @param _amount The amount to wrap.
+     */
     function wrap(address _token, uint256 _amount) external payable returns (bool) {
         address xTokenAddress = tokenToXToken[_token];
         require(xTokenAddress != address(0), "token is not registered");
 
         if (_token != ETH_TOKEN_ADDRESS) {
-            // It uses tx.origin because user may use a CPK for interacting with the protocol.
-            // This way it saves having to transfer first the tokens to the CPK
-
-            // solhint-disable-next-line avoid-tx-origin
-            IERC20(_token).safeTransferFrom(tx.origin, address(this), _amount);
+            IERC20(_token).safeTransferFrom(_msgSender(), address(this), _amount);
         }
 
         uint256 amount = _token != ETH_TOKEN_ADDRESS ? _amount : msg.value;
@@ -89,6 +110,17 @@ contract XTokenWrapper is AccessControl {
         return true;
     }
 
+    /**
+     * @dev Unwraps `_xToken`.
+     *
+     * Requirements:
+     *
+     * - `_xToken` should be registered.
+     * - `_amonut` should be gt 0.
+     *
+     * @param _xToken The address of the ERC20 being wrapped.
+     * @param _amount The amount to unwrap.
+     */
     function unwrap(address _xToken, uint256 _amount) external returns (bool) {
         address tokenAddress = xTokenToToken[_xToken];
         require(tokenAddress != address(0), "xToken is not registered");
@@ -98,11 +130,8 @@ contract XTokenWrapper is AccessControl {
         // but user address is used for authorizing the operation
         IXToken(_xToken).burnFrom(_msgSender(), _amount);
 
-        // It uses tx.origin because user may use a CPK for interacting with the
-        // protocol so collateral is sended to the user
         if (tokenAddress != ETH_TOKEN_ADDRESS) {
-            // solhint-disable-next-line avoid-tx-origin
-            IERC20(tokenAddress).safeTransfer(tx.origin, _amount);
+            IERC20(tokenAddress).safeTransfer(_msgSender(), _amount);
         } else {
             // solhint-disable-next-line
             (bool sent, ) = tx.origin.call{ value: _amount }("");

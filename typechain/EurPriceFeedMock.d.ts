@@ -93,26 +93,26 @@ export class EurPriceFeedMock extends Contract {
     ): Promise<ContractTransaction>;
 
     setAssetFeed(
-      _asset: string,
-      _feed: string,
+      arg0: string,
+      arg1: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setAssetFeed(address,address)"(
-      _asset: string,
-      _feed: string,
+      arg0: string,
+      arg1: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setAssetsFeeds(
-      _assets: string[],
-      _feeds: string[],
+      arg0: string[],
+      arg1: string[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setAssetsFeeds(address[],address[])"(
-      _assets: string[],
-      _feeds: string[],
+      arg0: string[],
+      arg1: string[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
@@ -137,26 +137,26 @@ export class EurPriceFeedMock extends Contract {
   ): Promise<ContractTransaction>;
 
   setAssetFeed(
-    _asset: string,
-    _feed: string,
+    arg0: string,
+    arg1: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setAssetFeed(address,address)"(
-    _asset: string,
-    _feed: string,
+    arg0: string,
+    arg1: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setAssetsFeeds(
-    _assets: string[],
-    _feeds: string[],
+    arg0: string[],
+    arg1: string[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setAssetsFeeds(address[],address[])"(
-    _assets: string[],
-    _feeds: string[],
+    arg0: string[],
+    arg1: string[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -181,26 +181,26 @@ export class EurPriceFeedMock extends Contract {
     ): Promise<BigNumber>;
 
     setAssetFeed(
-      _asset: string,
-      _feed: string,
+      arg0: string,
+      arg1: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "setAssetFeed(address,address)"(
-      _asset: string,
-      _feed: string,
+      arg0: string,
+      arg1: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setAssetsFeeds(
-      _assets: string[],
-      _feeds: string[],
+      arg0: string[],
+      arg1: string[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     "setAssetsFeeds(address[],address[])"(
-      _assets: string[],
-      _feeds: string[],
+      arg0: string[],
+      arg1: string[],
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -228,26 +228,26 @@ export class EurPriceFeedMock extends Contract {
     ): Promise<BigNumber>;
 
     setAssetFeed(
-      _asset: string,
-      _feed: string,
+      arg0: string,
+      arg1: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setAssetFeed(address,address)"(
-      _asset: string,
-      _feed: string,
+      arg0: string,
+      arg1: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     setAssetsFeeds(
-      _assets: string[],
-      _feeds: string[],
+      arg0: string[],
+      arg1: string[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setAssetsFeeds(address[],address[])"(
-      _assets: string[],
-      _feeds: string[],
+      arg0: string[],
+      arg1: string[],
       overrides?: Overrides
     ): Promise<BigNumber>;
   };
@@ -276,26 +276,26 @@ export class EurPriceFeedMock extends Contract {
     ): Promise<PopulatedTransaction>;
 
     setAssetFeed(
-      _asset: string,
-      _feed: string,
+      arg0: string,
+      arg1: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setAssetFeed(address,address)"(
-      _asset: string,
-      _feed: string,
+      arg0: string,
+      arg1: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setAssetsFeeds(
-      _assets: string[],
-      _feeds: string[],
+      arg0: string[],
+      arg1: string[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setAssetsFeeds(address[],address[])"(
-      _assets: string[],
-      _feeds: string[],
+      arg0: string[],
+      arg1: string[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };

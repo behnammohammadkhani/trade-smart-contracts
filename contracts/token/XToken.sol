@@ -95,7 +95,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have ``role``'s admin role.
      * - the contract must not be paused.
      */
     function pause() public onlyAdmin {
@@ -107,7 +107,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have ``role``'s admin role.
      * - the contract must be paused.
      */
     function unpause() public onlyAdmin {
@@ -119,7 +119,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have ``role``'s admin role.
      */
     function setAuthorization(address authorization_) public onlyAdmin {
         _setAuthorization(authorization_);
@@ -130,7 +130,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have ``role``'s admin role.
      */
     function setOperationsRegistry(address operationsRegistry_) public onlyAdmin {
         require(operationsRegistry_ != address(0), "operationsRegistry is the zero address");
@@ -143,7 +143,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have ``role``'s admin role.
      */
     function setKya(string memory kya_) public onlyAdmin {
         _setKya(kya_);
@@ -215,7 +215,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have WRAPPER_ROLE.
      * - the operation should be authorized.
      * - `to` cannot be the zero address.
      */
@@ -237,7 +237,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have WRAPPER_ROLE.
      * - the operation should be authorized.
      * - `account` cannot be the zero address.
      * - `account` must have at least `amount` tokens.

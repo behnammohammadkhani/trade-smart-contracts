@@ -393,7 +393,29 @@ describe('xTokenWrapper', function () {
       });
 
       it('should not be able to wrap a non registered token', async () => {
-        const usdcBefore = await usdcToken.balanceOf(kakarotoAddress);
+        await usdcToken.approve(cpkKakaroto.address, ethers.constants.MaxUint256);
+
+        const execTransferFromTx = await cpkKakaroto.execTransactions([
+          {
+            operation: CPK.CALL,
+            value: '0',
+            to: usdcToken.address,
+            data: usdcToken.interface.encodeFunctionData('transferFrom', [kakarotoAddress, cpkKakaroto.address, '1']),
+          },
+        ]);
+        await execTransferFromTx.transactionResponse?.wait();
+
+        const usdcBalanceBefore = await usdcToken.balanceOf(cpkKakaroto.address);
+
+        const execApproveTx = await cpkKakaroto.execTransactions([
+          {
+            operation: CPK.CALL,
+            value: '0',
+            to: usdcToken.address,
+            data: usdcToken.interface.encodeFunctionData('approve', [xTokenWrapperContractKakaroto.address, '1']),
+          },
+        ]);
+        await execApproveTx.transactionResponse?.wait();
 
         const execTx = await cpkKakaroto.execTransactions([
           {
@@ -406,32 +428,36 @@ describe('xTokenWrapper', function () {
 
         await execTx.transactionResponse?.wait();
 
-        expect(await usdcToken.balanceOf(kakarotoAddress)).to.eq(usdcBefore);
-      });
-
-      it('should not be able to wrap a registered ERC20 token before approving the wrapper', async () => {
-        const daiBefore = await daiToken.balanceOf(kakarotoAddress);
-
-        const execTx = await cpkKakaroto.execTransactions([
-          {
-            operation: CPK.CALL,
-            value: '0',
-            to: xTokenWrapperContractKakaroto.address,
-            data: xTokenWrapperContractKakaroto.interface.encodeFunctionData('wrap', [daiToken.address, '1']),
-          },
-        ]);
-
-        await execTx.transactionResponse?.wait();
-
-        expect(await daiToken.balanceOf(kakarotoAddress)).to.eq(daiBefore);
+        expect(await usdcToken.balanceOf(cpkKakaroto.address)).to.eq(usdcBalanceBefore);
       });
 
       it('should not be able to wrap a registered ERC20 token if it is not authorized', async () => {
         await authorizationContract.setAuthorized(false);
 
-        await daiTokenKakaroto.approve(xTokenWrapperContract.address, ethers.constants.MaxUint256);
+        await daiTokenKakaroto.approve(cpkKakaroto.address, ethers.constants.MaxUint256);
 
-        const daiBefore = await daiToken.balanceOf(kakarotoAddress);
+        const execTransferFromTx = await cpkKakaroto.execTransactions([
+          {
+            operation: CPK.CALL,
+            value: '0',
+            to: daiToken.address,
+            data: daiToken.interface.encodeFunctionData('transferFrom', [kakarotoAddress, cpkKakaroto.address, '1']),
+          },
+        ]);
+        await execTransferFromTx.transactionResponse?.wait();
+
+        const daiBalanceBefore = await daiToken.balanceOf(cpkKakaroto.address);
+        const xDaiBalanceBefore = await xTokenDaiContract.balanceOf(cpkKakaroto.address);
+
+        const execApproveTx = await cpkKakaroto.execTransactions([
+          {
+            operation: CPK.CALL,
+            value: '0',
+            to: daiToken.address,
+            data: daiToken.interface.encodeFunctionData('approve', [xTokenWrapperContractKakaroto.address, '1']),
+          },
+        ]);
+        await execApproveTx.transactionResponse?.wait();
 
         const execTx = await cpkKakaroto.execTransactions([
           {
@@ -444,14 +470,35 @@ describe('xTokenWrapper', function () {
 
         await execTx.transactionResponse?.wait();
 
-        expect(await daiToken.balanceOf(kakarotoAddress)).to.eq(daiBefore);
+        expect(await daiToken.balanceOf(cpkKakaroto.address)).to.eq(daiBalanceBefore);
+        expect(await xTokenDaiContract.balanceOf(cpkKakaroto.address)).to.eq(xDaiBalanceBefore);
       });
 
       it('should be able to wrap a registered ERC20 token', async () => {
-        const daiBalanceBefore = await daiToken.balanceOf(kakarotoAddress);
+        await daiTokenKakaroto.approve(cpkKakaroto.address, ethers.constants.MaxUint256);
+
+        const execTransferFromTx = await cpkKakaroto.execTransactions([
+          {
+            operation: CPK.CALL,
+            value: '0',
+            to: daiToken.address,
+            data: daiToken.interface.encodeFunctionData('transferFrom', [kakarotoAddress, cpkKakaroto.address, '1']),
+          },
+        ]);
+        await execTransferFromTx.transactionResponse?.wait();
+
+        const daiBalanceBefore = await daiToken.balanceOf(cpkKakaroto.address);
         const xDaiBalanceBefore = await xTokenDaiContract.balanceOf(cpkKakaroto.address);
 
-        await daiTokenKakaroto.approve(xTokenWrapperContract.address, ethers.constants.MaxUint256);
+        const execApproveTx = await cpkKakaroto.execTransactions([
+          {
+            operation: CPK.CALL,
+            value: '0',
+            to: daiToken.address,
+            data: daiToken.interface.encodeFunctionData('approve', [xTokenWrapperContractKakaroto.address, '1']),
+          },
+        ]);
+        await execApproveTx.transactionResponse?.wait();
 
         const execTx = await cpkKakaroto.execTransactions([
           {
@@ -464,13 +511,13 @@ describe('xTokenWrapper', function () {
 
         await execTx.transactionResponse?.wait();
 
-        expect(await daiToken.balanceOf(kakarotoAddress)).to.eq(daiBalanceBefore.sub(1));
+        expect(await daiToken.balanceOf(cpkKakaroto.address)).to.eq(daiBalanceBefore.sub(1));
         expect(await xTokenDaiContract.balanceOf(cpkKakaroto.address)).to.eq(xDaiBalanceBefore.add(1));
 
         await reverter.snapshot();
       });
 
-      it('should not be able to wrap a ETH if it is not paying with ETH', async () => {
+      xit('should not be able to wrap a ETH if it is not paying with ETH', async () => {
         const ethBalanceBefore = await kakaroto.getBalance();
         const xEthBalanceBefore = await xTokenEthContract.balanceOf(cpkKakaroto.address);
 
@@ -496,7 +543,7 @@ describe('xTokenWrapper', function () {
         expect(await xTokenEthContract.balanceOf(cpkKakaroto.address)).to.eq(xEthBalanceBefore);
       });
 
-      it('should not be able to wrap a ETH if it is not authorized', async () => {
+      xit('should not be able to wrap a ETH if it is not authorized', async () => {
         await authorizationContract.setAuthorized(false);
 
         const ethBalanceBefore = await kakaroto.getBalance();
@@ -587,6 +634,178 @@ describe('xTokenWrapper', function () {
         expect(await xTokenEthContract.balanceOf(cpkKakaroto.address)).to.eq(
           xEthBalanceBefore.add(ethers.constants.WeiPerEther),
         );
+      });
+    });
+
+    describe('#unwrap', () => {
+      let unRegisteredXToken: XToken;
+      before(async () => {
+        const xTokenFactory = await ethers.getContractFactory('XToken', karpincho);
+
+        unRegisteredXToken = (await xTokenFactory.deploy(
+          'some x token',
+          'xST',
+          18,
+          '',
+          authorizationContract.address,
+          operationsRegistryContract.address,
+        )) as XToken;
+        await unRegisteredXToken.deployed();
+      });
+
+      beforeEach(async () => {
+        await reverter.revert();
+      });
+
+      it('should not be able to unwrap a non registered token', async () => {
+        const execTx = await cpkKakaroto.execTransactions([
+          {
+            operation: CPK.CALL,
+            value: '0',
+            to: xTokenWrapperContractKakaroto.address,
+            data: xTokenWrapperContractKakaroto.interface.encodeFunctionData('unwrap', [
+              unRegisteredXToken.address,
+              '1',
+            ]),
+          },
+        ]);
+
+        const receipt = await execTx.transactionResponse?.wait();
+
+        const log = receipt
+          ? receipt.logs
+            ? receipt.logs[0]
+            : {
+                topics: [],
+                data: '',
+              }
+          : {
+              topics: [],
+              data: '',
+            };
+
+        expect(SafeContract.interface.parseLog(log).name).to.eq('ExecutionFailure');
+      });
+
+      it('should not be able to unwrap a registered ERC20 wrapped xToken if it is not authorized', async () => {
+        await authorizationContract.setAuthorized(false);
+        const xDaiBalanceBefore = await xTokenDaiContract.balanceOf(cpkKakaroto.address);
+        expect(xDaiBalanceBefore).to.eq('1');
+
+        const execTx = await cpkKakaroto.execTransactions([
+          {
+            operation: CPK.CALL,
+            value: '0',
+            to: xTokenWrapperContractKakaroto.address,
+            data: xTokenWrapperContractKakaroto.interface.encodeFunctionData('unwrap', [
+              xTokenDaiContract.address,
+              '1',
+            ]),
+          },
+        ]);
+
+        const receipt = await execTx.transactionResponse?.wait();
+
+        const log = receipt
+          ? receipt.logs
+            ? receipt.logs[0]
+            : {
+                topics: [],
+                data: '',
+              }
+          : {
+              topics: [],
+              data: '',
+            };
+
+        expect(SafeContract.interface.parseLog(log).name).to.eq('ExecutionFailure');
+        expect(await xTokenDaiContract.balanceOf(cpkKakaroto.address)).to.eq(xDaiBalanceBefore);
+      });
+
+      it('should not be able to unwrap a registered ERC20 wrapped xToken more than it owns', async () => {
+        await authorizationContract.setAuthorized(true);
+        const xDaiBalanceBefore = await xTokenDaiContract.balanceOf(cpkKakaroto.address);
+        expect(xDaiBalanceBefore).to.eq('1');
+
+        const execTx = await cpkKakaroto.execTransactions([
+          {
+            operation: CPK.CALL,
+            value: '0',
+            to: xTokenWrapperContractKakaroto.address,
+            data: xTokenWrapperContractKakaroto.interface.encodeFunctionData('unwrap', [
+              xTokenDaiContract.address,
+              xDaiBalanceBefore.add(1),
+            ]),
+          },
+        ]);
+
+        const receipt = await execTx.transactionResponse?.wait();
+
+        const log = receipt
+          ? receipt.logs
+            ? receipt.logs[0]
+            : {
+                topics: [],
+                data: '',
+              }
+          : {
+              topics: [],
+              data: '',
+            };
+
+        expect(SafeContract.interface.parseLog(log).name).to.eq('ExecutionFailure');
+        expect(await xTokenDaiContract.balanceOf(cpkKakaroto.address)).to.eq(xDaiBalanceBefore);
+      });
+
+      it('should be able to unwrap a registered ERC20 token', async () => {
+        const daiBalanceBefore = await daiToken.balanceOf(cpkKakaroto.address);
+        const xDaiBalanceBefore = await xTokenDaiContract.balanceOf(cpkKakaroto.address);
+
+        const execTx = await cpkKakaroto.execTransactions([
+          {
+            operation: CPK.CALL,
+            value: '0',
+            to: xTokenWrapperContractKakaroto.address,
+            data: xTokenWrapperContractKakaroto.interface.encodeFunctionData('unwrap', [
+              xTokenDaiContract.address,
+              xDaiBalanceBefore,
+            ]),
+          },
+        ]);
+
+        await execTx.transactionResponse?.wait();
+
+        expect(await daiToken.balanceOf(cpkKakaroto.address)).to.eq(daiBalanceBefore.add(1));
+        expect(await xTokenDaiContract.balanceOf(cpkKakaroto.address)).to.eq(xDaiBalanceBefore.sub(1));
+      });
+
+      xit('should not be able to unwrap a ETH if it is not authorized', async () => {
+        await authorizationContract.setAuthorized(false);
+
+        await expect(xTokenWrapperContractKakaroto.unwrap(xTokenEthContract.address, 1)).to.be.revertedWith(
+          'Authorizable: not authorized',
+        );
+      });
+
+      xit('should not be able to unwrap a registered ERC20 wrapped xToken more than it owns', async () => {
+        const xEthBalance = await xTokenEthContract.balanceOf(kakarotoAddress);
+
+        await expect(
+          xTokenWrapperContractKakaroto.unwrap(xTokenEthContract.address, xEthBalance.add(1)),
+        ).to.be.revertedWith('ERC20: burn amount exceeds balance');
+      });
+
+      xit('should be able to unwrap a ETH', async () => {
+        const ethBalanceBefore = await kakaroto.getBalance();
+        const xEthBalanceBefore = await xTokenEthContract.balanceOf(kakarotoAddress);
+
+        const tx = await xTokenWrapperContractKakaroto.unwrap(xTokenEthContract.address, xEthBalanceBefore);
+        const gasPrice = tx.gasPrice;
+        const receipt = await tx.wait();
+        const gasUsed = receipt.gasUsed;
+
+        expect(await kakaroto.getBalance()).to.eq(ethBalanceBefore.add(xEthBalanceBefore).sub(gasUsed.mul(gasPrice)));
+        expect(await xTokenEthContract.balanceOf(kakarotoAddress)).to.eq(0);
       });
     });
   });

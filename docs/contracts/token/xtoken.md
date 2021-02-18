@@ -68,7 +68,7 @@ Triggers stopped state.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have ``role``'s admin role.
 
 - the contract must not be paused.
 
@@ -78,7 +78,7 @@ Returns to normal state.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have ``role``'s admin role.
 
 - the contract must be paused.
 
@@ -88,7 +88,7 @@ Sets authorization.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have ``role``'s admin role.
 
 ### Function `setOperationsRegistry(address operationsRegistry_) public`
 
@@ -96,7 +96,7 @@ Sets operationsRegistry.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have ``role``'s admin role.
 
 ### Function `setKya(string kya_) public`
 
@@ -104,7 +104,7 @@ Sets kya.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have ``role``'s admin role.
 
 ### Function `_setKya(string kya_) internal`
 
@@ -164,7 +164,7 @@ This is not required by the EIP.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have WRAPPER_ROLE.
 
 - the operation should be authorized.
 
@@ -184,7 +184,7 @@ This is not required by the EIP.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have WRAPPER_ROLE.
 
 - the operation should be authorized.
 
