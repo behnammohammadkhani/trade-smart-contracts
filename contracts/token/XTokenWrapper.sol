@@ -72,8 +72,6 @@ contract XTokenWrapper is AccessControl {
      * @dev Wraps `_token` into its associated xToken.
      *
      * It requires prior approval.
-     * It gets the ERC20 (or ETH) amount from the tx.origin and send the xToken to the msg.sender
-     * allowing the use a UserProxy.
      *
      * Requirements:
      *
@@ -88,11 +86,7 @@ contract XTokenWrapper is AccessControl {
         require(xTokenAddress != address(0), "token is not registered");
 
         if (_token != ETH_TOKEN_ADDRESS) {
-            // It uses tx.origin because user may use a CPK for interacting with the protocol.
-            // This way it saves having to transfer first the tokens to the CPK
-
-            // solhint-disable-next-line avoid-tx-origin
-            IERC20(_token).safeTransferFrom(tx.origin, address(this), _amount);
+            IERC20(_token).safeTransferFrom(_msgSender(), address(this), _amount);
         }
 
         uint256 amount = _token != ETH_TOKEN_ADDRESS ? _amount : msg.value;
@@ -108,9 +102,6 @@ contract XTokenWrapper is AccessControl {
 
     /**
      * @dev Unwraps `_xToken`.
-     *
-     * It burns the xToken amount from the msg.sender and sends the associated ERC20 (or ETH)
-     * to the tx.origin allowing the use a UserProxy.
      *
      * Requirements:
      *
@@ -129,11 +120,8 @@ contract XTokenWrapper is AccessControl {
         // but user address is used for authorizing the operation
         IXToken(_xToken).burnFrom(_msgSender(), _amount);
 
-        // It uses tx.origin because user may use a CPK for interacting with the
-        // protocol so collateral is sended to the user
         if (tokenAddress != ETH_TOKEN_ADDRESS) {
-            // solhint-disable-next-line avoid-tx-origin
-            IERC20(tokenAddress).safeTransfer(tx.origin, _amount);
+            IERC20(tokenAddress).safeTransfer(_msgSender(), _amount);
         } else {
             // solhint-disable-next-line
             (bool sent, ) = tx.origin.call{ value: _amount }("");
