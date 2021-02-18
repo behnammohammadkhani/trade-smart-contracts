@@ -8,17 +8,17 @@ Provide tier based permissions assignments and revoking functions
 
 - `setPermissionItems(address _permissionItems) (public)`
 
-- `assingTier1(address _user) (public)`
+- `assingTier1(address _user, address _proxy) (public)`
 
-- `assingTier2(address _user) (public)`
+- `assingTier2(address _user, address _proxy) (public)`
 
-- `suspendUser(address _user) (public)`
+- `suspendUser(address _user, address _proxy) (public)`
 
-- `revokeTier1(address _user) (public)`
+- `revokeTier1(address _user, address _proxy) (public)`
 
-- `revokeTier2(address _user) (public)`
+- `revokeTier2(address _user, address _proxy) (public)`
 
-- `unsuspendUser(address _user) (public)`
+- `unsuspendUser(address _user, address _proxy) (public)`
 
 - `_hasItem(address _user, uint256 itemId) (internal)`
 
@@ -60,9 +60,9 @@ Requirements:
 
 - `_permissionItems`: The address of the new Pemissions module.
 
-### Function `assingTier1(address _user) public`
+### Function `assingTier1(address _user, address _proxy) public`
 
-assign Tier1 permission to `_user`.
+assigns Tier1 permission to `_user`.
 
 Requirements:
 
@@ -74,9 +74,11 @@ Requirements:
 
 - `_user`: The address of the user.
 
-### Function `assingTier2(address _user) public`
+- `_proxy`: The address of the user's proxy if it is not address zero.
 
-assign Tier2 permission to `_user`.
+### Function `assingTier2(address _user, address _proxy) public`
+
+assigns Tier2 permission to `_user`.
 
 Requirements:
 
@@ -88,9 +90,11 @@ Requirements:
 
 - `_user`: The address of the user.
 
-### Function `suspendUser(address _user) public`
+- `_proxy`: The address of the user's proxy if it is not address zero.
 
-suspend pemissions effects on `_user`.
+### Function `suspendUser(address _user, address _proxy) public`
+
+suspends pemissions effects on `_user`.
 
 Requirements:
 
@@ -102,9 +106,11 @@ Requirements:
 
 - `_user`: The address of the user.
 
-### Function `revokeTier1(address _user) public`
+- `_proxy`: The address of the user's proxy if it is not address zero.
 
-remove Tier1 permission from `_user`.
+### Function `revokeTier1(address _user, address _proxy) public`
+
+removes Tier1 permission from `_user`.
 
 Requirements:
 
@@ -116,9 +122,11 @@ Requirements:
 
 - `_user`: The address of the user.
 
-### Function `revokeTier2(address _user) public`
+- `_proxy`: The address of the user's proxy if it is not address zero.
 
-remove Tier2 permission from `_user`.
+### Function `revokeTier2(address _user, address _proxy) public`
+
+removes Tier2 permission from `_user`.
 
 Requirements:
 
@@ -130,9 +138,11 @@ Requirements:
 
 - `_user`: The address of the user.
 
-### Function `unsuspendUser(address _user) public`
+- `_proxy`: The address of the user's proxy if it is not address zero.
 
-re-activate pemissions effects on `_user`.
+### Function `unsuspendUser(address _user, address _proxy) public`
+
+re-activates pemissions effects on `_user`.
 
 Requirements:
 
@@ -143,6 +153,8 @@ Requirements:
 #### Parameters:
 
 - `_user`: The address of the user.
+
+- `_proxy`: The address of the user's proxy if it is not address zero.
 
 ### Function `_hasItem(address _user, uint256 itemId) → bool internal`
 
@@ -156,7 +168,7 @@ Returns `true` if `_user` has been assigned Tier1 permission.
 
 ### Function `hasTier2(address _user) → bool public`
 
-Returns `true` if `_user` has been assigned Tier2 permission .
+Returns `true` if `_user` has been assigned Tier2 permission.
 
 #### Parameters:
 

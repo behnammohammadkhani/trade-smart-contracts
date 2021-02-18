@@ -16,4 +16,6 @@
     * [PermissionManager](docs/contracts/permissioning/permissionmanager.md)
     * [PermissionManagerStorage](docs/contracts/permissioning/permissionmanagerstorage.md)
   * token
-    * [xToken](docs/contracts/token/xtoken.md)
+    * [IXToken](docs/contracts/token/ixtoken.md)
+    * [XToken](docs/contracts/token/xtoken.md)
+    * [XTokenWrapper](docs/contracts/token/xtokenwrapper.md)
