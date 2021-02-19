@@ -145,6 +145,8 @@ contract XTokenFactory is Ownable {
         address assetFeed_
     ) external onlyOwner returns (address) {
         XToken xToken = new XToken(name_, symbol_, decimals_, kya_, authorization_, operationsRegistry);
+        xToken.setWrapper(xTokenWrapper);
+        xToken.grantRole(xToken.DEFAULT_ADMIN_ROLE(), owner());
 
         XTokenWrapper(xTokenWrapper).registerToken(token_, address(xToken));
         IOperationsRegistry(operationsRegistry).allowAsset(address(xToken));

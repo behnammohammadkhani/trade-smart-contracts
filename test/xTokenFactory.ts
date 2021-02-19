@@ -37,9 +37,9 @@ let XTokenContractFactory: ContractFactory;
 
 let daiToken: ERC20Detailed;
 let usdcToken: ERC20Detailed;
-// let wbtcToken: ERC20Detailed;
 
-// const agregatorAbi = ['function latestAnswer() external view returns (int256)'];
+let DEFAULT_ADMIN_ROLE: string;
+let WRAPPER_ROLE: string;
 
 describe('XTokenFactory', function () {
   const reverter = new Reverter();
@@ -278,17 +278,29 @@ describe('XTokenFactory', function () {
         : '') as string;
       const xTokenDeployed = XTokenContractFactory.attach(xTokenAddress) as XToken;
 
+      DEFAULT_ADMIN_ROLE = await xTokenDeployed.DEFAULT_ADMIN_ROLE();
+      WRAPPER_ROLE = await xTokenDeployed.WRAPPER_ROLE();
+
+      // xToken detail
       expect(await xTokenDeployed.name()).to.equal('xDAI');
       expect(await xTokenDeployed.symbol()).to.equal('xDAI');
       expect(await xTokenDeployed.decimals()).to.equal(18);
       expect(await xTokenDeployed.kya()).to.equal('it is a wraped DAI');
       expect(await xTokenDeployed.authorization()).to.equal(authorizationContract.address);
 
+      // xToken roles
+      const xTokenFactoryContractOwner = await xTokenFactoryContract.owner();
+      expect(await xTokenDeployed.hasRole(DEFAULT_ADMIN_ROLE, xTokenFactoryContractOwner)).to.equal(true);
+      expect(await xTokenDeployed.hasRole(WRAPPER_ROLE, xTokenWrapperContract.address)).to.equal(true);
+
+      // wrapper registry
       expect(await xTokenWrapperContract.tokenToXToken(daiToken.address)).to.eq(xTokenAddress);
       expect(await xTokenWrapperContract.xTokenToToken(xTokenAddress)).to.eq(daiToken.address);
 
+      // operations registry allowed
       expect(await operationsRegistryContract.allowedAssets(xTokenAddress)).to.eq(true);
 
+      // feed
       expect(await eurPriceFeedContract.assetEthFeed(xTokenAddress)).to.eq(daiEthFeedContract.address);
     });
   });
