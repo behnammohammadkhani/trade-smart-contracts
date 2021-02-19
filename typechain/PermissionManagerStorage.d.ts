@@ -21,12 +21,17 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface PermissionManagerStorageInterface extends ethers.utils.Interface {
   functions: {
+    "REJECTED_ID()": FunctionFragment;
     "SUSPENDED_ID()": FunctionFragment;
     "TIER_1_ID()": FunctionFragment;
     "TIER_2_ID()": FunctionFragment;
     "permissionItems()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "REJECTED_ID",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "SUSPENDED_ID",
     values?: undefined
@@ -38,6 +43,10 @@ interface PermissionManagerStorageInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "REJECTED_ID",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "SUSPENDED_ID",
     data: BytesLike
@@ -66,6 +75,10 @@ export class PermissionManagerStorage extends Contract {
   interface: PermissionManagerStorageInterface;
 
   functions: {
+    REJECTED_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "REJECTED_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     SUSPENDED_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -82,6 +95,10 @@ export class PermissionManagerStorage extends Contract {
 
     "permissionItems()"(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  REJECTED_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "REJECTED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -100,6 +117,10 @@ export class PermissionManagerStorage extends Contract {
   "permissionItems()"(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    REJECTED_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "REJECTED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
     "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -120,6 +141,10 @@ export class PermissionManagerStorage extends Contract {
   filters: {};
 
   estimateGas: {
+    REJECTED_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "REJECTED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
     "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -138,6 +163,10 @@ export class PermissionManagerStorage extends Contract {
   };
 
   populateTransaction: {
+    REJECTED_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "REJECTED_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     SUSPENDED_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;

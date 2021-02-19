@@ -121,6 +121,27 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
     }
 
     /**
+     * @dev Assigns Reject permission to `_user`.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - `_user` should not be already rejected.
+     *
+     * @param _user The address of the user.
+     * @param _proxy The address of the user's proxy if it is not address zero.
+     */
+    function rejectUser(address _user, address _proxy) public onlyOwner {
+        require(!isRejected(_user), "PermissionManager: Address is already rejected");
+        PermissionItems(permissionItems).mint(_user, REJECTED_ID, 1, "");
+
+        if (_proxy != address(0)) {
+            require(!isRejected(_proxy), "PermissionManager: Proxy is already rejected");
+            PermissionItems(permissionItems).mint(_proxy, REJECTED_ID, 1, "");
+        }
+    }
+
+    /**
      * @dev removes Tier1 permission from `_user`.
      *
      * Requirements:
@@ -183,6 +204,27 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
         }
     }
 
+    /**
+     * @dev Removes Reject permission from `_user`.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - `_user` should be rejected.
+     *
+     * @param _user The address of the user.
+     * @param _proxy The address of the user's proxy if it is not address zero.
+     */
+    function unrejectUser(address _user, address _proxy) public onlyOwner {
+        require(isRejected(_user), "PermissionManager: Address is not currently rejected");
+        PermissionItems(permissionItems).burn(_user, REJECTED_ID, 1);
+
+        if (_proxy != address(0)) {
+            require(isRejected(_proxy), "PermissionManager: Proxy is not currently rejected");
+            PermissionItems(permissionItems).burn(_proxy, REJECTED_ID, 1);
+        }
+    }
+
     function _hasItem(address _user, uint256 itemId) internal view returns (bool) {
         if (PermissionItems(permissionItems).balanceOf(_user, itemId) == 0) {
             return false;
@@ -215,5 +257,14 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
      */
     function isSuspended(address _user) public view returns (bool) {
         return _hasItem(_user, SUSPENDED_ID);
+    }
+
+    /**
+     * @dev Returns `true` if `_user` has been Rejected.
+     *
+     * @param _user The address of the user.
+     */
+    function isRejected(address _user) public view returns (bool) {
+        return _hasItem(_user, REJECTED_ID);
     }
 }
