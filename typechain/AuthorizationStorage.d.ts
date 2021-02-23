@@ -21,12 +21,12 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface AuthorizationStorageInterface extends ethers.utils.Interface {
   functions: {
-    "AUTHORIZED_PROXY_ID()": FunctionFragment;
     "ERC20_APPROVE()": FunctionFragment;
     "ERC20_BURN_FROM()": FunctionFragment;
     "ERC20_MINT()": FunctionFragment;
     "ERC20_TRANSFER()": FunctionFragment;
     "ERC20_TRANSFER_FROM()": FunctionFragment;
+    "REJECTED_ID()": FunctionFragment;
     "SUSPENDED_ID()": FunctionFragment;
     "TIER_1_ID()": FunctionFragment;
     "TIER_2_ID()": FunctionFragment;
@@ -37,10 +37,6 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     "tradingLimit()": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "AUTHORIZED_PROXY_ID",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "ERC20_APPROVE",
     values?: undefined
@@ -59,6 +55,10 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "ERC20_TRANSFER_FROM",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "REJECTED_ID",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -86,10 +86,6 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "AUTHORIZED_PROXY_ID",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "ERC20_APPROVE",
     data: BytesLike
   ): Result;
@@ -104,6 +100,10 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "ERC20_TRANSFER_FROM",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "REJECTED_ID",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -147,10 +147,6 @@ export class AuthorizationStorage extends Contract {
   interface: AuthorizationStorageInterface;
 
   functions: {
-    AUTHORIZED_PROXY_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "AUTHORIZED_PROXY_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     ERC20_APPROVE(overrides?: CallOverrides): Promise<[string]>;
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<[string]>;
@@ -170,6 +166,10 @@ export class AuthorizationStorage extends Contract {
     ERC20_TRANSFER_FROM(overrides?: CallOverrides): Promise<[string]>;
 
     "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<[string]>;
+
+    REJECTED_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "REJECTED_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     SUSPENDED_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -204,10 +204,6 @@ export class AuthorizationStorage extends Contract {
     "tradingLimit()"(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
-  AUTHORIZED_PROXY_ID(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "AUTHORIZED_PROXY_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   ERC20_APPROVE(overrides?: CallOverrides): Promise<string>;
 
   "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<string>;
@@ -227,6 +223,10 @@ export class AuthorizationStorage extends Contract {
   ERC20_TRANSFER_FROM(overrides?: CallOverrides): Promise<string>;
 
   "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<string>;
+
+  REJECTED_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "REJECTED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -261,10 +261,6 @@ export class AuthorizationStorage extends Contract {
   "tradingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
-    AUTHORIZED_PROXY_ID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "AUTHORIZED_PROXY_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     ERC20_APPROVE(overrides?: CallOverrides): Promise<string>;
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<string>;
@@ -284,6 +280,10 @@ export class AuthorizationStorage extends Contract {
     ERC20_TRANSFER_FROM(overrides?: CallOverrides): Promise<string>;
 
     "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<string>;
+
+    REJECTED_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "REJECTED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -321,10 +321,6 @@ export class AuthorizationStorage extends Contract {
   filters: {};
 
   estimateGas: {
-    AUTHORIZED_PROXY_ID(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "AUTHORIZED_PROXY_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     ERC20_APPROVE(overrides?: CallOverrides): Promise<BigNumber>;
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -344,6 +340,10 @@ export class AuthorizationStorage extends Contract {
     ERC20_TRANSFER_FROM(overrides?: CallOverrides): Promise<BigNumber>;
 
     "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    REJECTED_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "REJECTED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -379,14 +379,6 @@ export class AuthorizationStorage extends Contract {
   };
 
   populateTransaction: {
-    AUTHORIZED_PROXY_ID(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "AUTHORIZED_PROXY_ID()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     ERC20_APPROVE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -414,6 +406,10 @@ export class AuthorizationStorage extends Contract {
     "ERC20_TRANSFER_FROM()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    REJECTED_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "REJECTED_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     SUSPENDED_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

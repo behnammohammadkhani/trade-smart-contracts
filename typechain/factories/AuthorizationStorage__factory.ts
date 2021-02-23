@@ -23,19 +23,6 @@ export class AuthorizationStorage__factory {
 const _abi = [
   {
     inputs: [],
-    name: "AUTHORIZED_PROXY_ID",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "ERC20_APPROVE",
     outputs: [
       {
@@ -94,6 +81,19 @@ const _abi = [
         internalType: "bytes4",
         name: "",
         type: "bytes4",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "REJECTED_ID",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
