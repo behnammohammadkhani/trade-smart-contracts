@@ -24,8 +24,10 @@ abstract contract AuthorizableUpgradeable is ContextUpgradeable {
      * @dev Throws if called by any account which is not authorized to execute the transaction.
      */
     modifier onlyAuthorized() {
+        // It uses tx.origin because user may use a CPK for interacting with the protocol
         require(
-            authorization.isAuthorized(_msgSender(), address(this), msg.sig, _msgData()),
+            // solhint-disable-next-line avoid-tx-origin
+            authorization.isAuthorized(tx.origin, address(this), msg.sig, _msgData()),
             "Authorizable: not authorized"
         );
         _;
@@ -35,7 +37,7 @@ abstract contract AuthorizableUpgradeable is ContextUpgradeable {
      * @dev Sets authorization.
      *
      */
-    function _setAuthorization(address authorization_) internal virtual {
+    function _setAuthorization(address authorization_) internal {
         require(authorization_ != address(0), "Authorizable: authorization is the zero address");
         authorization = IAuthorization(authorization_);
         emit AuthorizationSetted(authorization_);

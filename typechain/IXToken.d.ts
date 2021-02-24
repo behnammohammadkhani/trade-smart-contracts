@@ -20,20 +20,21 @@ import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
-interface ERC20DetailedInterface extends ethers.utils.Interface {
+interface IXTokenInterface extends ethers.utils.Interface {
   functions: {
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "decimals()": FunctionFragment;
-    "decreaseAllowance(address,uint256)": FunctionFragment;
-    "increaseAllowance(address,uint256)": FunctionFragment;
+    "burnFrom(address,uint256)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
-    "name()": FunctionFragment;
-    "symbol()": FunctionFragment;
+    "pause()": FunctionFragment;
+    "setAuthorization(address)": FunctionFragment;
+    "setKya(string)": FunctionFragment;
+    "setOperationsRegistry(address)": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
+    "unpause()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -45,21 +46,24 @@ interface ERC20DetailedInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
-  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "decreaseAllowance",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "increaseAllowance",
+    functionFragment: "burnFrom",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "setAuthorization",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "setKya", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setOperationsRegistry",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
@@ -72,22 +76,23 @@ interface ERC20DetailedInterface extends ethers.utils.Interface {
     functionFragment: "transferFrom",
     values: [string, string, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "decreaseAllowance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "increaseAllowance",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "burnFrom", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setAuthorization",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setKya", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setOperationsRegistry",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
@@ -97,6 +102,7 @@ interface ERC20DetailedInterface extends ethers.utils.Interface {
     functionFragment: "transferFrom",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
@@ -107,7 +113,7 @@ interface ERC20DetailedInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
-export class ERC20Detailed extends Contract {
+export class IXToken extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -118,7 +124,7 @@ export class ERC20Detailed extends Contract {
   removeAllListeners(eventName: EventFilter | string): this;
   removeListener(eventName: any, listener: Listener): this;
 
-  interface: ERC20DetailedInterface;
+  interface: IXTokenInterface;
 
   functions: {
     allowance(
@@ -152,31 +158,15 @@ export class ERC20Detailed extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    decimals(overrides?: CallOverrides): Promise<[number]>;
-
-    "decimals()"(overrides?: CallOverrides): Promise<[number]>;
-
-    decreaseAllowance(
-      spender: string,
-      subtractedValue: BigNumberish,
+    burnFrom(
+      account: string,
+      amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "decreaseAllowance(address,uint256)"(
-      spender: string,
-      subtractedValue: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    increaseAllowance(
-      spender: string,
-      addedValue: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "increaseAllowance(address,uint256)"(
-      spender: string,
-      addedValue: BigNumberish,
+    "burnFrom(address,uint256)"(
+      account: string,
+      amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -192,13 +182,36 @@ export class ERC20Detailed extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    name(overrides?: CallOverrides): Promise<[string]>;
+    pause(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "name()"(overrides?: CallOverrides): Promise<[string]>;
+    "pause()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    symbol(overrides?: CallOverrides): Promise<[string]>;
+    setAuthorization(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    "symbol()"(overrides?: CallOverrides): Promise<[string]>;
+    "setAuthorization(address)"(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setKya(kya_: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    "setKya(string)"(
+      kya_: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setOperationsRegistry(
+      operationsRegistry_: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setOperationsRegistry(address)"(
+      operationsRegistry_: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -229,6 +242,10 @@ export class ERC20Detailed extends Contract {
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    unpause(overrides?: Overrides): Promise<ContractTransaction>;
+
+    "unpause()"(overrides?: Overrides): Promise<ContractTransaction>;
   };
 
   allowance(
@@ -262,31 +279,15 @@ export class ERC20Detailed extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  decimals(overrides?: CallOverrides): Promise<number>;
-
-  "decimals()"(overrides?: CallOverrides): Promise<number>;
-
-  decreaseAllowance(
-    spender: string,
-    subtractedValue: BigNumberish,
+  burnFrom(
+    account: string,
+    amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "decreaseAllowance(address,uint256)"(
-    spender: string,
-    subtractedValue: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  increaseAllowance(
-    spender: string,
-    addedValue: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "increaseAllowance(address,uint256)"(
-    spender: string,
-    addedValue: BigNumberish,
+  "burnFrom(address,uint256)"(
+    account: string,
+    amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -302,13 +303,36 @@ export class ERC20Detailed extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  name(overrides?: CallOverrides): Promise<string>;
+  pause(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "name()"(overrides?: CallOverrides): Promise<string>;
+  "pause()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  symbol(overrides?: CallOverrides): Promise<string>;
+  setAuthorization(
+    authorization_: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  "symbol()"(overrides?: CallOverrides): Promise<string>;
+  "setAuthorization(address)"(
+    authorization_: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setKya(kya_: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  "setKya(string)"(
+    kya_: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setOperationsRegistry(
+    operationsRegistry_: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setOperationsRegistry(address)"(
+    operationsRegistry_: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -339,6 +363,10 @@ export class ERC20Detailed extends Contract {
     amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  unpause(overrides?: Overrides): Promise<ContractTransaction>;
+
+  "unpause()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   callStatic: {
     allowance(
@@ -372,33 +400,17 @@ export class ERC20Detailed extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    decimals(overrides?: CallOverrides): Promise<number>;
-
-    "decimals()"(overrides?: CallOverrides): Promise<number>;
-
-    decreaseAllowance(
-      spender: string,
-      subtractedValue: BigNumberish,
+    burnFrom(
+      account: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
-    "decreaseAllowance(address,uint256)"(
-      spender: string,
-      subtractedValue: BigNumberish,
+    "burnFrom(address,uint256)"(
+      account: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    increaseAllowance(
-      spender: string,
-      addedValue: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "increaseAllowance(address,uint256)"(
-      spender: string,
-      addedValue: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     mint(
       account: string,
@@ -412,13 +424,33 @@ export class ERC20Detailed extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    name(overrides?: CallOverrides): Promise<string>;
+    pause(overrides?: CallOverrides): Promise<void>;
 
-    "name()"(overrides?: CallOverrides): Promise<string>;
+    "pause()"(overrides?: CallOverrides): Promise<void>;
 
-    symbol(overrides?: CallOverrides): Promise<string>;
+    setAuthorization(
+      authorization_: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    "symbol()"(overrides?: CallOverrides): Promise<string>;
+    "setAuthorization(address)"(
+      authorization_: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setKya(kya_: string, overrides?: CallOverrides): Promise<void>;
+
+    "setKya(string)"(kya_: string, overrides?: CallOverrides): Promise<void>;
+
+    setOperationsRegistry(
+      operationsRegistry_: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setOperationsRegistry(address)"(
+      operationsRegistry_: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -449,6 +481,10 @@ export class ERC20Detailed extends Contract {
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    unpause(overrides?: CallOverrides): Promise<void>;
+
+    "unpause()"(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -493,31 +529,15 @@ export class ERC20Detailed extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    decimals(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "decimals()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    decreaseAllowance(
-      spender: string,
-      subtractedValue: BigNumberish,
+    burnFrom(
+      account: string,
+      amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "decreaseAllowance(address,uint256)"(
-      spender: string,
-      subtractedValue: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    increaseAllowance(
-      spender: string,
-      addedValue: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "increaseAllowance(address,uint256)"(
-      spender: string,
-      addedValue: BigNumberish,
+    "burnFrom(address,uint256)"(
+      account: string,
+      amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -533,13 +553,33 @@ export class ERC20Detailed extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    name(overrides?: CallOverrides): Promise<BigNumber>;
+    pause(overrides?: Overrides): Promise<BigNumber>;
 
-    "name()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "pause()"(overrides?: Overrides): Promise<BigNumber>;
 
-    symbol(overrides?: CallOverrides): Promise<BigNumber>;
+    setAuthorization(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    "symbol()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "setAuthorization(address)"(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setKya(kya_: string, overrides?: Overrides): Promise<BigNumber>;
+
+    "setKya(string)"(kya_: string, overrides?: Overrides): Promise<BigNumber>;
+
+    setOperationsRegistry(
+      operationsRegistry_: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setOperationsRegistry(address)"(
+      operationsRegistry_: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -570,6 +610,10 @@ export class ERC20Detailed extends Contract {
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    unpause(overrides?: Overrides): Promise<BigNumber>;
+
+    "unpause()"(overrides?: Overrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -607,31 +651,15 @@ export class ERC20Detailed extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "decimals()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    decreaseAllowance(
-      spender: string,
-      subtractedValue: BigNumberish,
+    burnFrom(
+      account: string,
+      amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "decreaseAllowance(address,uint256)"(
-      spender: string,
-      subtractedValue: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    increaseAllowance(
-      spender: string,
-      addedValue: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "increaseAllowance(address,uint256)"(
-      spender: string,
-      addedValue: BigNumberish,
+    "burnFrom(address,uint256)"(
+      account: string,
+      amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -647,13 +675,36 @@ export class ERC20Detailed extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    pause(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "name()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "pause()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    setAuthorization(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
-    "symbol()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "setAuthorization(address)"(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setKya(kya_: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "setKya(string)"(
+      kya_: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setOperationsRegistry(
+      operationsRegistry_: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setOperationsRegistry(address)"(
+      operationsRegistry_: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -684,5 +735,9 @@ export class ERC20Detailed extends Contract {
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    unpause(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "unpause()"(overrides?: Overrides): Promise<PopulatedTransaction>;
   };
 }

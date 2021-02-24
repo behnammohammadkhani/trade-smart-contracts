@@ -2,20 +2,30 @@
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20Pausable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
 
 import "../authorization/Authorizable.sol";
-
 import "../authorization/IAuthorization.sol";
 import "../authorization/IOperationsRegistry.sol";
+import "../interfaces/IGnosisSafe.sol";
 
 import "hardhat/console.sol";
 
-contract XToken is ERC20Pausable, Ownable, Authorizable {
+/**
+ * @title XToken
+ * @author Protofire
+ * @dev ERC20 token used for wrapping tokens with the purpose of applying an authorization layer.
+ *
+ */
+contract XToken is ERC20Pausable, AccessControl, Authorizable {
+    using Address for address;
+
     IOperationsRegistry public operationsRegistry;
     string public kya;
 
     bytes4 public constant ERC20_TRANSFER = bytes4(keccak256("transfer(address,uint256)"));
+    bytes32 public constant WRAPPER_ROLE = keccak256("MINTER_ROLE");
 
     /**
      * @dev Emitted when `operationsRegistry` address is setted.
@@ -30,7 +40,7 @@ contract XToken is ERC20Pausable, Ownable, Authorizable {
     /**
      * @dev Sets the values for {name}, {symbol}, {decimals}, {kya}, {authorization} and {operationsRegistry}.
      *
-     * Sets ownership to `owner_`.
+     * Grants the contract deployer the default admin role.
      *
      */
     constructor(
@@ -39,19 +49,45 @@ contract XToken is ERC20Pausable, Ownable, Authorizable {
         uint8 decimals_,
         string memory kya_,
         address authorization_,
-        address operationsRegistry_,
-        address owner_
+        address operationsRegistry_
     ) public ERC20(name_, symbol_) {
         require(decimals_ > 0, "decimals is 0");
         require(authorization_ != address(0), "authorization is the zero address");
         require(operationsRegistry_ != address(0), "operationsRegistry is the zero address");
-        require(owner_ != address(0), "owner is the zero address");
 
         _setupDecimals(decimals_);
-        kya = kya_;
+
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setKya(kya_);
         _setAuthorization(authorization_);
         operationsRegistry = IOperationsRegistry(operationsRegistry_);
-        transferOwnership(owner_);
+    }
+
+    /**
+     * @dev Throws if called by any account with no admin role.
+     */
+    modifier onlyAdmin() {
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "must have default admin role");
+        _;
+    }
+
+    /**
+     * @dev Throws if called by any account with no wrapper role.
+     */
+    modifier onlyWrapper() {
+        require(hasRole(WRAPPER_ROLE, _msgSender()), "must have wrapper role");
+        _;
+    }
+
+    /**
+     * @dev Grants WRAPPER role to `account`.
+     *
+     * Requirements:
+     *
+     * - the caller must have ``role``'s admin role.
+     */
+    function setWrapper(address account) public {
+        grantRole(WRAPPER_ROLE, account);
     }
 
     /**
@@ -59,10 +95,10 @@ contract XToken is ERC20Pausable, Ownable, Authorizable {
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have ``role``'s admin role.
      * - the contract must not be paused.
      */
-    function pause() public onlyOwner {
+    function pause() public onlyAdmin {
         _pause();
     }
 
@@ -71,26 +107,32 @@ contract XToken is ERC20Pausable, Ownable, Authorizable {
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have ``role``'s admin role.
      * - the contract must be paused.
      */
-    function unpause() public onlyOwner {
+    function unpause() public onlyAdmin {
         _unpause();
     }
 
     /**
      * @dev Sets authorization.
      *
+     * Requirements:
+     *
+     * - the caller must have ``role``'s admin role.
      */
-    function setAuthorization(address authorization_) public onlyOwner {
+    function setAuthorization(address authorization_) public onlyAdmin {
         _setAuthorization(authorization_);
     }
 
     /**
      * @dev Sets operationsRegistry.
      *
+     * Requirements:
+     *
+     * - the caller must have ``role``'s admin role.
      */
-    function setOperationsRegistry(address operationsRegistry_) public onlyOwner {
+    function setOperationsRegistry(address operationsRegistry_) public onlyAdmin {
         require(operationsRegistry_ != address(0), "operationsRegistry is the zero address");
         emit OperationsRegistrySetted(operationsRegistry_);
         operationsRegistry = IOperationsRegistry(operationsRegistry_);
@@ -99,8 +141,19 @@ contract XToken is ERC20Pausable, Ownable, Authorizable {
     /**
      * @dev Sets kya.
      *
+     * Requirements:
+     *
+     * - the caller must have ``role``'s admin role.
      */
-    function setKya(string memory kya_) public onlyOwner {
+    function setKya(string memory kya_) public onlyAdmin {
+        _setKya(kya_);
+    }
+
+    /**
+     * @dev Sets kya.
+     *
+     */
+    function _setKya(string memory kya_) internal {
         emit KyaSetted(kya_);
         kya = kya_;
     }
@@ -120,7 +173,10 @@ contract XToken is ERC20Pausable, Ownable, Authorizable {
      */
     function transfer(address recipient, uint256 amount) public override onlyAuthorized returns (bool) {
         super.transfer(recipient, amount);
-        operationsRegistry.addTrade(_msgSender(), msg.sig, amount);
+
+        // It uses tx.origin because user may use a CPK for interacting with the protocol
+        // solhint-disable-next-line avoid-tx-origin
+        operationsRegistry.addTrade(tx.origin, msg.sig, amount);
         return true;
     }
 
@@ -145,6 +201,7 @@ contract XToken is ERC20Pausable, Ownable, Authorizable {
         uint256 amount
     ) public override onlyAuthorized returns (bool) {
         super.transferFrom(sender, recipient, amount);
+
         operationsRegistry.addTrade(sender, ERC20_TRANSFER, amount);
         return true;
     }
@@ -158,13 +215,16 @@ contract XToken is ERC20Pausable, Ownable, Authorizable {
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have WRAPPER_ROLE.
      * - the operation should be authorized.
      * - `to` cannot be the zero address.
      */
-    function mint(address account, uint256 amount) public onlyOwner onlyAuthorized {
+    function mint(address account, uint256 amount) public onlyWrapper onlyAuthorized {
         _mint(account, amount);
-        operationsRegistry.addTrade(account, msg.sig, amount);
+
+        // It uses tx.origin because user may use a CPK for interacting with the protocol
+        // solhint-disable-next-line avoid-tx-origin
+        operationsRegistry.addTrade(tx.origin, msg.sig, amount);
     }
 
     /**
@@ -177,13 +237,16 @@ contract XToken is ERC20Pausable, Ownable, Authorizable {
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have WRAPPER_ROLE.
      * - the operation should be authorized.
      * - `account` cannot be the zero address.
      * - `account` must have at least `amount` tokens.
      */
-    function burnFrom(address account, uint256 amount) public onlyOwner onlyAuthorized {
+    function burnFrom(address account, uint256 amount) public onlyWrapper onlyAuthorized {
         _burn(account, amount);
-        operationsRegistry.addTrade(account, msg.sig, amount);
+
+        // It uses tx.origin because user may use a CPK for interacting with the protocol
+        // solhint-disable-next-line avoid-tx-origin
+        operationsRegistry.addTrade(tx.origin, msg.sig, amount);
     }
 }

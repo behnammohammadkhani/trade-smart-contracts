@@ -58,7 +58,7 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
     }
 
     /**
-     * @dev assign Tier1 permission to `_user`.
+     * @dev assigns Tier1 permission to `_user`.
      *
      * Requirements:
      *
@@ -66,14 +66,20 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
      * - `_user` should not have Tier1 already assigned.
      *
      * @param _user The address of the user.
+     * @param _proxy The address of the user's proxy if it is not address zero.
      */
-    function assingTier1(address _user) public onlyOwner {
-        require(!hasTier1(_user), "PermissionManager: User already has Tier 1 assigned");
+    function assingTier1(address _user, address _proxy) public onlyOwner {
+        require(!hasTier1(_user), "PermissionManager: Address already has Tier 1 assigned");
         PermissionItems(permissionItems).mint(_user, TIER_1_ID, 1, "");
+
+        if (_proxy != address(0)) {
+            require(!hasTier1(_proxy), "PermissionManager: Proxy already has Tier 1 assigned");
+            PermissionItems(permissionItems).mint(_proxy, TIER_1_ID, 1, "");
+        }
     }
 
     /**
-     * @dev assign Tier2 permission to `_user`.
+     * @dev assigns Tier2 permission to `_user`.
      *
      * Requirements:
      *
@@ -81,14 +87,20 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
      * - `_user` should not have Tier2 already assigned.
      *
      * @param _user The address of the user.
+     * @param _proxy The address of the user's proxy if it is not address zero.
      */
-    function assingTier2(address _user) public onlyOwner {
-        require(!hasTier2(_user), "PermissionManager: User already has Tier 2 assigned");
+    function assingTier2(address _user, address _proxy) public onlyOwner {
+        require(!hasTier2(_user), "PermissionManager: Address already has Tier 2 assigned");
         PermissionItems(permissionItems).mint(_user, TIER_2_ID, 1, "");
+
+        if (_proxy != address(0)) {
+            require(!hasTier2(_proxy), "PermissionManager: Proxy already has Tier 2 assigned");
+            PermissionItems(permissionItems).mint(_proxy, TIER_2_ID, 1, "");
+        }
     }
 
     /**
-     * @dev suspend pemissions effects on `_user`.
+     * @dev suspends pemissions effects on `_user`.
      *
      * Requirements:
      *
@@ -96,14 +108,20 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
      * - `_user` should not be already suspended.
      *
      * @param _user The address of the user.
+     * @param _proxy The address of the user's proxy if it is not address zero.
      */
-    function suspendUser(address _user) public onlyOwner {
-        require(!isSuspended(_user), "PermissionManager: User is already suspended");
+    function suspendUser(address _user, address _proxy) public onlyOwner {
+        require(!isSuspended(_user), "PermissionManager: Address is already suspended");
         PermissionItems(permissionItems).mint(_user, SUSPENDED_ID, 1, "");
+
+        if (_proxy != address(0)) {
+            require(!isSuspended(_proxy), "PermissionManager: Proxy is already suspended");
+            PermissionItems(permissionItems).mint(_proxy, SUSPENDED_ID, 1, "");
+        }
     }
 
     /**
-     * @dev remove Tier1 permission from `_user`.
+     * @dev removes Tier1 permission from `_user`.
      *
      * Requirements:
      *
@@ -111,14 +129,20 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
      * - `_user` should have Tier1 assigned.
      *
      * @param _user The address of the user.
+     * @param _proxy The address of the user's proxy if it is not address zero.
      */
-    function revokeTier1(address _user) public onlyOwner {
-        require(hasTier1(_user), "PermissionManager: User doesn't has Tier 1 assigned");
+    function revokeTier1(address _user, address _proxy) public onlyOwner {
+        require(hasTier1(_user), "PermissionManager: Address doesn't has Tier 1 assigned");
         PermissionItems(permissionItems).burn(_user, TIER_1_ID, 1);
+
+        if (_proxy != address(0)) {
+            require(hasTier1(_proxy), "PermissionManager: Proxy doesn't has Tier 1 assigned");
+            PermissionItems(permissionItems).burn(_proxy, TIER_1_ID, 1);
+        }
     }
 
     /**
-     * @dev remove Tier2 permission from `_user`.
+     * @dev removes Tier2 permission from `_user`.
      *
      * Requirements:
      *
@@ -126,14 +150,20 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
      * - `_user` should have Tier2 assigned.
      *
      * @param _user The address of the user.
+     * @param _proxy The address of the user's proxy if it is not address zero.
      */
-    function revokeTier2(address _user) public onlyOwner {
-        require(hasTier2(_user), "PermissionManager: User doesn't has Tier 2 assigned");
+    function revokeTier2(address _user, address _proxy) public onlyOwner {
+        require(hasTier2(_user), "PermissionManager: Address doesn't has Tier 2 assigned");
         PermissionItems(permissionItems).burn(_user, TIER_2_ID, 1);
+
+        if (_proxy != address(0)) {
+            require(hasTier2(_proxy), "PermissionManager: Proxy doesn't has Tier 2 assigned");
+            PermissionItems(permissionItems).burn(_proxy, TIER_2_ID, 1);
+        }
     }
 
     /**
-     * @dev re-activate pemissions effects on `_user`.
+     * @dev re-activates pemissions effects on `_user`.
      *
      * Requirements:
      *
@@ -141,10 +171,16 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
      * - `_user` should be suspended.
      *
      * @param _user The address of the user.
+     * @param _proxy The address of the user's proxy if it is not address zero.
      */
-    function unsuspendUser(address _user) public onlyOwner {
-        require(isSuspended(_user), "PermissionManager: User is not currently suspended");
+    function unsuspendUser(address _user, address _proxy) public onlyOwner {
+        require(isSuspended(_user), "PermissionManager: Address is not currently suspended");
         PermissionItems(permissionItems).burn(_user, SUSPENDED_ID, 1);
+
+        if (_proxy != address(0)) {
+            require(isSuspended(_proxy), "PermissionManager: Proxy is not currently suspended");
+            PermissionItems(permissionItems).burn(_proxy, SUSPENDED_ID, 1);
+        }
     }
 
     function _hasItem(address _user, uint256 itemId) internal view returns (bool) {
@@ -164,7 +200,7 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
     }
 
     /**
-     * @dev Returns `true` if `_user` has been assigned Tier2 permission .
+     * @dev Returns `true` if `_user` has been assigned Tier2 permission.
      *
      * @param _user The address of the user.
      */

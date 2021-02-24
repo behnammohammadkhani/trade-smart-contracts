@@ -21,6 +21,7 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface AuthorizationStorageInterface extends ethers.utils.Interface {
   functions: {
+    "AUTHORIZED_PROXY_ID()": FunctionFragment;
     "ERC20_APPROVE()": FunctionFragment;
     "ERC20_BURN_FROM()": FunctionFragment;
     "ERC20_MINT()": FunctionFragment;
@@ -36,6 +37,10 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     "tradingLimit()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "AUTHORIZED_PROXY_ID",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "ERC20_APPROVE",
     values?: undefined
@@ -80,6 +85,10 @@ interface AuthorizationStorageInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "AUTHORIZED_PROXY_ID",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "ERC20_APPROVE",
     data: BytesLike
@@ -138,6 +147,10 @@ export class AuthorizationStorage extends Contract {
   interface: AuthorizationStorageInterface;
 
   functions: {
+    AUTHORIZED_PROXY_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "AUTHORIZED_PROXY_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     ERC20_APPROVE(overrides?: CallOverrides): Promise<[string]>;
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<[string]>;
@@ -190,6 +203,10 @@ export class AuthorizationStorage extends Contract {
 
     "tradingLimit()"(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
+
+  AUTHORIZED_PROXY_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "AUTHORIZED_PROXY_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   ERC20_APPROVE(overrides?: CallOverrides): Promise<string>;
 
@@ -244,6 +261,10 @@ export class AuthorizationStorage extends Contract {
   "tradingLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
+    AUTHORIZED_PROXY_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "AUTHORIZED_PROXY_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     ERC20_APPROVE(overrides?: CallOverrides): Promise<string>;
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<string>;
@@ -300,6 +321,10 @@ export class AuthorizationStorage extends Contract {
   filters: {};
 
   estimateGas: {
+    AUTHORIZED_PROXY_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "AUTHORIZED_PROXY_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     ERC20_APPROVE(overrides?: CallOverrides): Promise<BigNumber>;
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -354,6 +379,14 @@ export class AuthorizationStorage extends Contract {
   };
 
   populateTransaction: {
+    AUTHORIZED_PROXY_ID(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "AUTHORIZED_PROXY_ID()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     ERC20_APPROVE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;

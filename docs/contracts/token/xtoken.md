@@ -1,8 +1,18 @@
-# `xToken`
+# `XToken`
+
+ERC20 token used for wrapping tokens with the purpose of applying an authorization layer.
+
+## Modifiers:
+
+- `onlyAdmin()`
+
+- `onlyWrapper()`
 
 ## Functions:
 
-- `constructor(string name_, string symbol_, uint8 decimals_, string kya_, address authorization_, address operationsRegistry_, address owner_) (public)`
+- `constructor(string name_, string symbol_, uint8 decimals_, string kya_, address authorization_, address operationsRegistry_) (public)`
+
+- `setWrapper(address account) (public)`
 
 - `pause() (public)`
 
@@ -13,6 +23,8 @@
 - `setOperationsRegistry(address operationsRegistry_) (public)`
 
 - `setKya(string kya_) (public)`
+
+- `_setKya(string kya_) (internal)`
 
 - `transfer(address recipient, uint256 amount) (public)`
 
@@ -28,11 +40,27 @@
 
 - `OperationsRegistrySetted(address newOperationsRegistry)`
 
-### Function `constructor(string name_, string symbol_, uint8 decimals_, string kya_, address authorization_, address operationsRegistry_, address owner_) public`
+### Modifier `onlyAdmin()`
+
+Throws if called by any account with no admin role.
+
+### Modifier `onlyWrapper()`
+
+Throws if called by any account with no wrapper role.
+
+### Function `constructor(string name_, string symbol_, uint8 decimals_, string kya_, address authorization_, address operationsRegistry_) public`
 
 Sets the values for {name}, {symbol}, {decimals}, {kya}, {authorization} and {operationsRegistry}.
 
-Sets ownership to `owner_`.
+Grants the contract deployer the default admin role.
+
+### Function `setWrapper(address account) public`
+
+Grants WRAPPER role to `account`.
+
+Requirements:
+
+- the caller must have ``role``'s admin role.
 
 ### Function `pause() public`
 
@@ -40,7 +68,7 @@ Triggers stopped state.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have ``role``'s admin role.
 
 - the contract must not be paused.
 
@@ -50,7 +78,7 @@ Returns to normal state.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have ``role``'s admin role.
 
 - the contract must be paused.
 
@@ -58,11 +86,27 @@ Requirements:
 
 Sets authorization.
 
+Requirements:
+
+- the caller must have ``role``'s admin role.
+
 ### Function `setOperationsRegistry(address operationsRegistry_) public`
 
 Sets operationsRegistry.
 
+Requirements:
+
+- the caller must have ``role``'s admin role.
+
 ### Function `setKya(string kya_) public`
+
+Sets kya.
+
+Requirements:
+
+- the caller must have ``role``'s admin role.
+
+### Function `_setKya(string kya_) internal`
 
 Sets kya.
 
@@ -120,7 +164,7 @@ This is not required by the EIP.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have WRAPPER_ROLE.
 
 - the operation should be authorized.
 
@@ -140,7 +184,7 @@ This is not required by the EIP.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have WRAPPER_ROLE.
 
 - the operation should be authorized.
 

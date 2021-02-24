@@ -24,6 +24,7 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
   functions: {
     "assingTier1(address)": FunctionFragment;
     "assingTier2(address)": FunctionFragment;
+    "authorizeProxy(address)": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
@@ -32,11 +33,16 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "unauthorizeProxy(address)": FunctionFragment;
     "uri(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "assingTier1", values: [string]): string;
   encodeFunctionData(functionFragment: "assingTier2", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "authorizeProxy",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [string, BigNumberish]
@@ -66,6 +72,10 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "unauthorizeProxy",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
 
   decodeFunctionResult(
@@ -74,6 +84,10 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "assingTier2",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "authorizeProxy",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -100,6 +114,10 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "unauthorizeProxy",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
@@ -148,6 +166,16 @@ export class PermissionsMock extends Contract {
 
     "assingTier2(address)"(
       _user: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    authorizeProxy(
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "authorizeProxy(address)"(
+      _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -255,6 +283,16 @@ export class PermissionsMock extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    unauthorizeProxy(
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "unauthorizeProxy(address)"(
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
 
     "uri(uint256)"(
@@ -280,6 +318,16 @@ export class PermissionsMock extends Contract {
 
   "assingTier2(address)"(
     _user: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  authorizeProxy(
+    _proxy: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "authorizeProxy(address)"(
+    _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -384,6 +432,16 @@ export class PermissionsMock extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  unauthorizeProxy(
+    _proxy: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "unauthorizeProxy(address)"(
+    _proxy: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   "uri(uint256)"(
@@ -403,6 +461,13 @@ export class PermissionsMock extends Contract {
 
     "assingTier2(address)"(
       _user: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    authorizeProxy(_proxy: string, overrides?: CallOverrides): Promise<void>;
+
+    "authorizeProxy(address)"(
+      _proxy: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -507,6 +572,13 @@ export class PermissionsMock extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    unauthorizeProxy(_proxy: string, overrides?: CallOverrides): Promise<void>;
+
+    "unauthorizeProxy(address)"(
+      _proxy: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     "uri(uint256)"(
@@ -553,6 +625,13 @@ export class PermissionsMock extends Contract {
 
     "assingTier2(address)"(
       _user: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    authorizeProxy(_proxy: string, overrides?: Overrides): Promise<BigNumber>;
+
+    "authorizeProxy(address)"(
+      _proxy: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -657,6 +736,13 @@ export class PermissionsMock extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    unauthorizeProxy(_proxy: string, overrides?: Overrides): Promise<BigNumber>;
+
+    "unauthorizeProxy(address)"(
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     "uri(uint256)"(
@@ -683,6 +769,16 @@ export class PermissionsMock extends Contract {
 
     "assingTier2(address)"(
       _user: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    authorizeProxy(
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "authorizeProxy(address)"(
+      _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -788,6 +884,16 @@ export class PermissionsMock extends Contract {
     "supportsInterface(bytes4)"(
       interfaceId: BytesLike,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    unauthorizeProxy(
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "unauthorizeProxy(address)"(
+      _proxy: string,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     uri(

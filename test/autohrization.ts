@@ -1,10 +1,16 @@
 import { ethers, upgrades } from 'hardhat';
 import { Signer } from 'ethers';
 import { expect } from 'chai';
-import { Authorization, XTokenMock, PermissionsMock, EurPriceFeedMock, OperationsRegistry } from '../typechain';
+import {
+  Authorization,
+  PermissionsMock,
+  EurPriceFeedMock,
+  OperationsRegistry,
+  XTokenWrapperMock,
+  XToken,
+} from '../typechain';
 import Reverter from './utils/reverter';
 
-const { BigNumber } = ethers;
 let deployer: Signer;
 let kakaroto: Signer;
 let vegeta: Signer;
@@ -15,10 +21,15 @@ let kakarotoAddress: string;
 let vegetaAddress: string;
 let karpinchoAddress: string;
 
-let token: XTokenMock;
-let tokenKakaroto: XTokenMock;
-let tokenVegeta: XTokenMock;
-let tokenKarpincho: XTokenMock;
+let xTokenContract: XToken;
+let xTokenContractKakaroto: XToken;
+let xTokenContractVegeta: XToken;
+let xTokenContractKarpincho: XToken;
+
+let xTokenWrapperMockContract: XTokenWrapperMock;
+let xTokenWrapperMockContractKakaroto: XTokenWrapperMock;
+let xTokenWrapperMockContractVegeta: XTokenWrapperMock;
+let xTokenWrapperMockContractKarpincho: XTokenWrapperMock;
 
 let eurPriceFeedContract: EurPriceFeedMock;
 let permissionsContract: PermissionsMock;
@@ -42,9 +53,10 @@ describe('Authorization', function () {
 
     const PermissionsMock = await ethers.getContractFactory('PermissionsMock');
     const Authorization = await ethers.getContractFactory('Authorization');
-    const xTokenMock = await ethers.getContractFactory('xTokenMock');
+    const xTokenFactory = await ethers.getContractFactory('XToken');
     const EurPriceFeed = await ethers.getContractFactory('EurPriceFeedMock');
     const OperationsRegistry = await ethers.getContractFactory('OperationsRegistry');
+    const XTokenWrapperFactory = await ethers.getContractFactory('XTokenWrapperMock');
 
     eurPriceFeedContract = (await EurPriceFeed.deploy()) as EurPriceFeedMock;
     await eurPriceFeedContract.deployed();
@@ -63,21 +75,32 @@ describe('Authorization', function () {
       false,
     ])) as Authorization;
 
-    token = (await xTokenMock.deploy(
+    xTokenContract = (await xTokenFactory.deploy(
       'Authorizable Token',
       'AT',
+      18,
+      '',
       authorizationContract.address,
       operationsRegistryContract.address,
-    )) as XTokenMock;
-    await token.deployed();
+    )) as XToken;
+    await xTokenContract.deployed();
 
-    await operationsRegistryContract.allowAsset(token.address);
+    await operationsRegistryContract.allowAsset(xTokenContract.address);
 
     authorizationContractKakaroto = authorizationContract.connect(kakaroto);
 
-    tokenKakaroto = token.connect(kakaroto);
-    tokenVegeta = token.connect(vegeta);
-    tokenKarpincho = token.connect(karpincho);
+    xTokenContractKakaroto = xTokenContract.connect(kakaroto);
+    xTokenContractVegeta = xTokenContract.connect(vegeta);
+    xTokenContractKarpincho = xTokenContract.connect(karpincho);
+
+    xTokenWrapperMockContract = (await XTokenWrapperFactory.deploy()) as XTokenWrapperMock;
+    await xTokenWrapperMockContract.deployed();
+
+    await xTokenContract.setWrapper(xTokenWrapperMockContract.address);
+
+    xTokenWrapperMockContractKakaroto = xTokenWrapperMockContract.connect(kakaroto);
+    xTokenWrapperMockContractVegeta = xTokenWrapperMockContract.connect(vegeta);
+    xTokenWrapperMockContractKarpincho = xTokenWrapperMockContract.connect(karpincho);
 
     await reverter.snapshot();
   });
@@ -161,7 +184,7 @@ describe('Authorization', function () {
     });
 
     it('Should allow to set eur price feed address to owner', async function () {
-      const EurPriceFeed = await ethers.getContractFactory('EurPriceFeedMock');
+      const EurPriceFeed = await ethers.getContractFactory('EurPriceFeedMock', vegeta);
       const newEurPriceFeedContract = (await EurPriceFeed.deploy()) as EurPriceFeedMock;
       await newEurPriceFeedContract.deployed();
 
@@ -172,7 +195,7 @@ describe('Authorization', function () {
     });
 
     it('Should allow to set trading registry address to owner', async function () {
-      const OperationsRegistry = await ethers.getContractFactory('OperationsRegistry');
+      const OperationsRegistry = await ethers.getContractFactory('OperationsRegistry', vegeta);
       const newOperationsRegistryContract = (await OperationsRegistry.deploy(
         eurPriceFeedContract.address,
       )) as OperationsRegistry;
@@ -238,32 +261,29 @@ describe('Authorization', function () {
       describe('ERC20 Operations', () => {
         // mint
         it('should not be able to wrap', async () => {
-          await expect(token.mint(karpinchoAddress, BigNumber.from(`${1}`))).to.be.revertedWith(
+          await expect(xTokenWrapperMockContractKarpincho.wrap(xTokenContract.address, 1)).to.be.revertedWith(
             'Authorizable: not authorized',
           );
         });
 
         // burn
         it('should not be able to unwrap', async () => {
-          await token.mint(deployerAddress, BigNumber.from(`${10}`));
-          await token.transfer(karpinchoAddress, BigNumber.from(`${10}`));
-
-          await expect(token.burnFrom(karpinchoAddress, BigNumber.from(`${10}`))).to.be.revertedWith(
+          await expect(xTokenWrapperMockContractKarpincho.unwrap(xTokenContract.address, 1)).to.be.revertedWith(
             'Authorizable: not authorized',
           );
         });
 
         // transfer
         it('should not be able to transfer', async () => {
-          await expect(tokenKarpincho.transfer(deployerAddress, BigNumber.from(`${10}`))).to.be.revertedWith(
+          await expect(xTokenContractKarpincho.transfer(deployerAddress, 1)).to.be.revertedWith(
             'Authorizable: not authorized',
           );
         });
 
         // transferFrom
         it('should not be able to transferFrom', async () => {
-          await tokenKarpincho.approve(kakarotoAddress, '10');
-          await expect(tokenKakaroto.transferFrom(karpinchoAddress, deployerAddress, '10')).to.be.revertedWith(
+          await xTokenContractKarpincho.approve(kakarotoAddress, 1);
+          await expect(xTokenContractKakaroto.transferFrom(karpinchoAddress, deployerAddress, 1)).to.be.revertedWith(
             'Authorizable: not authorized',
           );
         });
@@ -278,112 +298,118 @@ describe('Authorization', function () {
 
         // mint
         it('should be able to wrap less than the allowed limit', async () => {
-          await token.mint(kakarotoAddress, '1');
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          await xTokenWrapperMockContractKakaroto.wrap(xTokenContract.address, '1');
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
 
           expect(kakarotoBalance).to.equal('1');
         });
 
         it('should be able to wrap up to allowed limit', async () => {
-          await token.mint(kakarotoAddress, '4999');
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          await xTokenWrapperMockContractKakaroto.wrap(xTokenContract.address, '4999');
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
 
           expect(kakarotoBalance).to.equal('5000');
         });
 
         it('should not be able to wrap more than allowed limit', async () => {
-          await expect(token.mint(kakarotoAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+          await expect(xTokenWrapperMockContractKakaroto.wrap(xTokenContract.address, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal('5000');
         });
 
         // burn
         it('should be able to unwrap less than the allowed limit', async () => {
-          await token.burnFrom(kakarotoAddress, '1');
+          await xTokenWrapperMockContractKakaroto.unwrap(xTokenContract.address, '1');
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal('4999');
         });
 
         it('should be able to unwrap up to the allowed limit', async () => {
-          await token.burnFrom(kakarotoAddress, '4999');
+          await xTokenWrapperMockContractKakaroto.unwrap(xTokenContract.address, '4999');
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal('0');
         });
 
         it('should not be able to unwrap more than allowed limit', async () => {
-          await token.mint(deployerAddress, '1');
-          await token.transfer(kakarotoAddress, '1');
+          await xTokenWrapperMockContract.wrap(xTokenContract.address, '1');
+          await xTokenContract.transfer(kakarotoAddress, '1');
 
-          await expect(token.burnFrom(kakarotoAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+          await expect(xTokenWrapperMockContractKakaroto.unwrap(xTokenContract.address, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal('1');
         });
 
         // transfer
         it('should be able to transfer less than the allowed limit', async () => {
-          await token.mint(deployerAddress, '10000');
-          await token.transfer(kakarotoAddress, '10000');
+          await xTokenWrapperMockContract.wrap(xTokenContract.address, '10000');
+          await xTokenContract.transfer(kakarotoAddress, '10000');
 
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
 
-          await tokenKakaroto.transfer(deployerAddress, '1');
+          await xTokenContractKakaroto.transfer(deployerAddress, '1');
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance.sub('1'));
         });
 
         it('should be able to transfer up to the allowed limit', async () => {
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await tokenKakaroto.transfer(deployerAddress, '4999');
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await xTokenContractKakaroto.transfer(deployerAddress, '4999');
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance.sub('4999'));
         });
 
         it('should not be able to transfer more than the allowed limit', async () => {
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await expect(tokenKakaroto.transfer(deployerAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await expect(xTokenContractKakaroto.transfer(deployerAddress, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
         });
 
         // transferFrom
-        it('should be able to transfer less than the allowed limit', async () => {
+        it('should be able to transferFrom less than the allowed limit', async () => {
           await reverter.revert();
 
-          await token.mint(deployerAddress, '10000');
-          await token.transfer(kakarotoAddress, '10000');
+          await xTokenWrapperMockContract.wrap(xTokenContract.address, '10000');
+          await xTokenContract.transfer(kakarotoAddress, '10000');
 
-          await tokenKakaroto.approve(deployerAddress, '10000');
+          await xTokenContractKakaroto.approve(deployerAddress, '10000');
 
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
 
-          await token.transferFrom(kakarotoAddress, deployerAddress, '1');
+          await xTokenContract.transferFrom(kakarotoAddress, deployerAddress, '1');
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance.sub('1'));
         });
 
-        it('should be able to transfer up to the allowed limit', async () => {
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await token.transferFrom(kakarotoAddress, deployerAddress, '4999');
+        it('should be able to transferFrom up to the allowed limit', async () => {
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await xTokenContract.transferFrom(kakarotoAddress, deployerAddress, '4999');
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance.sub('4999'));
         });
 
-        it('should not be able to transfer more than the allowed limit', async () => {
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await expect(token.transferFrom(kakarotoAddress, deployerAddress, '1')).to.be.revertedWith(
+        it('should not be able to transferFrom more than the allowed limit', async () => {
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await expect(xTokenContract.transferFrom(kakarotoAddress, deployerAddress, '1')).to.be.revertedWith(
             'Authorizable: not authorized',
           );
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
         });
       });
@@ -397,108 +423,108 @@ describe('Authorization', function () {
 
         // mint
         it('should be able to wrap less than the allowed limit', async () => {
-          await token.mint(vegetaAddress, '1');
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          await xTokenWrapperMockContractVegeta.wrap(xTokenContract.address, '1');
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
 
           expect(vegetaBalance).to.equal('1');
         });
 
         it('should be able to wrap up to allowed limit', async () => {
-          await token.mint(vegetaAddress, '4999');
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          await xTokenWrapperMockContractVegeta.wrap(xTokenContract.address, '4999');
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
 
           expect(vegetaBalance).to.equal('5000');
         });
 
         it('should be able to wrap more than allowed limit', async () => {
-          await token.mint(vegetaAddress, '1');
+          await xTokenWrapperMockContractVegeta.wrap(xTokenContract.address, '1');
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal('5001');
         });
 
         // burn
         it('should be able to unwrap less than the allowed limit', async () => {
-          await token.burnFrom(vegetaAddress, '1');
+          await xTokenWrapperMockContractVegeta.unwrap(xTokenContract.address, '1');
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal('5000');
         });
 
         it('should be able to unwrap up to the allowed limit', async () => {
-          await token.burnFrom(vegetaAddress, '4999');
+          await xTokenWrapperMockContractVegeta.unwrap(xTokenContract.address, '4999');
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal('1');
         });
 
         it('should be able to unwrap more than allowed limit', async () => {
-          await token.burnFrom(vegetaAddress, '1');
+          await xTokenWrapperMockContractVegeta.unwrap(xTokenContract.address, '1');
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal('0');
         });
 
         // transfer
         it('should be able to transfer less than the allowed limit', async () => {
-          await token.mint(deployerAddress, '10000');
-          await token.transfer(vegetaAddress, '10000');
+          await xTokenWrapperMockContract.wrap(xTokenContract.address, '10000');
+          await xTokenContract.transfer(vegetaAddress, '10000');
 
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
 
-          await tokenVegeta.transfer(deployerAddress, '1');
+          await xTokenContractVegeta.transfer(deployerAddress, '1');
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('1'));
         });
 
         it('should be able to transfer up to the allowed limit', async () => {
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
-          await tokenVegeta.transfer(deployerAddress, '4999');
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await xTokenContractVegeta.transfer(deployerAddress, '4999');
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('4999'));
         });
 
         it('should be able to transfer more than the allowed limit', async () => {
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
-          await tokenVegeta.transfer(deployerAddress, '1');
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await xTokenContractVegeta.transfer(deployerAddress, '1');
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('1'));
         });
 
         // transferFrom
-        it('should be able to transfer less than the allowed limit', async () => {
+        it('should be able to transferFrom less than the allowed limit', async () => {
           await reverter.revert();
 
-          await token.mint(deployerAddress, '10000');
-          await token.transfer(vegetaAddress, '10000');
+          await xTokenWrapperMockContract.wrap(xTokenContract.address, '10000');
+          await xTokenContract.transfer(vegetaAddress, '10000');
 
-          await tokenVegeta.approve(deployerAddress, '10000');
+          await xTokenContractVegeta.approve(deployerAddress, '10000');
 
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
 
-          await token.transferFrom(vegetaAddress, deployerAddress, '1');
+          await xTokenContract.transferFrom(vegetaAddress, deployerAddress, '1');
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('1'));
         });
 
-        it('should be able to transfer up to the allowed limit', async () => {
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
-          await token.transferFrom(vegetaAddress, deployerAddress, '4999');
+        it('should be able to transferFrom up to the allowed limit', async () => {
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await xTokenContract.transferFrom(vegetaAddress, deployerAddress, '4999');
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('4999'));
         });
 
-        it('should be able to transfer more than the allowed limit', async () => {
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
+        it('should be able to transferFrom more than the allowed limit', async () => {
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
 
-          await token.transferFrom(vegetaAddress, deployerAddress, '1');
+          await xTokenContract.transferFrom(vegetaAddress, deployerAddress, '1');
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('1'));
         });
       });
@@ -509,48 +535,54 @@ describe('Authorization', function () {
         before(async () => {
           await reverter.revert();
 
-          await token.mint(deployerAddress, '1');
-          await token.transfer(kakarotoAddress, '1');
+          await xTokenWrapperMockContract.wrap(xTokenContract.address, '1');
+          await xTokenContract.transfer(kakarotoAddress, '1');
 
           await authorizationContract.pause();
         });
 
         // mint
         it('should not be able to wrap', async () => {
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await expect(token.mint(kakarotoAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await expect(xTokenWrapperMockContractKakaroto.wrap(xTokenContract.address, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
         });
 
         // burn
         it('should not be able to unwrap more than allowed limit', async () => {
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await expect(token.burnFrom(kakarotoAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await expect(xTokenWrapperMockContractKakaroto.unwrap(xTokenContract.address, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
         });
 
         // transfer
         it('should not be able to transfer', async () => {
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await expect(tokenKakaroto.transfer(deployerAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await expect(xTokenContractKakaroto.transfer(deployerAddress, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
         });
 
         // transferFrom
         it('should not be able to transferFrom', async () => {
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await tokenKakaroto.approve(deployerAddress, kakarotoInitialBalance);
-          await expect(token.transferFrom(kakarotoAddress, deployerAddress, kakarotoInitialBalance)).to.be.revertedWith(
-            'Authorizable: not authorized',
-          );
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await xTokenContractKakaroto.approve(deployerAddress, kakarotoInitialBalance);
+          await expect(
+            xTokenContract.transferFrom(kakarotoAddress, deployerAddress, kakarotoInitialBalance),
+          ).to.be.revertedWith('Authorizable: not authorized');
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
         });
       });
@@ -561,48 +593,54 @@ describe('Authorization', function () {
         before(async () => {
           await reverter.revert();
 
-          await token.mint(deployerAddress, '1');
-          await token.transfer(vegetaAddress, '1');
+          await xTokenWrapperMockContract.wrap(xTokenContract.address, '1');
+          await xTokenContract.transfer(vegetaAddress, '1');
 
           await authorizationContract.pause();
         });
 
         // mint
         it('should not be able to wrap', async () => {
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
-          await expect(token.mint(vegetaAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await expect(xTokenWrapperMockContractVegeta.wrap(xTokenContract.address, '1')).be.revertedWith(
+            'Authorizable: not authorized',
+          );
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance);
         });
 
         // burn
         it('should not be able to unwrap more than allowed limit', async () => {
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
-          await expect(token.burnFrom(vegetaAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await expect(xTokenWrapperMockContractVegeta.unwrap(xTokenContract.address, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance);
         });
 
         // transfer
         it('should not be able to transfer', async () => {
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
-          await expect(tokenVegeta.transfer(deployerAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await expect(xTokenContractVegeta.transfer(deployerAddress, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance);
         });
 
         // transferFrom
         it('should not be able to transferFrom', async () => {
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
-          await tokenVegeta.approve(deployerAddress, vegetaInitialBalance);
-          await expect(token.transferFrom(vegetaAddress, deployerAddress, vegetaInitialBalance)).to.be.revertedWith(
-            'Authorizable: not authorized',
-          );
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await xTokenContractVegeta.approve(deployerAddress, vegetaInitialBalance);
+          await expect(
+            xTokenContract.transferFrom(vegetaAddress, deployerAddress, vegetaInitialBalance),
+          ).to.be.revertedWith('Authorizable: not authorized');
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance);
         });
       });
@@ -613,74 +651,80 @@ describe('Authorization', function () {
         before(async () => {
           await reverter.revert();
 
-          await token.mint(deployerAddress, '30');
-          await token.transfer(vegetaAddress, '15');
-          await token.transfer(kakarotoAddress, '15');
+          await xTokenWrapperMockContract.wrap(xTokenContract.address, '30');
+          await xTokenContract.transfer(vegetaAddress, '15');
+          await xTokenContract.transfer(kakarotoAddress, '15');
 
           await permissionsContract.pauseUser(kakarotoAddress);
         });
 
         // mint
         it('should not be able to wrap', async () => {
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await expect(token.mint(kakarotoAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await expect(xTokenWrapperMockContractKakaroto.wrap(xTokenContract.address, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
 
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
-          await token.mint(vegetaAddress, '1');
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await xTokenWrapperMockContractVegeta.wrap(xTokenContract.address, '1');
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance.add('1'));
         });
 
         // burn
         it('should not be able to unwrap more than allowed limit', async () => {
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await expect(token.burnFrom(kakarotoAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await expect(xTokenWrapperMockContractKakaroto.unwrap(xTokenContract.address, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
 
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
-          await token.burnFrom(vegetaAddress, '1');
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await xTokenWrapperMockContractVegeta.unwrap(xTokenContract.address, '1');
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('1'));
         });
 
         // transfer
         it('should not be able to transfer', async () => {
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await expect(tokenKakaroto.transfer(deployerAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await expect(xTokenContractKakaroto.transfer(deployerAddress, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
 
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
-          await tokenVegeta.transfer(deployerAddress, '1');
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await xTokenContractVegeta.transfer(deployerAddress, '1');
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('1'));
         });
 
         // transferFrom
         it('should not be able to transferFrom', async () => {
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await tokenKakaroto.approve(deployerAddress, kakarotoInitialBalance);
-          await expect(token.transferFrom(kakarotoAddress, deployerAddress, kakarotoInitialBalance)).to.be.revertedWith(
-            'Authorizable: not authorized',
-          );
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await xTokenContractKakaroto.approve(deployerAddress, kakarotoInitialBalance);
+          await expect(
+            xTokenContract.transferFrom(kakarotoAddress, deployerAddress, kakarotoInitialBalance),
+          ).to.be.revertedWith('Authorizable: not authorized');
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
 
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
-          await tokenVegeta.approve(deployerAddress, vegetaInitialBalance);
-          await token.transferFrom(vegetaAddress, deployerAddress, vegetaInitialBalance);
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await xTokenContractVegeta.approve(deployerAddress, vegetaInitialBalance);
+          await xTokenContract.transferFrom(vegetaAddress, deployerAddress, vegetaInitialBalance);
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal('0');
         });
       });
@@ -691,79 +735,85 @@ describe('Authorization', function () {
         before(async () => {
           await reverter.revert();
 
-          await token.mint(deployerAddress, '30');
-          await token.transfer(vegetaAddress, '15');
-          await token.transfer(kakarotoAddress, '15');
+          await xTokenWrapperMockContract.wrap(xTokenContract.address, '30');
+          await xTokenContract.transfer(vegetaAddress, '15');
+          await xTokenContract.transfer(kakarotoAddress, '15');
 
           await permissionsContract.pauseUser(vegetaAddress);
         });
 
         // mint
         it('should not be able to wrap', async () => {
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
-          await expect(token.mint(vegetaAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await expect(xTokenWrapperMockContractVegeta.wrap(xTokenContract.address, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance);
 
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await token.mint(kakarotoAddress, '1');
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await xTokenWrapperMockContractKakaroto.wrap(xTokenContract.address, '1');
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance.add('1'));
         });
 
         // burn
         it('should not be able to unwrap more than allowed limit', async () => {
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
-          await expect(token.burnFrom(vegetaAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await expect(xTokenWrapperMockContractVegeta.unwrap(xTokenContract.address, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance);
 
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await token.burnFrom(kakarotoAddress, '1');
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await xTokenWrapperMockContractKakaroto.unwrap(xTokenContract.address, '1');
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance.sub('1'));
         });
 
         // transfer
         it('should not be able to transfer', async () => {
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
-          await expect(tokenVegeta.transfer(deployerAddress, '1')).to.be.revertedWith('Authorizable: not authorized');
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await expect(xTokenContractVegeta.transfer(deployerAddress, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance);
 
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await tokenKakaroto.transfer(deployerAddress, '1');
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await xTokenContractKakaroto.transfer(deployerAddress, '1');
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal(kakarotoInitialBalance.sub('1'));
         });
 
         // transferFrom
         it('should not be able to transferFrom', async () => {
-          const vegetaInitialBalance = await token.balanceOf(vegetaAddress);
-          await tokenVegeta.approve(deployerAddress, vegetaInitialBalance);
-          await expect(token.transferFrom(vegetaAddress, deployerAddress, vegetaInitialBalance)).to.be.revertedWith(
-            'Authorizable: not authorized',
-          );
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await xTokenContractVegeta.approve(deployerAddress, vegetaInitialBalance);
+          await expect(
+            xTokenContract.transferFrom(vegetaAddress, deployerAddress, vegetaInitialBalance),
+          ).to.be.revertedWith('Authorizable: not authorized');
 
-          const vegetaBalance = await token.balanceOf(vegetaAddress);
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance);
 
-          const kakarotoInitialBalance = await token.balanceOf(kakarotoAddress);
-          await tokenKakaroto.approve(deployerAddress, kakarotoInitialBalance);
-          await token.transferFrom(kakarotoAddress, deployerAddress, kakarotoInitialBalance);
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await xTokenContractKakaroto.approve(deployerAddress, kakarotoInitialBalance);
+          await xTokenContract.transferFrom(kakarotoAddress, deployerAddress, kakarotoInitialBalance);
 
-          const kakarotoBalance = await token.balanceOf(kakarotoAddress);
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
           expect(kakarotoBalance).to.equal('0');
         });
       });
     });
-
-    //
   });
+
+  // TODO - Add isAuthorized through CPK
 });

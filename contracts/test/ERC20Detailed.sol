@@ -7,4 +7,8 @@ contract ERC20Detailed is ERC20 {
   constructor (string memory name_, string memory symbol_, uint8 decimals_) public ERC20(name_, symbol_)  {
       _setupDecimals(decimals_);
   }
+
+  function mint(address account, uint256 amount) public {
+        _mint(account, amount);
+    }
 }

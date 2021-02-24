@@ -25,8 +25,8 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     "SUSPENDED_ID()": FunctionFragment;
     "TIER_1_ID()": FunctionFragment;
     "TIER_2_ID()": FunctionFragment;
-    "assingTier1(address)": FunctionFragment;
-    "assingTier2(address)": FunctionFragment;
+    "assingTier1(address,address)": FunctionFragment;
+    "assingTier2(address,address)": FunctionFragment;
     "hasTier1(address)": FunctionFragment;
     "hasTier2(address)": FunctionFragment;
     "initialize(address)": FunctionFragment;
@@ -34,12 +34,12 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     "owner()": FunctionFragment;
     "permissionItems()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "revokeTier1(address)": FunctionFragment;
-    "revokeTier2(address)": FunctionFragment;
+    "revokeTier1(address,address)": FunctionFragment;
+    "revokeTier2(address,address)": FunctionFragment;
     "setPermissionItems(address)": FunctionFragment;
-    "suspendUser(address)": FunctionFragment;
+    "suspendUser(address,address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "unsuspendUser(address)": FunctionFragment;
+    "unsuspendUser(address,address)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -48,8 +48,14 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "TIER_1_ID", values?: undefined): string;
   encodeFunctionData(functionFragment: "TIER_2_ID", values?: undefined): string;
-  encodeFunctionData(functionFragment: "assingTier1", values: [string]): string;
-  encodeFunctionData(functionFragment: "assingTier2", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "assingTier1",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "assingTier2",
+    values: [string, string]
+  ): string;
   encodeFunctionData(functionFragment: "hasTier1", values: [string]): string;
   encodeFunctionData(functionFragment: "hasTier2", values: [string]): string;
   encodeFunctionData(functionFragment: "initialize", values: [string]): string;
@@ -63,20 +69,29 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "revokeTier1", values: [string]): string;
-  encodeFunctionData(functionFragment: "revokeTier2", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "revokeTier1",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeTier2",
+    values: [string, string]
+  ): string;
   encodeFunctionData(
     functionFragment: "setPermissionItems",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "suspendUser", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "suspendUser",
+    values: [string, string]
+  ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "unsuspendUser",
-    values: [string]
+    values: [string, string]
   ): string;
 
   decodeFunctionResult(
@@ -171,21 +186,25 @@ export class PermissionManager extends Contract {
 
     assingTier1(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "assingTier1(address)"(
+    "assingTier1(address,address)"(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     assingTier2(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "assingTier2(address)"(
+    "assingTier2(address,address)"(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -234,21 +253,25 @@ export class PermissionManager extends Contract {
 
     revokeTier1(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "revokeTier1(address)"(
+    "revokeTier1(address,address)"(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     revokeTier2(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "revokeTier2(address)"(
+    "revokeTier2(address,address)"(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -264,11 +287,13 @@ export class PermissionManager extends Contract {
 
     suspendUser(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "suspendUser(address)"(
+    "suspendUser(address,address)"(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -284,11 +309,13 @@ export class PermissionManager extends Contract {
 
     unsuspendUser(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "unsuspendUser(address)"(
+    "unsuspendUser(address,address)"(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
@@ -307,21 +334,25 @@ export class PermissionManager extends Contract {
 
   assingTier1(
     _user: string,
+    _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "assingTier1(address)"(
+  "assingTier1(address,address)"(
     _user: string,
+    _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   assingTier2(
     _user: string,
+    _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "assingTier2(address)"(
+  "assingTier2(address,address)"(
     _user: string,
+    _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -370,21 +401,25 @@ export class PermissionManager extends Contract {
 
   revokeTier1(
     _user: string,
+    _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "revokeTier1(address)"(
+  "revokeTier1(address,address)"(
     _user: string,
+    _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   revokeTier2(
     _user: string,
+    _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "revokeTier2(address)"(
+  "revokeTier2(address,address)"(
     _user: string,
+    _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -400,11 +435,13 @@ export class PermissionManager extends Contract {
 
   suspendUser(
     _user: string,
+    _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "suspendUser(address)"(
+  "suspendUser(address,address)"(
     _user: string,
+    _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -420,11 +457,13 @@ export class PermissionManager extends Contract {
 
   unsuspendUser(
     _user: string,
+    _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "unsuspendUser(address)"(
+  "unsuspendUser(address,address)"(
     _user: string,
+    _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -441,17 +480,27 @@ export class PermissionManager extends Contract {
 
     "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    assingTier1(_user: string, overrides?: CallOverrides): Promise<void>;
-
-    "assingTier1(address)"(
+    assingTier1(
       _user: string,
+      _proxy: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    assingTier2(_user: string, overrides?: CallOverrides): Promise<void>;
-
-    "assingTier2(address)"(
+    "assingTier1(address,address)"(
       _user: string,
+      _proxy: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    assingTier2(
+      _user: string,
+      _proxy: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "assingTier2(address,address)"(
+      _user: string,
+      _proxy: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -498,17 +547,27 @@ export class PermissionManager extends Contract {
 
     "renounceOwnership()"(overrides?: CallOverrides): Promise<void>;
 
-    revokeTier1(_user: string, overrides?: CallOverrides): Promise<void>;
-
-    "revokeTier1(address)"(
+    revokeTier1(
       _user: string,
+      _proxy: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    revokeTier2(_user: string, overrides?: CallOverrides): Promise<void>;
-
-    "revokeTier2(address)"(
+    "revokeTier1(address,address)"(
       _user: string,
+      _proxy: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeTier2(
+      _user: string,
+      _proxy: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "revokeTier2(address,address)"(
+      _user: string,
+      _proxy: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -522,10 +581,15 @@ export class PermissionManager extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    suspendUser(_user: string, overrides?: CallOverrides): Promise<void>;
-
-    "suspendUser(address)"(
+    suspendUser(
       _user: string,
+      _proxy: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "suspendUser(address,address)"(
+      _user: string,
+      _proxy: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -539,10 +603,15 @@ export class PermissionManager extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    unsuspendUser(_user: string, overrides?: CallOverrides): Promise<void>;
-
-    "unsuspendUser(address)"(
+    unsuspendUser(
       _user: string,
+      _proxy: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "unsuspendUser(address,address)"(
+      _user: string,
+      _proxy: string,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -569,17 +638,27 @@ export class PermissionManager extends Contract {
 
     "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    assingTier1(_user: string, overrides?: Overrides): Promise<BigNumber>;
-
-    "assingTier1(address)"(
+    assingTier1(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    assingTier2(_user: string, overrides?: Overrides): Promise<BigNumber>;
-
-    "assingTier2(address)"(
+    "assingTier1(address,address)"(
       _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    assingTier2(
+      _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "assingTier2(address,address)"(
+      _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -626,17 +705,27 @@ export class PermissionManager extends Contract {
 
     "renounceOwnership()"(overrides?: Overrides): Promise<BigNumber>;
 
-    revokeTier1(_user: string, overrides?: Overrides): Promise<BigNumber>;
-
-    "revokeTier1(address)"(
+    revokeTier1(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    revokeTier2(_user: string, overrides?: Overrides): Promise<BigNumber>;
-
-    "revokeTier2(address)"(
+    "revokeTier1(address,address)"(
       _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    revokeTier2(
+      _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "revokeTier2(address,address)"(
+      _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -650,10 +739,15 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    suspendUser(_user: string, overrides?: Overrides): Promise<BigNumber>;
-
-    "suspendUser(address)"(
+    suspendUser(
       _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "suspendUser(address,address)"(
+      _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -667,10 +761,15 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    unsuspendUser(_user: string, overrides?: Overrides): Promise<BigNumber>;
-
-    "unsuspendUser(address)"(
+    unsuspendUser(
       _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "unsuspendUser(address,address)"(
+      _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
   };
@@ -690,21 +789,25 @@ export class PermissionManager extends Contract {
 
     assingTier1(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "assingTier1(address)"(
+    "assingTier1(address,address)"(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     assingTier2(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "assingTier2(address)"(
+    "assingTier2(address,address)"(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -764,21 +867,25 @@ export class PermissionManager extends Contract {
 
     revokeTier1(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "revokeTier1(address)"(
+    "revokeTier1(address,address)"(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     revokeTier2(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "revokeTier2(address)"(
+    "revokeTier2(address,address)"(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -794,11 +901,13 @@ export class PermissionManager extends Contract {
 
     suspendUser(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "suspendUser(address)"(
+    "suspendUser(address,address)"(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -814,11 +923,13 @@ export class PermissionManager extends Contract {
 
     unsuspendUser(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "unsuspendUser(address)"(
+    "unsuspendUser(address,address)"(
       _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };

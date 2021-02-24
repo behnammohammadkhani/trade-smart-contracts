@@ -15,6 +15,14 @@ contract PermissionsMock is ERC1155 {
         _mint(_user, 2, 1, "");
     }
 
+    function authorizeProxy(address _proxy) public {
+        _mint(_proxy, 3, 1, "");
+    }
+
+    function unauthorizeProxy(address _proxy) public {
+        _burn(_proxy, 3, 1);
+    }
+
     function pauseUser(address _user) public {
         _mint(_user, 0, 1, "");
     }
