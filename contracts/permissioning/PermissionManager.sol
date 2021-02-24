@@ -58,45 +58,38 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
     }
 
     /**
-     * @dev assigns Tier1 permission to `_user`.
+     * @dev assigns Tier1 permission to user's `_proxy`.
      *
      * Requirements:
      *
      * - the caller must be the owner.
-     * - `_user` should not have Tier1 already assigned.
+     * - `_proxy` should not have Tier1 already assigned.
      *
-     * @param _user The address of the user.
-     * @param _proxy The address of the user's proxy if it is not address zero.
+     * @param _proxy The address of the user's proxy.
      */
-    function assingTier1(address _user, address _proxy) public onlyOwner {
-        require(!hasTier1(_user), "PermissionManager: Address already has Tier 1 assigned");
-        PermissionItems(permissionItems).mint(_user, TIER_1_ID, 1, "");
-
-        if (_proxy != address(0)) {
-            require(!hasTier1(_proxy), "PermissionManager: Proxy already has Tier 1 assigned");
-            PermissionItems(permissionItems).mint(_proxy, TIER_1_ID, 1, "");
-        }
+    function assingTier1(address _proxy) public onlyOwner {
+        require(!hasTier1(_proxy), "PermissionManager: Proxy already has Tier 1 assigned");
+        PermissionItems(permissionItems).mint(_proxy, TIER_1_ID, 1, "");
     }
 
     /**
-     * @dev assigns Tier2 permission to `_user`.
+     * @dev assigns Tier2 permission to `_user` and its `_proxy`.
      *
      * Requirements:
      *
      * - the caller must be the owner.
      * - `_user` should not have Tier2 already assigned.
+     * - `_proxy` should not have Tier2 already assigned.
      *
      * @param _user The address of the user.
-     * @param _proxy The address of the user's proxy if it is not address zero.
+     * @param _proxy The address of the user's proxy.
      */
     function assingTier2(address _user, address _proxy) public onlyOwner {
         require(!hasTier2(_user), "PermissionManager: Address already has Tier 2 assigned");
-        PermissionItems(permissionItems).mint(_user, TIER_2_ID, 1, "");
+        require(!hasTier2(_proxy), "PermissionManager: Proxy already has Tier 2 assigned");
 
-        if (_proxy != address(0)) {
-            require(!hasTier2(_proxy), "PermissionManager: Proxy already has Tier 2 assigned");
-            PermissionItems(permissionItems).mint(_proxy, TIER_2_ID, 1, "");
-        }
+        PermissionItems(permissionItems).mint(_user, TIER_2_ID, 1, "");
+        PermissionItems(permissionItems).mint(_proxy, TIER_2_ID, 1, "");
     }
 
     /**
@@ -108,7 +101,7 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
      * - `_user` should not be already suspended.
      *
      * @param _user The address of the user.
-     * @param _proxy The address of the user's proxy if it is not address zero.
+     * @param _proxy [Optional] The address of the user's proxy if it is not address zero.
      */
     function suspendUser(address _user, address _proxy) public onlyOwner {
         require(!isSuspended(_user), "PermissionManager: Address is already suspended");
@@ -129,7 +122,7 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
      * - `_user` should not be already rejected.
      *
      * @param _user The address of the user.
-     * @param _proxy The address of the user's proxy if it is not address zero.
+     * @param _proxy [Optional] The address of the user's proxy if it is not address zero.
      */
     function rejectUser(address _user, address _proxy) public onlyOwner {
         require(!isRejected(_user), "PermissionManager: Address is already rejected");
@@ -142,28 +135,22 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
     }
 
     /**
-     * @dev removes Tier1 permission from `_user`.
+     * @dev removes Tier1 permission user's `_proxy`.
      *
      * Requirements:
      *
      * - the caller must be the owner.
-     * - `_user` should have Tier1 assigned.
+     * - `_proxy` should have Tier1 assigned.
      *
-     * @param _user The address of the user.
-     * @param _proxy The address of the user's proxy if it is not address zero.
+     * @param _proxy The address of the user's proxy.
      */
-    function revokeTier1(address _user, address _proxy) public onlyOwner {
-        require(hasTier1(_user), "PermissionManager: Address doesn't has Tier 1 assigned");
-        PermissionItems(permissionItems).burn(_user, TIER_1_ID, 1);
-
-        if (_proxy != address(0)) {
-            require(hasTier1(_proxy), "PermissionManager: Proxy doesn't has Tier 1 assigned");
-            PermissionItems(permissionItems).burn(_proxy, TIER_1_ID, 1);
-        }
+    function revokeTier1(address _proxy) public onlyOwner {
+        require(hasTier1(_proxy), "PermissionManager: Proxy doesn't has Tier 1 assigned");
+        PermissionItems(permissionItems).burn(_proxy, TIER_1_ID, 1);
     }
 
     /**
-     * @dev removes Tier2 permission from `_user`.
+     * @dev removes Tier2 permission from `_user` and its `_proxy`.
      *
      * Requirements:
      *
@@ -171,16 +158,14 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
      * - `_user` should have Tier2 assigned.
      *
      * @param _user The address of the user.
-     * @param _proxy The address of the user's proxy if it is not address zero.
+     * @param _proxy The address of the user's proxy.
      */
     function revokeTier2(address _user, address _proxy) public onlyOwner {
         require(hasTier2(_user), "PermissionManager: Address doesn't has Tier 2 assigned");
-        PermissionItems(permissionItems).burn(_user, TIER_2_ID, 1);
+        require(hasTier2(_proxy), "PermissionManager: Proxy doesn't has Tier 2 assigned");
 
-        if (_proxy != address(0)) {
-            require(hasTier2(_proxy), "PermissionManager: Proxy doesn't has Tier 2 assigned");
-            PermissionItems(permissionItems).burn(_proxy, TIER_2_ID, 1);
-        }
+        PermissionItems(permissionItems).burn(_user, TIER_2_ID, 1);
+        PermissionItems(permissionItems).burn(_proxy, TIER_2_ID, 1);
     }
 
     /**
@@ -192,7 +177,7 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
      * - `_user` should be suspended.
      *
      * @param _user The address of the user.
-     * @param _proxy The address of the user's proxy if it is not address zero.
+     * @param _proxy [Optional] The address of the user's proxy if it is not address zero.
      */
     function unsuspendUser(address _user, address _proxy) public onlyOwner {
         require(isSuspended(_user), "PermissionManager: Address is not currently suspended");
@@ -213,7 +198,7 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
      * - `_user` should be rejected.
      *
      * @param _user The address of the user.
-     * @param _proxy The address of the user's proxy if it is not address zero.
+     * @param _proxy [Optional] The address of the user's proxy if it is not address zero.
      */
     function unrejectUser(address _user, address _proxy) public onlyOwner {
         require(isRejected(_user), "PermissionManager: Address is not currently rejected");
@@ -233,38 +218,38 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
     }
 
     /**
-     * @dev Returns `true` if `_user` has been assigned Tier1 permission.
+     * @dev Returns `true` if `_account` has been assigned Tier1 permission.
      *
-     * @param _user The address of the user.
+     * @param _account The address of the user.
      */
-    function hasTier1(address _user) public view returns (bool) {
-        return _hasItem(_user, TIER_1_ID);
+    function hasTier1(address _account) public view returns (bool) {
+        return _hasItem(_account, TIER_1_ID);
     }
 
     /**
-     * @dev Returns `true` if `_user` has been assigned Tier2 permission.
+     * @dev Returns `true` if `_account` has been assigned Tier2 permission.
      *
-     * @param _user The address of the user.
+     * @param _account The address of the user.
      */
-    function hasTier2(address _user) public view returns (bool) {
-        return _hasItem(_user, TIER_2_ID);
+    function hasTier2(address _account) public view returns (bool) {
+        return _hasItem(_account, TIER_2_ID);
     }
 
     /**
-     * @dev Returns `true` if `_user` has been Suspended.
+     * @dev Returns `true` if `_account` has been Suspended.
      *
-     * @param _user The address of the user.
+     * @param _account The address of the user.
      */
-    function isSuspended(address _user) public view returns (bool) {
-        return _hasItem(_user, SUSPENDED_ID);
+    function isSuspended(address _account) public view returns (bool) {
+        return _hasItem(_account, SUSPENDED_ID);
     }
 
     /**
-     * @dev Returns `true` if `_user` has been Rejected.
+     * @dev Returns `true` if `_account` has been Rejected.
      *
-     * @param _user The address of the user.
+     * @param _account The address of the user.
      */
-    function isRejected(address _user) public view returns (bool) {
-        return _hasItem(_user, REJECTED_ID);
+    function isRejected(address _account) public view returns (bool) {
+        return _hasItem(_account, REJECTED_ID);
     }
 }

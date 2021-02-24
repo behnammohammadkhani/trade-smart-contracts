@@ -26,7 +26,7 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     "SUSPENDED_ID()": FunctionFragment;
     "TIER_1_ID()": FunctionFragment;
     "TIER_2_ID()": FunctionFragment;
-    "assingTier1(address,address)": FunctionFragment;
+    "assingTier1(address)": FunctionFragment;
     "assingTier2(address,address)": FunctionFragment;
     "hasTier1(address)": FunctionFragment;
     "hasTier2(address)": FunctionFragment;
@@ -37,7 +37,7 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     "permissionItems()": FunctionFragment;
     "rejectUser(address,address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "revokeTier1(address,address)": FunctionFragment;
+    "revokeTier1(address)": FunctionFragment;
     "revokeTier2(address,address)": FunctionFragment;
     "setPermissionItems(address)": FunctionFragment;
     "suspendUser(address,address)": FunctionFragment;
@@ -56,10 +56,7 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "TIER_1_ID", values?: undefined): string;
   encodeFunctionData(functionFragment: "TIER_2_ID", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "assingTier1",
-    values: [string, string]
-  ): string;
+  encodeFunctionData(functionFragment: "assingTier1", values: [string]): string;
   encodeFunctionData(
     functionFragment: "assingTier2",
     values: [string, string]
@@ -82,10 +79,7 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "revokeTier1",
-    values: [string, string]
-  ): string;
+  encodeFunctionData(functionFragment: "revokeTier1", values: [string]): string;
   encodeFunctionData(
     functionFragment: "revokeTier2",
     values: [string, string]
@@ -216,13 +210,11 @@ export class PermissionManager extends Contract {
     "TIER_2_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     assingTier1(
-      _user: string,
       _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "assingTier1(address,address)"(
-      _user: string,
+    "assingTier1(address)"(
       _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -239,17 +231,17 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    hasTier1(_user: string, overrides?: CallOverrides): Promise<[boolean]>;
+    hasTier1(_account: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     "hasTier1(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    hasTier2(_user: string, overrides?: CallOverrides): Promise<[boolean]>;
+    hasTier2(_account: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     "hasTier2(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -263,17 +255,20 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    isRejected(_user: string, overrides?: CallOverrides): Promise<[boolean]>;
+    isRejected(_account: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     "isRejected(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    isSuspended(_user: string, overrides?: CallOverrides): Promise<[boolean]>;
+    isSuspended(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     "isSuspended(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -302,13 +297,11 @@ export class PermissionManager extends Contract {
     "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
 
     revokeTier1(
-      _user: string,
       _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "revokeTier1(address,address)"(
-      _user: string,
+    "revokeTier1(address)"(
       _proxy: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -399,13 +392,11 @@ export class PermissionManager extends Contract {
   "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   assingTier1(
-    _user: string,
     _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "assingTier1(address,address)"(
-    _user: string,
+  "assingTier1(address)"(
     _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -422,17 +413,17 @@ export class PermissionManager extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  hasTier1(_user: string, overrides?: CallOverrides): Promise<boolean>;
+  hasTier1(_account: string, overrides?: CallOverrides): Promise<boolean>;
 
   "hasTier1(address)"(
-    _user: string,
+    _account: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  hasTier2(_user: string, overrides?: CallOverrides): Promise<boolean>;
+  hasTier2(_account: string, overrides?: CallOverrides): Promise<boolean>;
 
   "hasTier2(address)"(
-    _user: string,
+    _account: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -446,17 +437,17 @@ export class PermissionManager extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  isRejected(_user: string, overrides?: CallOverrides): Promise<boolean>;
+  isRejected(_account: string, overrides?: CallOverrides): Promise<boolean>;
 
   "isRejected(address)"(
-    _user: string,
+    _account: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  isSuspended(_user: string, overrides?: CallOverrides): Promise<boolean>;
+  isSuspended(_account: string, overrides?: CallOverrides): Promise<boolean>;
 
   "isSuspended(address)"(
-    _user: string,
+    _account: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -485,13 +476,11 @@ export class PermissionManager extends Contract {
   "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   revokeTier1(
-    _user: string,
     _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "revokeTier1(address,address)"(
-    _user: string,
+  "revokeTier1(address)"(
     _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -581,14 +570,9 @@ export class PermissionManager extends Contract {
 
     "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    assingTier1(
-      _user: string,
-      _proxy: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    assingTier1(_proxy: string, overrides?: CallOverrides): Promise<void>;
 
-    "assingTier1(address,address)"(
-      _user: string,
+    "assingTier1(address)"(
       _proxy: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -605,17 +589,17 @@ export class PermissionManager extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    hasTier1(_user: string, overrides?: CallOverrides): Promise<boolean>;
+    hasTier1(_account: string, overrides?: CallOverrides): Promise<boolean>;
 
     "hasTier1(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    hasTier2(_user: string, overrides?: CallOverrides): Promise<boolean>;
+    hasTier2(_account: string, overrides?: CallOverrides): Promise<boolean>;
 
     "hasTier2(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -629,17 +613,17 @@ export class PermissionManager extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    isRejected(_user: string, overrides?: CallOverrides): Promise<boolean>;
+    isRejected(_account: string, overrides?: CallOverrides): Promise<boolean>;
 
     "isRejected(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    isSuspended(_user: string, overrides?: CallOverrides): Promise<boolean>;
+    isSuspended(_account: string, overrides?: CallOverrides): Promise<boolean>;
 
     "isSuspended(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -667,14 +651,9 @@ export class PermissionManager extends Contract {
 
     "renounceOwnership()"(overrides?: CallOverrides): Promise<void>;
 
-    revokeTier1(
-      _user: string,
-      _proxy: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    revokeTier1(_proxy: string, overrides?: CallOverrides): Promise<void>;
 
-    "revokeTier1(address,address)"(
-      _user: string,
+    "revokeTier1(address)"(
       _proxy: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -774,14 +753,9 @@ export class PermissionManager extends Contract {
 
     "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    assingTier1(
-      _user: string,
-      _proxy: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
+    assingTier1(_proxy: string, overrides?: Overrides): Promise<BigNumber>;
 
-    "assingTier1(address,address)"(
-      _user: string,
+    "assingTier1(address)"(
       _proxy: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -798,17 +772,17 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    hasTier1(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
+    hasTier1(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "hasTier1(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    hasTier2(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
+    hasTier2(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "hasTier2(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -822,17 +796,20 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    isRejected(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
+    isRejected(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "isRejected(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isSuspended(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
+    isSuspended(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     "isSuspended(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -860,14 +837,9 @@ export class PermissionManager extends Contract {
 
     "renounceOwnership()"(overrides?: Overrides): Promise<BigNumber>;
 
-    revokeTier1(
-      _user: string,
-      _proxy: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
+    revokeTier1(_proxy: string, overrides?: Overrides): Promise<BigNumber>;
 
-    "revokeTier1(address,address)"(
-      _user: string,
+    "revokeTier1(address)"(
       _proxy: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -959,13 +931,11 @@ export class PermissionManager extends Contract {
     "TIER_2_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     assingTier1(
-      _user: string,
       _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "assingTier1(address,address)"(
-      _user: string,
+    "assingTier1(address)"(
       _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -983,22 +953,22 @@ export class PermissionManager extends Contract {
     ): Promise<PopulatedTransaction>;
 
     hasTier1(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "hasTier1(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     hasTier2(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "hasTier2(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1013,22 +983,22 @@ export class PermissionManager extends Contract {
     ): Promise<PopulatedTransaction>;
 
     isRejected(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "isRejected(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isSuspended(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "isSuspended(address)"(
-      _user: string,
+      _account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1059,13 +1029,11 @@ export class PermissionManager extends Contract {
     "renounceOwnership()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     revokeTier1(
-      _user: string,
       _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "revokeTier1(address,address)"(
-      _user: string,
+    "revokeTier1(address)"(
       _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
