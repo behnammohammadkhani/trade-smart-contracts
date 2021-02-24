@@ -6,13 +6,9 @@ import Reverter from './utils/reverter';
 
 let deployer: Signer;
 let kakaroto: Signer;
-// let vegeta: Signer;
-// let karpincho: Signer;
 
 let deployerAddress: string;
 let kakarotoAddress: string;
-// let vegetaAddress: string;
-// let karpinchoAddress: string;
 
 let eurPriceFeedContract: EurPriceFeedMock;
 let operationsRegistryContract: OperationsRegistry;
@@ -23,8 +19,6 @@ let disallowedAssetContract: OperationsRegistryAssetMock;
 
 let allowedAssetContractKakaroto: OperationsRegistryAssetMock;
 let disallowedAssetContractKakaroto: OperationsRegistryAssetMock;
-
-// const tradingLimit = ethers.constants.One.mul(5000);
 
 let DEFAULT_ADMIN_ROLE: string;
 let ASSETS_MANAGER_ROLE: string;
@@ -57,11 +51,6 @@ describe('OperationsRegistry', function () {
       operationsRegistryContract.address,
     )) as OperationsRegistryAssetMock;
     await disallowedAssetContract.deployed();
-
-    // operationsRegistryContract.setFeedManager(deployerAddress);
-    // operationsRegistryContract.setAssetsManager(deployerAddress);
-
-    // await operationsRegistryContract.allowAsset(allowedAssetContract.address);
 
     allowedAssetContractKakaroto = allowedAssetContract.connect(kakaroto);
     disallowedAssetContractKakaroto = disallowedAssetContract.connect(kakaroto);

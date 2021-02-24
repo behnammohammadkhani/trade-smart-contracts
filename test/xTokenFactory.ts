@@ -13,9 +13,7 @@ import {
 } from '../typechain';
 import Reverter from './utils/reverter';
 
-// let deployer: Signer;
 let kakaroto: Signer;
-// let vegeta: Signer;
 
 let eurPriceFeedContract: EurPriceFeed;
 let eurUsdFeedContract: ChainlinkAggregatorMock;
@@ -46,7 +44,6 @@ describe('XTokenFactory', function () {
 
   before(async () => {
     [, kakaroto] = await ethers.getSigners();
-    // [deployerAddress] = await Promise.all([deployer.getAddress()]);
 
     EurPriceFeedFactory = await ethers.getContractFactory('EurPriceFeed');
     ChainlinkAggregatorMockFactory = await ethers.getContractFactory('ChainlinkAggregatorMock');
