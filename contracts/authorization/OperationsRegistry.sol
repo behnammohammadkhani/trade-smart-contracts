@@ -2,7 +2,7 @@
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 import "./IOperationsRegistry.sol";
 import "./IEurPriceFeed.sol";
@@ -15,8 +15,11 @@ import "hardhat/console.sol";
  * @dev Contract module to keep track of the EUR amount being tradded for each user by operation.
  *
  */
-contract OperationsRegistry is IOperationsRegistry, Ownable {
+contract OperationsRegistry is IOperationsRegistry, AccessControl {
     using SafeMath for uint256;
+
+    bytes32 public constant ASSETS_MANAGER_ROLE = keccak256("ASSETS_MANAGER_ROLE");
+    bytes32 public constant FEED_MANAGER_ROLE = keccak256("FEED_MANAGER_ROLE");
 
     /**
      * @dev Address of EUR Price feed module from where to get assets EUR prices.
@@ -51,13 +54,15 @@ contract OperationsRegistry is IOperationsRegistry, Ownable {
     /**
      * @dev Sets the values for {eurPriceFeed}.
      *
-     * Sets ownership to the account that deploys the contract.
+     * Grants the contract deployer the default admin role.
      *
      */
     constructor(address _eurPriceFeed) public {
         require(_eurPriceFeed != address(0), "eur price feed is the zero address");
         emit EurPriceFeedSetted(_eurPriceFeed);
         eurPriceFeed = _eurPriceFeed;
+
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
     /**
@@ -69,16 +74,47 @@ contract OperationsRegistry is IOperationsRegistry, Ownable {
     }
 
     /**
+     * @dev Throws if called by some address with ASSETS_MANAGER_ROLE.
+     */
+    modifier onlyAssetsManager() {
+        require(hasRole(ASSETS_MANAGER_ROLE, _msgSender()), "must have asset manager role");
+        _;
+    }
+
+    /**
+     * @dev Grants FEED_MANAGER_ROLE to `_account`.
+     *
+     * Requirements:
+     *
+     * - the caller must have ``role``'s admin role.
+     */
+    function setFeedManager(address _account) external {
+        grantRole(FEED_MANAGER_ROLE, _account);
+    }
+
+    /**
+     * @dev Grants ASSETS_MANAGER_ROLE to `_account`.
+     *
+     * Requirements:
+     *
+     * - the caller must have ``role``'s admin role.
+     */
+    function setAssetsManager(address _account) external {
+        grantRole(ASSETS_MANAGER_ROLE, _account);
+    }
+
+    /**
      * @dev Sets `_eurPriceFeed` as the new EUR Price feed module.
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have FEED_MANAGER_ROLE.
      * - `_eurPriceFeed` should not be the zero address.
      *
      * @param _eurPriceFeed The address of the new EUR Price feed module.
      */
-    function setEurPriceFeed(address _eurPriceFeed) public override onlyOwner returns (bool) {
+    function setEurPriceFeed(address _eurPriceFeed) public override returns (bool) {
+        require(hasRole(FEED_MANAGER_ROLE, _msgSender()), "must have feed manager role");
         require(_eurPriceFeed != address(0), "eur price feed is the zero address");
         emit EurPriceFeedSetted(_eurPriceFeed);
         eurPriceFeed = _eurPriceFeed;
@@ -91,12 +127,12 @@ contract OperationsRegistry is IOperationsRegistry, Ownable {
      *
      * Requirements:
      *
-     * - the caller mustbe the owner.
+     * - the caller must have ASSETS_MANAGER.
      * - `_asset` should not be the zero address.
      *
      * @param _asset asset's address.
      */
-    function allowAsset(address _asset) public override onlyOwner returns (bool) {
+    function allowAsset(address _asset) public override onlyAssetsManager returns (bool) {
         require(_asset != address(0), "asset is the zero address");
         emit AssetAllowed(_asset);
         allowedAssets[_asset] = true;
@@ -114,7 +150,7 @@ contract OperationsRegistry is IOperationsRegistry, Ownable {
      *
      * @param _asset asset's address.
      */
-    function disallowAsset(address _asset) public override onlyOwner returns (bool) {
+    function disallowAsset(address _asset) public override onlyAssetsManager returns (bool) {
         require(_asset != address(0), "asset is the zero address");
         emit AssetDisallowed(_asset);
         allowedAssets[_asset] = false;

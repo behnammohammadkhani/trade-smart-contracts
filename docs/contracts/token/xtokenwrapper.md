@@ -4,7 +4,9 @@ Contract module which provides an functionality for wrapping tokens into the cor
 
 ## Functions:
 
-- `constructor(address _registryManager) (public)`
+- `constructor() (public)`
+
+- `setRegistryManager(address _registryManager) (external)`
 
 - `registerToken(address _token, address _xToken) (external)`
 
@@ -16,9 +18,17 @@ Contract module which provides an functionality for wrapping tokens into the cor
 
 - `RegisterToken(address token, address xToken)`
 
-### Function `constructor(address _registryManager) public`
+### Function `constructor() public`
 
 Grants the contract deployer the default admin role.
+
+### Function `setRegistryManager(address _registryManager) external`
+
+Grants REGISTRY_MANAGER_ROLE to `_registryManager`.
+
+Requirements:
+
+- the caller must have ``role``'s admin role.
 
 ### Function `registerToken(address _token, address _xToken) external`
 
@@ -44,10 +54,6 @@ Wraps `_token` into its associated xToken.
 
 It requires prior approval.
 
-It gets the ERC20 (or ETH) amount from the tx.origin and send the xToken to the msg.sender
-
-allowing the use a UserProxy.
-
 Requirements:
 
 - `_token` should be registered.
@@ -63,10 +69,6 @@ Requirements:
 ### Function `unwrap(address _xToken, uint256 _amount) → bool external`
 
 Unwraps `_xToken`.
-
-It burns the xToken amount from the msg.sender and sends the associated ERC20 (or ETH)
-
-to the tx.origin allowing the use a UserProxy.
 
 Requirements:
 

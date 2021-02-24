@@ -22,4 +22,20 @@ interface IEurPriceFeed {
      * @param _amount amount of `_asset`.
      */
     function calculateAmount(address _asset, uint256 _amount) external view returns (uint256);
+
+    /**
+     * @dev Sets feed addresses for a given group of assets.
+     *
+     * @param _assets Array of assets addresses.
+     * @param _feeds Array of asset/ETH price feeds.
+     */
+    function setAssetsFeeds(address[] memory _assets, address[] memory _feeds) external;
+
+    /**
+     * @dev Sets feed addresse for a given asset.
+     *
+     * @param _asset Assets address.
+     * @param _feed Asset/ETH price feed.
+     */
+    function setAssetFeed(address _asset, address _feed) external;
 }

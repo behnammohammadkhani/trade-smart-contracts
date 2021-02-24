@@ -43,6 +43,7 @@ export type { ERC20Detailed } from "./ERC20Detailed";
 export type { SafeEvents } from "./SafeEvents";
 export type { IXToken } from "./IXToken";
 export type { XToken } from "./XToken";
+export type { XTokenFactory } from "./XTokenFactory";
 export type { XTokenWrapper } from "./XTokenWrapper";
 
 export { AggregatorInterface__factory } from "./factories/AggregatorInterface__factory";
@@ -87,4 +88,5 @@ export { ERC20Detailed__factory } from "./factories/ERC20Detailed__factory";
 export { SafeEvents__factory } from "./factories/SafeEvents__factory";
 export { IXToken__factory } from "./factories/IXToken__factory";
 export { XToken__factory } from "./factories/XToken__factory";
+export { XTokenFactory__factory } from "./factories/XTokenFactory__factory";
 export { XTokenWrapper__factory } from "./factories/XTokenWrapper__factory";

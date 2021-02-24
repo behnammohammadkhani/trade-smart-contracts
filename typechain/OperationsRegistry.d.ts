@@ -22,18 +22,39 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface OperationsRegistryInterface extends ethers.utils.Interface {
   functions: {
+    "ASSETS_MANAGER_ROLE()": FunctionFragment;
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "FEED_MANAGER_ROLE()": FunctionFragment;
     "addTrade(address,bytes4,uint256)": FunctionFragment;
     "allowAsset(address)": FunctionFragment;
     "allowedAssets(address)": FunctionFragment;
     "disallowAsset(address)": FunctionFragment;
     "eurPriceFeed()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoleMember(bytes32,uint256)": FunctionFragment;
+    "getRoleMemberCount(bytes32)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
+    "setAssetsManager(address)": FunctionFragment;
     "setEurPriceFeed(address)": FunctionFragment;
+    "setFeedManager(address)": FunctionFragment;
     "tradingBalanceByOperation(address,bytes4)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "ASSETS_MANAGER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "FEED_MANAGER_ROLE",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "addTrade",
     values: [string, BytesLike, BigNumberish]
@@ -51,24 +72,63 @@ interface OperationsRegistryInterface extends ethers.utils.Interface {
     functionFragment: "eurPriceFeed",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMember",
+    values: [BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMemberCount",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAssetsManager",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setEurPriceFeed",
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "setFeedManager",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "tradingBalanceByOperation",
     values: [string, BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string]
-  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "ASSETS_MANAGER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "FEED_MANAGER_ROLE",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "addTrade", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "allowAsset", data: BytesLike): Result;
   decodeFunctionResult(
@@ -83,9 +143,27 @@ interface OperationsRegistryInterface extends ethers.utils.Interface {
     functionFragment: "eurPriceFeed",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "renounceOwnership",
+    functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMemberCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setAssetsManager",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -93,11 +171,11 @@ interface OperationsRegistryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "tradingBalanceByOperation",
+    functionFragment: "setFeedManager",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "transferOwnership",
+    functionFragment: "tradingBalanceByOperation",
     data: BytesLike
   ): Result;
 
@@ -105,13 +183,17 @@ interface OperationsRegistryInterface extends ethers.utils.Interface {
     "AssetAllowed(address)": EventFragment;
     "AssetDisallowed(address)": EventFragment;
     "EurPriceFeedSetted(address)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AssetAllowed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AssetDisallowed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EurPriceFeedSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
 }
 
 export class OperationsRegistry extends Contract {
@@ -128,6 +210,18 @@ export class OperationsRegistry extends Contract {
   interface: OperationsRegistryInterface;
 
   functions: {
+    ASSETS_MANAGER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    "ASSETS_MANAGER_ROLE()"(overrides?: CallOverrides): Promise<[string]>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<[string]>;
+
+    FEED_MANAGER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    "FEED_MANAGER_ROLE()"(overrides?: CallOverrides): Promise<[string]>;
+
     addTrade(
       _user: string,
       _operation: BytesLike,
@@ -173,13 +267,92 @@ export class OperationsRegistry extends Contract {
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<[string]>;
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
-    "owner()"(overrides?: CallOverrides): Promise<[string]>;
+    "getRoleAdmin(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
+    "getRoleMember(bytes32,uint256)"(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "getRoleMemberCount(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "grantRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "hasRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "renounceRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "revokeRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setAssetsManager(
+      _account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setAssetsManager(address)"(
+      _account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     setEurPriceFeed(
       _eurPriceFeed: string,
@@ -188,6 +361,16 @@ export class OperationsRegistry extends Contract {
 
     "setEurPriceFeed(address)"(
       _eurPriceFeed: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setFeedManager(
+      _account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setFeedManager(address)"(
+      _account: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -202,17 +385,19 @@ export class OperationsRegistry extends Contract {
       arg1: BytesLike,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "transferOwnership(address)"(
-      newOwner: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
   };
+
+  ASSETS_MANAGER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  "ASSETS_MANAGER_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
+  FEED_MANAGER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  "FEED_MANAGER_ROLE()"(overrides?: CallOverrides): Promise<string>;
 
   addTrade(
     _user: string,
@@ -259,13 +444,92 @@ export class OperationsRegistry extends Contract {
 
   "eurPriceFeed()"(overrides?: CallOverrides): Promise<string>;
 
-  owner(overrides?: CallOverrides): Promise<string>;
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
-  "owner()"(overrides?: CallOverrides): Promise<string>;
+  "getRoleAdmin(bytes32)"(
+    role: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-  renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
+  getRoleMember(
+    role: BytesLike,
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-  "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
+  "getRoleMember(bytes32,uint256)"(
+    role: BytesLike,
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getRoleMemberCount(
+    role: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "getRoleMemberCount(bytes32)"(
+    role: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  grantRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "grantRole(bytes32,address)"(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "hasRole(bytes32,address)"(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  renounceRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "renounceRole(bytes32,address)"(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "revokeRole(bytes32,address)"(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setAssetsManager(
+    _account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setAssetsManager(address)"(
+    _account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   setEurPriceFeed(
     _eurPriceFeed: string,
@@ -274,6 +538,16 @@ export class OperationsRegistry extends Contract {
 
   "setEurPriceFeed(address)"(
     _eurPriceFeed: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setFeedManager(
+    _account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setFeedManager(address)"(
+    _account: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -289,17 +563,19 @@ export class OperationsRegistry extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  transferOwnership(
-    newOwner: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "transferOwnership(address)"(
-    newOwner: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
   callStatic: {
+    ASSETS_MANAGER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    "ASSETS_MANAGER_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
+    FEED_MANAGER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    "FEED_MANAGER_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
     addTrade(
       _user: string,
       _operation: BytesLike,
@@ -339,13 +615,92 @@ export class OperationsRegistry extends Contract {
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<string>;
 
-    owner(overrides?: CallOverrides): Promise<string>;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
-    "owner()"(overrides?: CallOverrides): Promise<string>;
+    "getRoleAdmin(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    "renounceOwnership()"(overrides?: CallOverrides): Promise<void>;
+    "getRoleMember(bytes32,uint256)"(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getRoleMemberCount(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "grantRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "hasRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "renounceRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "revokeRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setAssetsManager(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setAssetsManager(address)"(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setEurPriceFeed(
       _eurPriceFeed: string,
@@ -356,6 +711,13 @@ export class OperationsRegistry extends Contract {
       _eurPriceFeed: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    setFeedManager(_account: string, overrides?: CallOverrides): Promise<void>;
+
+    "setFeedManager(address)"(
+      _account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     tradingBalanceByOperation(
       arg0: string,
@@ -368,16 +730,6 @@ export class OperationsRegistry extends Contract {
       arg1: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "transferOwnership(address)"(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {
@@ -387,13 +739,38 @@ export class OperationsRegistry extends Contract {
 
     EurPriceFeedSetted(newEurPriceFeed: string | null): EventFilter;
 
-    OwnershipTransferred(
-      previousOwner: string | null,
-      newOwner: string | null
+    RoleAdminChanged(
+      role: BytesLike | null,
+      previousAdminRole: BytesLike | null,
+      newAdminRole: BytesLike | null
+    ): EventFilter;
+
+    RoleGranted(
+      role: BytesLike | null,
+      account: string | null,
+      sender: string | null
+    ): EventFilter;
+
+    RoleRevoked(
+      role: BytesLike | null,
+      account: string | null,
+      sender: string | null
     ): EventFilter;
   };
 
   estimateGas: {
+    ASSETS_MANAGER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "ASSETS_MANAGER_ROLE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    FEED_MANAGER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "FEED_MANAGER_ROLE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     addTrade(
       _user: string,
       _operation: BytesLike,
@@ -433,13 +810,95 @@ export class OperationsRegistry extends Contract {
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "getRoleAdmin(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    renounceOwnership(overrides?: Overrides): Promise<BigNumber>;
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "renounceOwnership()"(overrides?: Overrides): Promise<BigNumber>;
+    "getRoleMember(bytes32,uint256)"(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getRoleMemberCount(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "grantRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "hasRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "renounceRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "revokeRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setAssetsManager(
+      _account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setAssetsManager(address)"(
+      _account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     setEurPriceFeed(
       _eurPriceFeed: string,
@@ -448,6 +907,13 @@ export class OperationsRegistry extends Contract {
 
     "setEurPriceFeed(address)"(
       _eurPriceFeed: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setFeedManager(_account: string, overrides?: Overrides): Promise<BigNumber>;
+
+    "setFeedManager(address)"(
+      _account: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -462,19 +928,31 @@ export class OperationsRegistry extends Contract {
       arg1: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "transferOwnership(address)"(
-      newOwner: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    ASSETS_MANAGER_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "ASSETS_MANAGER_ROLE()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "DEFAULT_ADMIN_ROLE()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    FEED_MANAGER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "FEED_MANAGER_ROLE()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     addTrade(
       _user: string,
       _operation: BytesLike,
@@ -523,13 +1001,95 @@ export class OperationsRegistry extends Contract {
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    "owner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "getRoleAdmin(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    renounceOwnership(overrides?: Overrides): Promise<PopulatedTransaction>;
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    "renounceOwnership()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+    "getRoleMember(bytes32,uint256)"(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getRoleMemberCount(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "grantRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "hasRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "renounceRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "revokeRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setAssetsManager(
+      _account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setAssetsManager(address)"(
+      _account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     setEurPriceFeed(
       _eurPriceFeed: string,
@@ -538,6 +1098,16 @@ export class OperationsRegistry extends Contract {
 
     "setEurPriceFeed(address)"(
       _eurPriceFeed: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setFeedManager(
+      _account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setFeedManager(address)"(
+      _account: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -551,16 +1121,6 @@ export class OperationsRegistry extends Contract {
       arg0: string,
       arg1: BytesLike,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "transferOwnership(address)"(
-      newOwner: string,
-      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };
 }

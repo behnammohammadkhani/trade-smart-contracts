@@ -18,4 +18,5 @@
   * token
     * [IXToken](docs/contracts/token/ixtoken.md)
     * [XToken](docs/contracts/token/xtoken.md)
+    * [XTokenFactory](docs/contracts/token/xtokenfactory.md)
     * [XTokenWrapper](docs/contracts/token/xtokenwrapper.md)

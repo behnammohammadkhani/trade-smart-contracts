@@ -19,7 +19,7 @@ let PermissionManagerFactory: ContractFactory;
 
 const karpinchoProxyAddress: string = '0xe3d92305784cfE42433Dbc51CBFD61ee95565D09';
 
-describe('OperationsRegistry', function () {
+describe('PermissionManager', function () {
   const reverter = new Reverter();
 
   before(async () => {

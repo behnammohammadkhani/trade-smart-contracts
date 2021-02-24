@@ -2,9 +2,15 @@
 
 Contract module to retrieve EUR price per asset.
 
+## Modifiers:
+
+- `onlyFeedsManager()`
+
 ## Functions:
 
 - `constructor(address _eurUsdFeed, address _ethUsdFeed, address[] _assets, address[] _feeds) (public)`
+
+- `setFeedsManager(address _account) (external)`
 
 - `setEurUsdFeed(address _eurUsdFeed) (public)`
 
@@ -12,11 +18,15 @@ Contract module to retrieve EUR price per asset.
 
 - `setAssetsFeeds(address[] _assets, address[] _feeds) (external)`
 
+- `setAssetFeed(address _asset, address _feed) (external)`
+
 - `getPrice(address _asset) (external)`
 
 - `calculateAmount(address _asset, uint256 _amount) (external)`
 
 - `_setAssetsFeeds(address[] _assets, address[] _feeds) (internal)`
+
+- `_setAssetFeed(address _asset, address _feed) (internal)`
 
 - `_getPrice(address _asset) (internal)`
 
@@ -28,11 +38,23 @@ Contract module to retrieve EUR price per asset.
 
 - `AssetEthFeedSetted(address asset, address feed)`
 
+### Modifier `onlyFeedsManager()`
+
+Throws if called by some address with FEEDS_MANAGER_ROLE.
+
 ### Function `constructor(address _eurUsdFeed, address _ethUsdFeed, address[] _assets, address[] _feeds) public`
 
 Sets the values for {eurUsdFeed}, {ethUsdFeed} and {assetUsdFeed}.
 
-Sets ownership to the account that deploys the contract.
+Grants the contract deployer the default admin role.
+
+### Function `setFeedsManager(address _account) external`
+
+Grants FEEDS_MANAGER_ROLE to `_account`.
+
+Requirements:
+
+- the caller must have ``role``'s admin role.
 
 ### Function `setEurUsdFeed(address _eurUsdFeed) public`
 
@@ -82,6 +104,24 @@ Requirements:
 
 - `_feeds`: Array of asset/ETH price feeds.
 
+### Function `setAssetFeed(address _asset, address _feed) external`
+
+Sets feed addresses for a given assets.
+
+Requirements:
+
+- the caller must be the owner.
+
+- `_asset` should not be the zero address .
+
+- `_feed` should not be the zero address .
+
+#### Parameters:
+
+- `_asset`: Asset address.
+
+- `_feed`: Asset/ETH price feed.
+
 ### Function `getPrice(address _asset) → uint256 external`
 
 Gets the price 1 `_asset` in EUR.
@@ -107,6 +147,8 @@ Gets how many EUR represents the `_amount` of `_asset`.
 - `_amount`: amount of `_asset`.
 
 ### Function `_setAssetsFeeds(address[] _assets, address[] _feeds) internal`
+
+### Function `_setAssetFeed(address _asset, address _feed) internal`
 
 ### Function `_getPrice(address _asset) → uint256 internal`
 

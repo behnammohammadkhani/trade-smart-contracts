@@ -22,19 +22,35 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface EurPriceFeedInterface extends ethers.utils.Interface {
   functions: {
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "FEEDS_MANAGER_ROLE()": FunctionFragment;
     "assetEthFeed(address)": FunctionFragment;
     "calculateAmount(address,uint256)": FunctionFragment;
     "ethUsdFeed()": FunctionFragment;
     "eurUsdFeed()": FunctionFragment;
     "getPrice(address)": FunctionFragment;
-    "owner()": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoleMember(bytes32,uint256)": FunctionFragment;
+    "getRoleMemberCount(bytes32)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
+    "setAssetFeed(address,address)": FunctionFragment;
     "setAssetsFeeds(address[],address[])": FunctionFragment;
     "setEthUsdFeed(address)": FunctionFragment;
     "setEurUsdFeed(address)": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
+    "setFeedsManager(address)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "FEEDS_MANAGER_ROLE",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "assetEthFeed",
     values: [string]
@@ -52,10 +68,37 @@ interface EurPriceFeedInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getPrice", values: [string]): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMember",
+    values: [BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMemberCount",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAssetFeed",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "setAssetsFeeds",
@@ -70,10 +113,18 @@ interface EurPriceFeedInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "transferOwnership",
+    functionFragment: "setFeedsManager",
     values: [string]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "FEEDS_MANAGER_ROLE",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "assetEthFeed",
     data: BytesLike
@@ -85,9 +136,27 @@ interface EurPriceFeedInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "ethUsdFeed", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "eurUsdFeed", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getPrice", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "renounceOwnership",
+    functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMemberCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setAssetFeed",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -103,7 +172,7 @@ interface EurPriceFeedInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "transferOwnership",
+    functionFragment: "setFeedsManager",
     data: BytesLike
   ): Result;
 
@@ -111,13 +180,17 @@ interface EurPriceFeedInterface extends ethers.utils.Interface {
     "AssetEthFeedSetted(address,address)": EventFragment;
     "EthUsdFeedSetted(address)": EventFragment;
     "EurUsdFeedSetted(address)": EventFragment;
-    "OwnershipTransferred(address,address)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AssetEthFeedSetted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EthUsdFeedSetted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EurUsdFeedSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
 }
 
 export class EurPriceFeed extends Contract {
@@ -134,6 +207,14 @@ export class EurPriceFeed extends Contract {
   interface: EurPriceFeedInterface;
 
   functions: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<[string]>;
+
+    FEEDS_MANAGER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    "FEEDS_MANAGER_ROLE()"(overrides?: CallOverrides): Promise<[string]>;
+
     assetEthFeed(arg0: string, overrides?: CallOverrides): Promise<[string]>;
 
     "assetEthFeed(address)"(
@@ -168,13 +249,94 @@ export class EurPriceFeed extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
-    "owner()"(overrides?: CallOverrides): Promise<[string]>;
+    "getRoleAdmin(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
+    "getRoleMember(bytes32,uint256)"(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "getRoleMemberCount(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "grantRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "hasRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "renounceRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "revokeRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setAssetFeed(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setAssetFeed(address,address)"(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     setAssetsFeeds(
       _assets: string[],
@@ -208,16 +370,24 @@ export class EurPriceFeed extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    transferOwnership(
-      newOwner: string,
+    setFeedsManager(
+      _account: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "transferOwnership(address)"(
-      newOwner: string,
+    "setFeedsManager(address)"(
+      _account: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
+
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
+  FEEDS_MANAGER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  "FEEDS_MANAGER_ROLE()"(overrides?: CallOverrides): Promise<string>;
 
   assetEthFeed(arg0: string, overrides?: CallOverrides): Promise<string>;
 
@@ -253,13 +423,94 @@ export class EurPriceFeed extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  owner(overrides?: CallOverrides): Promise<string>;
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
-  "owner()"(overrides?: CallOverrides): Promise<string>;
+  "getRoleAdmin(bytes32)"(
+    role: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-  renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
+  getRoleMember(
+    role: BytesLike,
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-  "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
+  "getRoleMember(bytes32,uint256)"(
+    role: BytesLike,
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getRoleMemberCount(
+    role: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "getRoleMemberCount(bytes32)"(
+    role: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  grantRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "grantRole(bytes32,address)"(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "hasRole(bytes32,address)"(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  renounceRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "renounceRole(bytes32,address)"(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "revokeRole(bytes32,address)"(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setAssetFeed(
+    _asset: string,
+    _feed: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setAssetFeed(address,address)"(
+    _asset: string,
+    _feed: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   setAssetsFeeds(
     _assets: string[],
@@ -293,17 +544,25 @@ export class EurPriceFeed extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  transferOwnership(
-    newOwner: string,
+  setFeedsManager(
+    _account: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "transferOwnership(address)"(
-    newOwner: string,
+  "setFeedsManager(address)"(
+    _account: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
+    FEEDS_MANAGER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    "FEEDS_MANAGER_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
     assetEthFeed(arg0: string, overrides?: CallOverrides): Promise<string>;
 
     "assetEthFeed(address)"(
@@ -338,13 +597,94 @@ export class EurPriceFeed extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    owner(overrides?: CallOverrides): Promise<string>;
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
-    "owner()"(overrides?: CallOverrides): Promise<string>;
+    "getRoleAdmin(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    "renounceOwnership()"(overrides?: CallOverrides): Promise<void>;
+    "getRoleMember(bytes32,uint256)"(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getRoleMemberCount(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "grantRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "hasRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "renounceRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "revokeRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setAssetFeed(
+      _asset: string,
+      _feed: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setAssetFeed(address,address)"(
+      _asset: string,
+      _feed: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setAssetsFeeds(
       _assets: string[],
@@ -378,13 +718,10 @@ export class EurPriceFeed extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    setFeedsManager(_account: string, overrides?: CallOverrides): Promise<void>;
 
-    "transferOwnership(address)"(
-      newOwner: string,
+    "setFeedsManager(address)"(
+      _account: string,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -396,13 +733,34 @@ export class EurPriceFeed extends Contract {
 
     EurUsdFeedSetted(newEurUsdFeed: string | null): EventFilter;
 
-    OwnershipTransferred(
-      previousOwner: string | null,
-      newOwner: string | null
+    RoleAdminChanged(
+      role: BytesLike | null,
+      previousAdminRole: BytesLike | null,
+      newAdminRole: BytesLike | null
+    ): EventFilter;
+
+    RoleGranted(
+      role: BytesLike | null,
+      account: string | null,
+      sender: string | null
+    ): EventFilter;
+
+    RoleRevoked(
+      role: BytesLike | null,
+      account: string | null,
+      sender: string | null
     ): EventFilter;
   };
 
   estimateGas: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    FEEDS_MANAGER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "FEEDS_MANAGER_ROLE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     assetEthFeed(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "assetEthFeed(address)"(
@@ -437,13 +795,97 @@ export class EurPriceFeed extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "getRoleAdmin(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    renounceOwnership(overrides?: Overrides): Promise<BigNumber>;
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "renounceOwnership()"(overrides?: Overrides): Promise<BigNumber>;
+    "getRoleMember(bytes32,uint256)"(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getRoleMemberCount(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "grantRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "hasRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "renounceRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "revokeRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setAssetFeed(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setAssetFeed(address,address)"(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     setAssetsFeeds(
       _assets: string[],
@@ -477,18 +919,34 @@ export class EurPriceFeed extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    transferOwnership(
-      newOwner: string,
+    setFeedsManager(
+      _account: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "transferOwnership(address)"(
-      newOwner: string,
+    "setFeedsManager(address)"(
+      _account: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "DEFAULT_ADMIN_ROLE()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    FEEDS_MANAGER_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "FEEDS_MANAGER_ROLE()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     assetEthFeed(
       arg0: string,
       overrides?: CallOverrides
@@ -529,13 +987,97 @@ export class EurPriceFeed extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    "owner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "getRoleAdmin(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    renounceOwnership(overrides?: Overrides): Promise<PopulatedTransaction>;
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    "renounceOwnership()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+    "getRoleMember(bytes32,uint256)"(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getRoleMemberCount(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "grantRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "hasRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "renounceRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "revokeRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setAssetFeed(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setAssetFeed(address,address)"(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     setAssetsFeeds(
       _assets: string[],
@@ -569,13 +1111,13 @@ export class EurPriceFeed extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    transferOwnership(
-      newOwner: string,
+    setFeedsManager(
+      _account: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "transferOwnership(address)"(
-      newOwner: string,
+    "setFeedsManager(address)"(
+      _account: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };

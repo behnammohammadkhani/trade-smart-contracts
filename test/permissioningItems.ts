@@ -25,7 +25,7 @@ let MINTER_ROLE: string;
 let BURNER_ROLE: string;
 let DEFAULT_ADMIN_ROLE: string;
 
-describe('OperationsRegistry', function () {
+describe('PermissioningItems', function () {
   const reverter = new Reverter();
 
   before(async () => {

@@ -24,6 +24,8 @@ interface IEurPriceFeedInterface extends ethers.utils.Interface {
   functions: {
     "calculateAmount(address,uint256)": FunctionFragment;
     "getPrice(address)": FunctionFragment;
+    "setAssetFeed(address,address)": FunctionFragment;
+    "setAssetsFeeds(address[],address[])": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -31,12 +33,28 @@ interface IEurPriceFeedInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "getPrice", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setAssetFeed",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAssetsFeeds",
+    values: [string[], string[]]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "calculateAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPrice", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setAssetFeed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setAssetsFeeds",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -76,6 +94,30 @@ export class IEurPriceFeed extends Contract {
       _asset: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    setAssetFeed(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setAssetFeed(address,address)"(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setAssetsFeeds(
+      _assets: string[],
+      _feeds: string[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setAssetsFeeds(address[],address[])"(
+      _assets: string[],
+      _feeds: string[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
   };
 
   calculateAmount(
@@ -94,6 +136,30 @@ export class IEurPriceFeed extends Contract {
 
   "getPrice(address)"(
     _asset: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setAssetFeed(
+    _asset: string,
+    _feed: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setAssetFeed(address,address)"(
+    _asset: string,
+    _feed: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setAssetsFeeds(
+    _assets: string[],
+    _feeds: string[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setAssetsFeeds(address[],address[])"(
+    _assets: string[],
+    _feeds: string[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -116,6 +182,30 @@ export class IEurPriceFeed extends Contract {
       _asset: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    setAssetFeed(
+      _asset: string,
+      _feed: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setAssetFeed(address,address)"(
+      _asset: string,
+      _feed: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setAssetsFeeds(
+      _assets: string[],
+      _feeds: string[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setAssetsFeeds(address[],address[])"(
+      _assets: string[],
+      _feeds: string[],
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
@@ -137,6 +227,30 @@ export class IEurPriceFeed extends Contract {
 
     "getPrice(address)"(
       _asset: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setAssetFeed(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setAssetFeed(address,address)"(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setAssetsFeeds(
+      _assets: string[],
+      _feeds: string[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setAssetsFeeds(address[],address[])"(
+      _assets: string[],
+      _feeds: string[],
       overrides?: Overrides
     ): Promise<BigNumber>;
   };
@@ -161,6 +275,30 @@ export class IEurPriceFeed extends Contract {
 
     "getPrice(address)"(
       _asset: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setAssetFeed(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setAssetFeed(address,address)"(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setAssetsFeeds(
+      _assets: string[],
+      _feeds: string[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setAssetsFeeds(address[],address[])"(
+      _assets: string[],
+      _feeds: string[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };

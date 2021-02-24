@@ -4,12 +4,12 @@ import { expect } from 'chai';
 import { EurPriceFeedMock, OperationsRegistry, OperationsRegistryAssetMock } from '../typechain';
 import Reverter from './utils/reverter';
 
-// let deployer: Signer;
+let deployer: Signer;
 let kakaroto: Signer;
 // let vegeta: Signer;
 // let karpincho: Signer;
 
-// let deployerAddress: string;
+let deployerAddress: string;
 let kakarotoAddress: string;
 // let vegetaAddress: string;
 // let karpinchoAddress: string;
@@ -26,12 +26,16 @@ let disallowedAssetContractKakaroto: OperationsRegistryAssetMock;
 
 // const tradingLimit = ethers.constants.One.mul(5000);
 
+let DEFAULT_ADMIN_ROLE: string;
+let ASSETS_MANAGER_ROLE: string;
+let FEED_MANAGER_ROLE: string;
+
 describe('OperationsRegistry', function () {
   const reverter = new Reverter();
 
   before(async () => {
-    kakaroto = (await ethers.getSigners())[1];
-    [kakarotoAddress] = await Promise.all([kakaroto.getAddress()]);
+    [deployer, kakaroto] = await ethers.getSigners();
+    [deployerAddress, kakarotoAddress] = await Promise.all([deployer.getAddress(), kakaroto.getAddress()]);
 
     const OperationsRegistry = await ethers.getContractFactory('OperationsRegistry');
     const EurPriceFeed = await ethers.getContractFactory('EurPriceFeedMock');
@@ -54,12 +58,43 @@ describe('OperationsRegistry', function () {
     )) as OperationsRegistryAssetMock;
     await disallowedAssetContract.deployed();
 
-    await operationsRegistryContract.allowAsset(allowedAssetContract.address);
+    // operationsRegistryContract.setFeedManager(deployerAddress);
+    // operationsRegistryContract.setAssetsManager(deployerAddress);
+
+    // await operationsRegistryContract.allowAsset(allowedAssetContract.address);
 
     allowedAssetContractKakaroto = allowedAssetContract.connect(kakaroto);
     disallowedAssetContractKakaroto = disallowedAssetContract.connect(kakaroto);
 
     await reverter.snapshot();
+  });
+
+  describe('#setFeedManager - #setAssetsManager', () => {
+    it('non admin should not be able to setFeedManager', async () => {
+      await expect(operationsRegistryContractKakaroto.setFeedManager(deployerAddress)).to.be.revertedWith(
+        'AccessControl: sender must be an admin to grant',
+      );
+    });
+
+    it('admin should be able to setFeedManager', async () => {
+      FEED_MANAGER_ROLE = await operationsRegistryContract.FEED_MANAGER_ROLE();
+      await operationsRegistryContract.setFeedManager(deployerAddress);
+      expect(await operationsRegistryContract.hasRole(FEED_MANAGER_ROLE, deployerAddress)).to.equal(true);
+    });
+
+    it('non admin should not be able to setAssetsManager', async () => {
+      await expect(operationsRegistryContractKakaroto.setAssetsManager(deployerAddress)).to.be.revertedWith(
+        'AccessControl: sender must be an admin to grant',
+      );
+    });
+
+    it('admin should be able to setAssetsManager', async () => {
+      ASSETS_MANAGER_ROLE = await operationsRegistryContract.ASSETS_MANAGER_ROLE();
+      await operationsRegistryContract.setAssetsManager(deployerAddress);
+      expect(await operationsRegistryContract.hasRole(ASSETS_MANAGER_ROLE, deployerAddress)).to.equal(true);
+
+      await reverter.snapshot();
+    });
   });
 
   describe('#setEurPriceFeed - #allowAsset - #disallowAsset', () => {
@@ -69,19 +104,19 @@ describe('OperationsRegistry', function () {
       await reverter.revert();
     });
 
-    it('Should not allow to set eurPriceFeed address to non owner', async function () {
+    it('Should not allow to set eurPriceFeed address to non feed manager', async function () {
       await expect(operationsRegistryContractKakaroto.setEurPriceFeed(eurPriceFeedContract.address)).to.be.revertedWith(
-        'Ownable: caller is not the owner',
+        'must have feed manager role',
       );
     });
 
-    it('Should not allow to set eurPriceFeed as zero address to owner', async function () {
+    it('Should not allow to set eurPriceFeed as zero address to feed manager', async function () {
       await expect(operationsRegistryContract.setEurPriceFeed(ethers.constants.AddressZero)).to.be.revertedWith(
         'eur price feed is the zero address',
       );
     });
 
-    it('Should allow to set eurPriceFeed address to owner', async function () {
+    it('Should allow to set eurPriceFeed address to feed manager', async function () {
       const EurPriceFeed = await ethers.getContractFactory('EurPriceFeedMock');
       eurPriceFeedContract2 = (await EurPriceFeed.deploy()) as EurPriceFeedMock;
       await eurPriceFeedContract2.deployed();
@@ -90,23 +125,27 @@ describe('OperationsRegistry', function () {
 
       const eurPriceFeedAddress = await operationsRegistryContract.eurPriceFeed();
       expect(eurPriceFeedAddress).to.equal(eurPriceFeedContract2.address);
+
+      await reverter.snapshot();
     });
 
-    it('Should not allow to set allowed asset address to non owner', async function () {
+    it('Should not allow to set allowed asset address to non assets manager', async function () {
       await expect(operationsRegistryContractKakaroto.allowAsset(allowedAssetContract.address)).to.be.revertedWith(
-        'Ownable: caller is not the owner',
+        'must have asset manager role',
       );
     });
 
-    it('Should not allow to allowed asset as zero address to owner', async function () {
+    it('Should not allow to allowed asset as zero address to assets manager', async function () {
       await expect(operationsRegistryContract.allowAsset(ethers.constants.AddressZero)).to.be.revertedWith(
         'asset is the zero address',
       );
     });
 
-    it('Should allow to allowed asset address to owner', async function () {
+    it('Should allow to allowed asset address to assets manager', async function () {
       await operationsRegistryContract.allowAsset(allowedAssetContract.address);
       expect(await operationsRegistryContract.allowedAssets(allowedAssetContract.address)).to.equal(true);
+
+      await reverter.snapshot();
     });
   });
 
