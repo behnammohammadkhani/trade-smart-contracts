@@ -242,6 +242,49 @@ describe('PermissionManager', function () {
     });
   });
 
+  describe('#rejectUser', () => {
+    beforeEach(async () => {
+      await reverter.revert();
+    });
+
+    it('non owner should not be able to call rejectUser', async () => {
+      await expect(
+        permissionManagerContractKakaroto.rejectUser(karpinchoAddress, ethers.constants.AddressZero),
+      ).to.be.revertedWith('Ownable: caller is not the owner');
+    });
+
+    it('owner should be able to call rejectUser', async () => {
+      await permissionManagerContract.rejectUser(karpinchoAddress, ethers.constants.AddressZero);
+
+      expect(await permissionManagerContract.isRejected(karpinchoAddress)).to.eq(true);
+    });
+
+    it('owner should be able to call rejectUser for user and proxy', async () => {
+      await permissionManagerContract.rejectUser(karpinchoAddress, karpinchoProxyAddress);
+
+      expect(await permissionManagerContract.isRejected(karpinchoAddress)).to.eq(true);
+      expect(await permissionManagerContract.isRejected(karpinchoProxyAddress)).to.eq(true);
+    });
+
+    it('owner should not be able to call rejectUser for the same user twice', async () => {
+      await permissionManagerContract.rejectUser(karpinchoAddress, ethers.constants.AddressZero);
+      expect(await permissionManagerContract.isRejected(karpinchoAddress)).to.eq(true);
+
+      await expect(
+        permissionManagerContract.rejectUser(karpinchoAddress, ethers.constants.AddressZero),
+      ).to.be.revertedWith('PermissionManager: Address is already rejected');
+    });
+
+    it('owner should not be able to call rejectUser for the same proxy twice', async () => {
+      await permissionManagerContract.rejectUser(karpinchoAddress, karpinchoProxyAddress);
+      expect(await permissionManagerContract.isRejected(karpinchoAddress)).to.eq(true);
+
+      await expect(permissionManagerContract.rejectUser(kakarotoAddress, karpinchoProxyAddress)).to.be.revertedWith(
+        'PermissionManager: Proxy is already rejected',
+      );
+    });
+  });
+
   describe('#revokeTier1', () => {
     before('', async () => {
       await reverter.revert();
@@ -332,6 +375,100 @@ describe('PermissionManager', function () {
       await permissionManagerContract.assingTier2(kakarotoAddress, ethers.constants.AddressZero);
       await expect(permissionManagerContract.revokeTier2(kakarotoAddress, karpinchoProxyAddress)).to.be.revertedWith(
         "PermissionManager: Proxy doesn't has Tier 2 assigned",
+      );
+    });
+  });
+
+  describe('#unsuspendUser', () => {
+    before('', async () => {
+      await reverter.revert();
+
+      await permissionManagerContract.suspendUser(karpinchoAddress, karpinchoProxyAddress);
+
+      await reverter.snapshot();
+    });
+
+    beforeEach(async () => {
+      await reverter.revert();
+    });
+
+    it('non owner should not be able to call unsuspendUser', async () => {
+      await expect(
+        permissionManagerContractKakaroto.unsuspendUser(karpinchoAddress, karpinchoProxyAddress),
+      ).to.be.revertedWith('Ownable: caller is not the owner');
+    });
+
+    it('owner should be able to call unsuspendUser for user', async () => {
+      await permissionManagerContract.unsuspendUser(karpinchoAddress, ethers.constants.AddressZero);
+
+      expect(await permissionManagerContract.isSuspended(karpinchoAddress)).to.eq(false);
+      expect(await permissionManagerContract.isSuspended(karpinchoProxyAddress)).to.eq(true);
+    });
+
+    it('owner should not be able to call unsuspendUser for the same user twice', async () => {
+      await permissionManagerContract.unsuspendUser(karpinchoAddress, ethers.constants.AddressZero);
+      expect(await permissionManagerContract.isSuspended(karpinchoAddress)).to.eq(false);
+
+      await expect(
+        permissionManagerContract.unsuspendUser(karpinchoAddress, ethers.constants.AddressZero),
+      ).to.be.revertedWith('PermissionManager: Address is not currently suspended');
+    });
+
+    it('owner should not be able to call unsuspendUser for the same proxy twice', async () => {
+      await permissionManagerContract.unsuspendUser(karpinchoAddress, karpinchoProxyAddress);
+      expect(await permissionManagerContract.isSuspended(karpinchoAddress)).to.eq(false);
+      expect(await permissionManagerContract.isSuspended(karpinchoProxyAddress)).to.eq(false);
+
+      await permissionManagerContract.suspendUser(kakarotoAddress, ethers.constants.AddressZero);
+      await expect(permissionManagerContract.unsuspendUser(kakarotoAddress, karpinchoProxyAddress)).to.be.revertedWith(
+        'PermissionManager: Proxy is not currently suspended',
+      );
+    });
+  });
+
+  describe('#unrejectUser', () => {
+    before('', async () => {
+      await reverter.revert();
+
+      await permissionManagerContract.rejectUser(karpinchoAddress, karpinchoProxyAddress);
+
+      await reverter.snapshot();
+    });
+
+    beforeEach(async () => {
+      await reverter.revert();
+    });
+
+    it('non owner should not be able to call unrejectUser', async () => {
+      await expect(
+        permissionManagerContractKakaroto.unrejectUser(karpinchoAddress, karpinchoProxyAddress),
+      ).to.be.revertedWith('Ownable: caller is not the owner');
+    });
+
+    it('owner should be able to call unrejectUser for user', async () => {
+      await permissionManagerContract.unrejectUser(karpinchoAddress, ethers.constants.AddressZero);
+
+      expect(await permissionManagerContract.isRejected(karpinchoAddress)).to.eq(false);
+      expect(await permissionManagerContract.isRejected(karpinchoProxyAddress)).to.eq(true);
+    });
+
+    it('owner should not be able to call unrejectUser for the same user twice', async () => {
+      await permissionManagerContract.unrejectUser(karpinchoAddress, ethers.constants.AddressZero);
+      expect(await permissionManagerContract.isRejected(karpinchoAddress)).to.eq(false);
+
+      await expect(
+        permissionManagerContract.unrejectUser(karpinchoAddress, ethers.constants.AddressZero),
+      ).to.be.revertedWith('PermissionManager: Address is not currently rejected');
+    });
+
+    it('owner should not be able to call unrejectUser for the same proxy twice', async () => {
+      await permissionManagerContract.unrejectUser(karpinchoAddress, karpinchoProxyAddress);
+      expect(await permissionManagerContract.isRejected(karpinchoAddress)).to.eq(false);
+      expect(await permissionManagerContract.isRejected(karpinchoProxyAddress)).to.eq(false);
+
+      await permissionManagerContract.rejectUser(kakarotoAddress, ethers.constants.AddressZero);
+      await expect(permissionManagerContract.unrejectUser(kakarotoAddress, karpinchoProxyAddress)).to.be.revertedWith(
+        'PermissionManager: Proxy is not currently rejected',
       );
     });
   });

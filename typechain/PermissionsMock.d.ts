@@ -24,25 +24,20 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
   functions: {
     "assingTier1(address)": FunctionFragment;
     "assingTier2(address)": FunctionFragment;
-    "authorizeProxy(address)": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "pauseUser(address)": FunctionFragment;
+    "rejectUser(address)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "unauthorizeProxy(address)": FunctionFragment;
+    "suspendUser(address)": FunctionFragment;
     "uri(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "assingTier1", values: [string]): string;
   encodeFunctionData(functionFragment: "assingTier2", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "authorizeProxy",
-    values: [string]
-  ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [string, BigNumberish]
@@ -55,7 +50,7 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
-  encodeFunctionData(functionFragment: "pauseUser", values: [string]): string;
+  encodeFunctionData(functionFragment: "rejectUser", values: [string]): string;
   encodeFunctionData(
     functionFragment: "safeBatchTransferFrom",
     values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
@@ -72,10 +67,7 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "unauthorizeProxy",
-    values: [string]
-  ): string;
+  encodeFunctionData(functionFragment: "suspendUser", values: [string]): string;
   encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
 
   decodeFunctionResult(
@@ -84,10 +76,6 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "assingTier2",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "authorizeProxy",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -99,7 +87,7 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "pauseUser", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "rejectUser", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "safeBatchTransferFrom",
     data: BytesLike
@@ -117,7 +105,7 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "unauthorizeProxy",
+    functionFragment: "suspendUser",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
@@ -169,16 +157,6 @@ export class PermissionsMock extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    authorizeProxy(
-      _proxy: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "authorizeProxy(address)"(
-      _proxy: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -215,12 +193,12 @@ export class PermissionsMock extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    pauseUser(
+    rejectUser(
       _user: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "pauseUser(address)"(
+    "rejectUser(address)"(
       _user: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -283,13 +261,13 @@ export class PermissionsMock extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    unauthorizeProxy(
-      _proxy: string,
+    suspendUser(
+      _user: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "unauthorizeProxy(address)"(
-      _proxy: string,
+    "suspendUser(address)"(
+      _user: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -318,16 +296,6 @@ export class PermissionsMock extends Contract {
 
   "assingTier2(address)"(
     _user: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  authorizeProxy(
-    _proxy: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "authorizeProxy(address)"(
-    _proxy: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -367,9 +335,12 @@ export class PermissionsMock extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  pauseUser(_user: string, overrides?: Overrides): Promise<ContractTransaction>;
+  rejectUser(
+    _user: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  "pauseUser(address)"(
+  "rejectUser(address)"(
     _user: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -432,13 +403,13 @@ export class PermissionsMock extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  unauthorizeProxy(
-    _proxy: string,
+  suspendUser(
+    _user: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "unauthorizeProxy(address)"(
-    _proxy: string,
+  "suspendUser(address)"(
+    _user: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -461,13 +432,6 @@ export class PermissionsMock extends Contract {
 
     "assingTier2(address)"(
       _user: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    authorizeProxy(_proxy: string, overrides?: CallOverrides): Promise<void>;
-
-    "authorizeProxy(address)"(
-      _proxy: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -507,9 +471,9 @@ export class PermissionsMock extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    pauseUser(_user: string, overrides?: CallOverrides): Promise<void>;
+    rejectUser(_user: string, overrides?: CallOverrides): Promise<void>;
 
-    "pauseUser(address)"(
+    "rejectUser(address)"(
       _user: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -572,10 +536,10 @@ export class PermissionsMock extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    unauthorizeProxy(_proxy: string, overrides?: CallOverrides): Promise<void>;
+    suspendUser(_user: string, overrides?: CallOverrides): Promise<void>;
 
-    "unauthorizeProxy(address)"(
-      _proxy: string,
+    "suspendUser(address)"(
+      _user: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -628,13 +592,6 @@ export class PermissionsMock extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    authorizeProxy(_proxy: string, overrides?: Overrides): Promise<BigNumber>;
-
-    "authorizeProxy(address)"(
-      _proxy: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -671,9 +628,9 @@ export class PermissionsMock extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    pauseUser(_user: string, overrides?: Overrides): Promise<BigNumber>;
+    rejectUser(_user: string, overrides?: Overrides): Promise<BigNumber>;
 
-    "pauseUser(address)"(
+    "rejectUser(address)"(
       _user: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -736,10 +693,10 @@ export class PermissionsMock extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    unauthorizeProxy(_proxy: string, overrides?: Overrides): Promise<BigNumber>;
+    suspendUser(_user: string, overrides?: Overrides): Promise<BigNumber>;
 
-    "unauthorizeProxy(address)"(
-      _proxy: string,
+    "suspendUser(address)"(
+      _user: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -772,16 +729,6 @@ export class PermissionsMock extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    authorizeProxy(
-      _proxy: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "authorizeProxy(address)"(
-      _proxy: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
     balanceOf(
       account: string,
       id: BigNumberish,
@@ -818,12 +765,12 @@ export class PermissionsMock extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    pauseUser(
+    rejectUser(
       _user: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "pauseUser(address)"(
+    "rejectUser(address)"(
       _user: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -886,13 +833,13 @@ export class PermissionsMock extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    unauthorizeProxy(
-      _proxy: string,
+    suspendUser(
+      _user: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "unauthorizeProxy(address)"(
-      _proxy: string,
+    "suspendUser(address)"(
+      _user: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 

@@ -235,42 +235,57 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
                 operation = ERC20_TRANSFER;
             }
 
-            return checkPermissionsByAmount(user, _asset, operation, operationAmount);
+            return checkPermissions(user, _asset, operation, operationAmount);
         }
 
         return false;
     }
 
     /**
-     * @dev Checks user permissions for amount limited operations.
+     * @dev Checks user permissions logic.
      *
      * @param _user user's address.
      * @param _asset address of the contract where `_operation` comes from.
      * @param _operation operation to authorized.
      * @param amount operation amount.
      */
-    function checkPermissionsByAmount(
+    function checkPermissions(
         address _user,
         address _asset,
         bytes4 _operation,
         uint256 amount
     ) internal view returns (bool) {
         // Get user permissions
-        address[] memory accounts = new address[](3);
+        address[] memory accounts = new address[](4);
         accounts[0] = _user;
         accounts[1] = _user;
         accounts[2] = _user;
+        accounts[3] = _user;
 
-        uint256[] memory ids = new uint256[](3);
+        uint256[] memory ids = new uint256[](4);
         ids[0] = TIER_1_ID;
         ids[1] = TIER_2_ID;
         ids[2] = SUSPENDED_ID;
+        ids[3] = REJECTED_ID;
 
         uint256[] memory permissionsBlance = IERC1155(permissions).balanceOfBatch(accounts, ids);
 
         // User is paused
         if (permissionsBlance[2] > 0) {
             return false;
+        }
+
+        // User is Rejected
+        if (permissionsBlance[3] > 0) {
+            // Only allowed to unwind position (burn)
+            // TODO - transferFrom shoudl only be allowed for LPT, we should deal with it when
+            // defining if LPT are going to be wrapped or not, depending on that we may need some sort of
+            // LPT/xLPT registry to only allow transferFrom if it is a xLPT
+            if (_operation == ERC20_BURN_FROM) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         // If User is in TIER 2 it is allowed to do everything

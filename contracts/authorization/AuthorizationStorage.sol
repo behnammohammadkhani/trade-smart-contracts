@@ -28,5 +28,5 @@ abstract contract AuthorizationStorage {
     uint256 public constant SUSPENDED_ID = 0;
     uint256 public constant TIER_1_ID = 1;
     uint256 public constant TIER_2_ID = 2;
-    uint256 public constant AUTHORIZED_PROXY_ID = 3;
+    uint256 public constant REJECTED_ID = 3;
 }

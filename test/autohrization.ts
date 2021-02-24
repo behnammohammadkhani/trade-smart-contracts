@@ -649,7 +649,7 @@ describe('Authorization', function () {
       });
     });
 
-    describe('Tier 1 User - Paused User', () => {
+    describe('Tier 1 User - Suspended User', () => {
       describe('ERC20 Operations', () => {
         before(async () => {
           await reverter.revert();
@@ -658,7 +658,7 @@ describe('Authorization', function () {
           await xTokenContract.transfer(vegetaAddress, '15');
           await xTokenContract.transfer(kakarotoAddress, '15');
 
-          await permissionsContract.pauseUser(kakarotoAddress);
+          await permissionsContract.suspendUser(kakarotoAddress);
         });
 
         // mint
@@ -733,7 +733,7 @@ describe('Authorization', function () {
       });
     });
 
-    describe('Tier 2 User - Paused User', () => {
+    describe('Tier 2 User - Suspended User', () => {
       describe('ERC20 Operations', () => {
         before(async () => {
           await reverter.revert();
@@ -742,7 +742,7 @@ describe('Authorization', function () {
           await xTokenContract.transfer(vegetaAddress, '15');
           await xTokenContract.transfer(kakarotoAddress, '15');
 
-          await permissionsContract.pauseUser(vegetaAddress);
+          await permissionsContract.suspendUser(vegetaAddress);
         });
 
         // mint
@@ -816,7 +816,126 @@ describe('Authorization', function () {
         });
       });
     });
-  });
 
-  // TODO - Add isAuthorized through CPK
+    //// Tier99
+    describe('Tier 1 Rejected User', () => {
+      describe('ERC20 Operations', () => {
+        before(async () => {
+          await reverter.revert();
+
+          await xTokenWrapperMockContract.wrap(xTokenContract.address, '30');
+          await xTokenContract.transfer(vegetaAddress, '15');
+          await xTokenContract.transfer(kakarotoAddress, '15');
+
+          await permissionsContract.rejectUser(kakarotoAddress);
+
+          await reverter.snapshot();
+        });
+
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        // mint
+        it('should not be able to wrap', async () => {
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await expect(xTokenWrapperMockContractKakaroto.wrap(xTokenContract.address, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
+        });
+
+        // burn
+        it('should be able to unwrap all its balance', async () => {
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await xTokenWrapperMockContractKakaroto.unwrap(xTokenContract.address, kakarotoInitialBalance);
+
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal('0');
+        });
+
+        // transfer
+        it('should not be able to transfer', async () => {
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await expect(xTokenContractKakaroto.transfer(deployerAddress, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
+        });
+
+        // transferFrom - TODO temporary, until defining this case with LPT
+        it('should not be able to transferFrom', async () => {
+          const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          await xTokenContractKakaroto.approve(deployerAddress, kakarotoInitialBalance);
+          await expect(
+            xTokenContract.transferFrom(kakarotoAddress, deployerAddress, kakarotoInitialBalance),
+          ).to.be.revertedWith('Authorizable: not authorized');
+
+          const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
+          expect(kakarotoBalance).to.equal(kakarotoInitialBalance);
+        });
+      });
+    });
+
+    describe('Tier 2 Rejected User', () => {
+      describe('ERC20 Operations', () => {
+        before(async () => {
+          await reverter.revert();
+
+          await permissionsContract.rejectUser(vegetaAddress);
+
+          await reverter.snapshot();
+        });
+
+        // mint
+        it('should not be able to wrap', async () => {
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await expect(xTokenWrapperMockContractVegeta.wrap(xTokenContract.address, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance);
+        });
+
+        // burn
+        it('should be able to unwrap all its balance', async () => {
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await xTokenWrapperMockContractVegeta.unwrap(xTokenContract.address, vegetaInitialBalance);
+
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal('0');
+        });
+
+        // transfer
+        it('should not be able to transfer', async () => {
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await expect(xTokenContractVegeta.transfer(deployerAddress, '1')).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance);
+        });
+
+        // transferFrom - TODO temporary, until defining this case with LPT
+        it('should not be able to transferFrom', async () => {
+          const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+          await xTokenContractVegeta.approve(deployerAddress, vegetaInitialBalance);
+          await expect(
+            xTokenContract.transferFrom(vegetaAddress, deployerAddress, vegetaInitialBalance),
+          ).to.be.revertedWith('Authorizable: not authorized');
+
+          const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
+          expect(vegetaBalance).to.equal(vegetaInitialBalance);
+        });
+      });
+    });
+  });
 });
+
+// TODO - Add isAuthorized through CPK

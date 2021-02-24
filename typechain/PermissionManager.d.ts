@@ -22,6 +22,7 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface PermissionManagerInterface extends ethers.utils.Interface {
   functions: {
+    "REJECTED_ID()": FunctionFragment;
     "SUSPENDED_ID()": FunctionFragment;
     "TIER_1_ID()": FunctionFragment;
     "TIER_2_ID()": FunctionFragment;
@@ -30,18 +31,25 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     "hasTier1(address)": FunctionFragment;
     "hasTier2(address)": FunctionFragment;
     "initialize(address)": FunctionFragment;
+    "isRejected(address)": FunctionFragment;
     "isSuspended(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "permissionItems()": FunctionFragment;
+    "rejectUser(address,address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "revokeTier1(address,address)": FunctionFragment;
     "revokeTier2(address,address)": FunctionFragment;
     "setPermissionItems(address)": FunctionFragment;
     "suspendUser(address,address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "unrejectUser(address,address)": FunctionFragment;
     "unsuspendUser(address,address)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "REJECTED_ID",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "SUSPENDED_ID",
     values?: undefined
@@ -59,11 +67,16 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "hasTier1", values: [string]): string;
   encodeFunctionData(functionFragment: "hasTier2", values: [string]): string;
   encodeFunctionData(functionFragment: "initialize", values: [string]): string;
+  encodeFunctionData(functionFragment: "isRejected", values: [string]): string;
   encodeFunctionData(functionFragment: "isSuspended", values: [string]): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "permissionItems",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rejectUser",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -90,10 +103,18 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "unrejectUser",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "unsuspendUser",
     values: [string, string]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "REJECTED_ID",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "SUSPENDED_ID",
     data: BytesLike
@@ -111,6 +132,7 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "hasTier1", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasTier2", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "isRejected", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isSuspended",
     data: BytesLike
@@ -120,6 +142,7 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     functionFragment: "permissionItems",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "rejectUser", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -142,6 +165,10 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "unrejectUser",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -172,6 +199,10 @@ export class PermissionManager extends Contract {
   interface: PermissionManagerInterface;
 
   functions: {
+    REJECTED_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "REJECTED_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     SUSPENDED_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -232,6 +263,13 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    isRejected(_user: string, overrides?: CallOverrides): Promise<[boolean]>;
+
+    "isRejected(address)"(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     isSuspended(_user: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     "isSuspended(address)"(
@@ -246,6 +284,18 @@ export class PermissionManager extends Contract {
     permissionItems(overrides?: CallOverrides): Promise<[string]>;
 
     "permissionItems()"(overrides?: CallOverrides): Promise<[string]>;
+
+    rejectUser(
+      _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "rejectUser(address,address)"(
+      _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
 
@@ -307,6 +357,18 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    unrejectUser(
+      _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "unrejectUser(address,address)"(
+      _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     unsuspendUser(
       _user: string,
       _proxy: string,
@@ -319,6 +381,10 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
+
+  REJECTED_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "REJECTED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -380,6 +446,13 @@ export class PermissionManager extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  isRejected(_user: string, overrides?: CallOverrides): Promise<boolean>;
+
+  "isRejected(address)"(
+    _user: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   isSuspended(_user: string, overrides?: CallOverrides): Promise<boolean>;
 
   "isSuspended(address)"(
@@ -394,6 +467,18 @@ export class PermissionManager extends Contract {
   permissionItems(overrides?: CallOverrides): Promise<string>;
 
   "permissionItems()"(overrides?: CallOverrides): Promise<string>;
+
+  rejectUser(
+    _user: string,
+    _proxy: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "rejectUser(address,address)"(
+    _user: string,
+    _proxy: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
 
@@ -455,6 +540,18 @@ export class PermissionManager extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  unrejectUser(
+    _user: string,
+    _proxy: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "unrejectUser(address,address)"(
+    _user: string,
+    _proxy: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   unsuspendUser(
     _user: string,
     _proxy: string,
@@ -468,6 +565,10 @@ export class PermissionManager extends Contract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    REJECTED_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "REJECTED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
     "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -528,6 +629,13 @@ export class PermissionManager extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    isRejected(_user: string, overrides?: CallOverrides): Promise<boolean>;
+
+    "isRejected(address)"(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     isSuspended(_user: string, overrides?: CallOverrides): Promise<boolean>;
 
     "isSuspended(address)"(
@@ -542,6 +650,18 @@ export class PermissionManager extends Contract {
     permissionItems(overrides?: CallOverrides): Promise<string>;
 
     "permissionItems()"(overrides?: CallOverrides): Promise<string>;
+
+    rejectUser(
+      _user: string,
+      _proxy: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "rejectUser(address,address)"(
+      _user: string,
+      _proxy: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
@@ -603,6 +723,18 @@ export class PermissionManager extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    unrejectUser(
+      _user: string,
+      _proxy: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "unrejectUser(address,address)"(
+      _user: string,
+      _proxy: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     unsuspendUser(
       _user: string,
       _proxy: string,
@@ -626,6 +758,10 @@ export class PermissionManager extends Contract {
   };
 
   estimateGas: {
+    REJECTED_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "REJECTED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     SUSPENDED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
     "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -686,6 +822,13 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    isRejected(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "isRejected(address)"(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     isSuspended(_user: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "isSuspended(address)"(
@@ -700,6 +843,18 @@ export class PermissionManager extends Contract {
     permissionItems(overrides?: CallOverrides): Promise<BigNumber>;
 
     "permissionItems()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    rejectUser(
+      _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "rejectUser(address,address)"(
+      _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     renounceOwnership(overrides?: Overrides): Promise<BigNumber>;
 
@@ -761,6 +916,18 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    unrejectUser(
+      _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "unrejectUser(address,address)"(
+      _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     unsuspendUser(
       _user: string,
       _proxy: string,
@@ -775,6 +942,10 @@ export class PermissionManager extends Contract {
   };
 
   populateTransaction: {
+    REJECTED_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "REJECTED_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     SUSPENDED_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "SUSPENDED_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -841,6 +1012,16 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    isRejected(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "isRejected(address)"(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     isSuspended(
       _user: string,
       overrides?: CallOverrides
@@ -859,6 +1040,18 @@ export class PermissionManager extends Contract {
 
     "permissionItems()"(
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    rejectUser(
+      _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "rejectUser(address,address)"(
+      _user: string,
+      _proxy: string,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     renounceOwnership(overrides?: Overrides): Promise<PopulatedTransaction>;
@@ -918,6 +1111,18 @@ export class PermissionManager extends Contract {
 
     "transferOwnership(address)"(
       newOwner: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    unrejectUser(
+      _user: string,
+      _proxy: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "unrejectUser(address,address)"(
+      _user: string,
+      _proxy: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
