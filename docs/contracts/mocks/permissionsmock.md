@@ -8,11 +8,9 @@
 
 - `assingTier2(address _user) (public)`
 
-- `authorizeProxy(address _proxy) (public)`
+- `suspendUser(address _user) (public)`
 
-- `unauthorizeProxy(address _proxy) (public)`
-
-- `pauseUser(address _user) (public)`
+- `rejectUser(address _user) (public)`
 
 ### Function `constructor(string uri_) public`
 
@@ -20,8 +18,6 @@
 
 ### Function `assingTier2(address _user) public`
 
-### Function `authorizeProxy(address _proxy) public`
+### Function `suspendUser(address _user) public`
 
-### Function `unauthorizeProxy(address _proxy) public`
-
-### Function `pauseUser(address _user) public`
+### Function `rejectUser(address _user) public`

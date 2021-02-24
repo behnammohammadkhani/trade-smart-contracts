@@ -22,7 +22,7 @@ This contract should be called by an Authorizable contract through its `onlyAuth
 
 - `isAuthorized(address _user, address _asset, bytes4 _operation, bytes _data) (public)`
 
-- `checkPermissionsByAmount(address _user, address _asset, bytes4 _operation, uint256 amount) (internal)`
+- `checkPermissions(address _user, address _asset, bytes4 _operation, uint256 amount) (internal)`
 
 ## Events:
 
@@ -146,9 +146,9 @@ Determins if a user is allowed to perform an operation.
 
 - a boolean signaling the authorization.
 
-### Function `checkPermissionsByAmount(address _user, address _asset, bytes4 _operation, uint256 amount) → bool internal`
+### Function `checkPermissions(address _user, address _asset, bytes4 _operation, uint256 amount) → bool internal`
 
-Checks user permissions for amount limited operations.
+Checks user permissions logic.
 
 #### Parameters:
 
