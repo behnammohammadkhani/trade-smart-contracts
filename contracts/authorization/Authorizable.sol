@@ -16,6 +16,11 @@ abstract contract Authorizable is Context {
     IAuthorization public authorization;
 
     /**
+     * @dev Emitted when `authorization` address is setted.
+     */
+    event AuthorizationSetted(address indexed newAuthorization);
+
+    /**
      * @dev Throws if called by any account which is not authorized to execute the transaction.
      */
     modifier onlyAuthorized() {
@@ -24,5 +29,15 @@ abstract contract Authorizable is Context {
             "Authorizable: not authorized"
         );
         _;
+    }
+
+    /**
+     * @dev Sets authorization.
+     *
+     */
+    function _setAuthorization(address authorization_) internal virtual {
+        require(authorization_ != address(0), "Authorizable: authorization is the zero address");
+        authorization = IAuthorization(authorization_);
+        emit AuthorizationSetted(authorization_);
     }
 }

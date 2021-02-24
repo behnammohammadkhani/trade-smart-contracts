@@ -22,6 +22,19 @@ export class AuthorizableUpgradeable__factory {
 
 const _abi = [
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newAuthorization",
+        type: "address",
+      },
+    ],
+    name: "AuthorizationSetted",
+    type: "event",
+  },
+  {
     inputs: [],
     name: "authorization",
     outputs: [

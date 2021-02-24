@@ -34,7 +34,11 @@ interface AuthorizableUpgradeableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "AuthorizationSetted(address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "AuthorizationSetted"): EventFragment;
 }
 
 export class AuthorizableUpgradeable extends Contract {
@@ -66,7 +70,9 @@ export class AuthorizableUpgradeable extends Contract {
     "authorization()"(overrides?: CallOverrides): Promise<string>;
   };
 
-  filters: {};
+  filters: {
+    AuthorizationSetted(newAuthorization: string | null): EventFilter;
+  };
 
   estimateGas: {
     authorization(overrides?: CallOverrides): Promise<BigNumber>;

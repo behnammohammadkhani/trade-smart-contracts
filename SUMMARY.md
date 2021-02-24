@@ -11,8 +11,9 @@
     * [IOperationsRegistry](docs/contracts/authorization/ioperationsregistry.md)
     * [OperationsRegistry](docs/contracts/authorization/operationsregistry.md)
   * common
-    * [Constants](docs/contracts/common/constants.md)
   * permissioning
     * [PermissionItems](docs/contracts/permissioning/permissionitems.md)
     * [PermissionManager](docs/contracts/permissioning/permissionmanager.md)
     * [PermissionManagerStorage](docs/contracts/permissioning/permissionmanagerstorage.md)
+  * token
+    * [xToken](docs/contracts/token/xtoken.md)

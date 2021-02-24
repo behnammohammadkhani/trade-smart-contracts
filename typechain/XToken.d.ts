@@ -20,7 +20,7 @@ import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
-interface XTokenMockInterface extends ethers.utils.Interface {
+interface XTokenInterface extends ethers.utils.Interface {
   functions: {
     "ERC20_TRANSFER()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
@@ -31,16 +31,23 @@ interface XTokenMockInterface extends ethers.utils.Interface {
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
+    "kya()": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "operationsRegistry()": FunctionFragment;
     "owner()": FunctionFragment;
+    "pause()": FunctionFragment;
+    "paused()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "setAuthorization(address)": FunctionFragment;
+    "setKya(string)": FunctionFragment;
+    "setOperationsRegistry(address)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "unpause()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -73,6 +80,7 @@ interface XTokenMockInterface extends ethers.utils.Interface {
     functionFragment: "increaseAllowance",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "kya", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "mint",
     values: [string, BigNumberish]
@@ -83,9 +91,20 @@ interface XTokenMockInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAuthorization",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "setKya", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setOperationsRegistry",
+    values: [string]
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
@@ -104,6 +123,7 @@ interface XTokenMockInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(
     functionFragment: "ERC20_TRANSFER",
@@ -126,6 +146,7 @@ interface XTokenMockInterface extends ethers.utils.Interface {
     functionFragment: "increaseAllowance",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "kya", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
@@ -133,8 +154,19 @@ interface XTokenMockInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setAuthorization",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setKya", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setOperationsRegistry",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
@@ -151,21 +183,30 @@ interface XTokenMockInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "AuthorizationSetted(address)": EventFragment;
+    "KyaSetted(string)": EventFragment;
+    "OperationsRegistrySetted(address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "Paused(address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
+    "Unpaused(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AuthorizationSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "KyaSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OperationsRegistrySetted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
-export class XTokenMock extends Contract {
+export class XToken extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -176,7 +217,7 @@ export class XTokenMock extends Contract {
   removeAllListeners(eventName: EventFilter | string): this;
   removeListener(eventName: any, listener: Listener): this;
 
-  interface: XTokenMockInterface;
+  interface: XTokenInterface;
 
   functions: {
     ERC20_TRANSFER(overrides?: CallOverrides): Promise<[string]>;
@@ -258,6 +299,10 @@ export class XTokenMock extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    kya(overrides?: CallOverrides): Promise<[string]>;
+
+    "kya()"(overrides?: CallOverrides): Promise<[string]>;
+
     mint(
       account: string,
       amount: BigNumberish,
@@ -282,9 +327,44 @@ export class XTokenMock extends Contract {
 
     "owner()"(overrides?: CallOverrides): Promise<[string]>;
 
+    pause(overrides?: Overrides): Promise<ContractTransaction>;
+
+    "pause()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "paused()"(overrides?: CallOverrides): Promise<[boolean]>;
+
     renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
 
     "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    setAuthorization(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setAuthorization(address)"(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setKya(kya_: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    "setKya(string)"(
+      kya_: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setOperationsRegistry(
+      operationsRegistry_: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setOperationsRegistry(address)"(
+      operationsRegistry_: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<[string]>;
 
@@ -329,6 +409,10 @@ export class XTokenMock extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    unpause(overrides?: Overrides): Promise<ContractTransaction>;
+
+    "unpause()"(overrides?: Overrides): Promise<ContractTransaction>;
   };
 
   ERC20_TRANSFER(overrides?: CallOverrides): Promise<string>;
@@ -410,6 +494,10 @@ export class XTokenMock extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  kya(overrides?: CallOverrides): Promise<string>;
+
+  "kya()"(overrides?: CallOverrides): Promise<string>;
+
   mint(
     account: string,
     amount: BigNumberish,
@@ -434,9 +522,44 @@ export class XTokenMock extends Contract {
 
   "owner()"(overrides?: CallOverrides): Promise<string>;
 
+  pause(overrides?: Overrides): Promise<ContractTransaction>;
+
+  "pause()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+  paused(overrides?: CallOverrides): Promise<boolean>;
+
+  "paused()"(overrides?: CallOverrides): Promise<boolean>;
+
   renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
 
   "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+  setAuthorization(
+    authorization_: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setAuthorization(address)"(
+    authorization_: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setKya(kya_: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  "setKya(string)"(
+    kya_: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setOperationsRegistry(
+    operationsRegistry_: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setOperationsRegistry(address)"(
+    operationsRegistry_: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -481,6 +604,10 @@ export class XTokenMock extends Contract {
     newOwner: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  unpause(overrides?: Overrides): Promise<ContractTransaction>;
+
+  "unpause()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   callStatic: {
     ERC20_TRANSFER(overrides?: CallOverrides): Promise<string>;
@@ -562,6 +689,10 @@ export class XTokenMock extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    kya(overrides?: CallOverrides): Promise<string>;
+
+    "kya()"(overrides?: CallOverrides): Promise<string>;
+
     mint(
       account: string,
       amount: BigNumberish,
@@ -586,9 +717,41 @@ export class XTokenMock extends Contract {
 
     "owner()"(overrides?: CallOverrides): Promise<string>;
 
+    pause(overrides?: CallOverrides): Promise<void>;
+
+    "pause()"(overrides?: CallOverrides): Promise<void>;
+
+    paused(overrides?: CallOverrides): Promise<boolean>;
+
+    "paused()"(overrides?: CallOverrides): Promise<boolean>;
+
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     "renounceOwnership()"(overrides?: CallOverrides): Promise<void>;
+
+    setAuthorization(
+      authorization_: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setAuthorization(address)"(
+      authorization_: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setKya(kya_: string, overrides?: CallOverrides): Promise<void>;
+
+    "setKya(string)"(kya_: string, overrides?: CallOverrides): Promise<void>;
+
+    setOperationsRegistry(
+      operationsRegistry_: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setOperationsRegistry(address)"(
+      operationsRegistry_: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -633,6 +796,10 @@ export class XTokenMock extends Contract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    unpause(overrides?: CallOverrides): Promise<void>;
+
+    "unpause()"(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -644,12 +811,20 @@ export class XTokenMock extends Contract {
 
     AuthorizationSetted(newAuthorization: string | null): EventFilter;
 
+    KyaSetted(newKya: null): EventFilter;
+
+    OperationsRegistrySetted(newOperationsRegistry: string | null): EventFilter;
+
     OwnershipTransferred(
       previousOwner: string | null,
       newOwner: string | null
     ): EventFilter;
 
+    Paused(account: null): EventFilter;
+
     Transfer(from: string | null, to: string | null, value: null): EventFilter;
+
+    Unpaused(account: null): EventFilter;
   };
 
   estimateGas: {
@@ -732,6 +907,10 @@ export class XTokenMock extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    kya(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "kya()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     mint(
       account: string,
       amount: BigNumberish,
@@ -756,9 +935,41 @@ export class XTokenMock extends Contract {
 
     "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    pause(overrides?: Overrides): Promise<BigNumber>;
+
+    "pause()"(overrides?: Overrides): Promise<BigNumber>;
+
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "paused()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     renounceOwnership(overrides?: Overrides): Promise<BigNumber>;
 
     "renounceOwnership()"(overrides?: Overrides): Promise<BigNumber>;
+
+    setAuthorization(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setAuthorization(address)"(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setKya(kya_: string, overrides?: Overrides): Promise<BigNumber>;
+
+    "setKya(string)"(kya_: string, overrides?: Overrides): Promise<BigNumber>;
+
+    setOperationsRegistry(
+      operationsRegistry_: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setOperationsRegistry(address)"(
+      operationsRegistry_: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -803,6 +1014,10 @@ export class XTokenMock extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    unpause(overrides?: Overrides): Promise<BigNumber>;
+
+    "unpause()"(overrides?: Overrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -890,6 +1105,10 @@ export class XTokenMock extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    kya(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "kya()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     mint(
       account: string,
       amount: BigNumberish,
@@ -918,9 +1137,44 @@ export class XTokenMock extends Contract {
 
     "owner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    pause(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "pause()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "paused()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     renounceOwnership(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "renounceOwnership()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    setAuthorization(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setAuthorization(address)"(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setKya(kya_: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "setKya(string)"(
+      kya_: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setOperationsRegistry(
+      operationsRegistry_: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setOperationsRegistry(address)"(
+      operationsRegistry_: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -965,5 +1219,9 @@ export class XTokenMock extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    unpause(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "unpause()"(overrides?: Overrides): Promise<PopulatedTransaction>;
   };
 }
