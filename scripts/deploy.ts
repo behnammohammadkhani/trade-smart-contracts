@@ -1,5 +1,6 @@
 import hre from 'hardhat';
 import { ContractFactory } from 'ethers';
+import { TransactionResponse } from '@ethersproject/abstract-provider';
 import assert from 'assert';
 import {
   PermissionItems,
@@ -46,7 +47,7 @@ async function main(): Promise<void> {
     PermissionItems: {
       address: permissionItemsContract.address,
       abi: PermissionItemsArtifact.abi,
-      deployTransaction: permissionItemsContract.deployTransaction,
+      deployTransaction: await getRecipt(permissionItemsContract.deployTransaction),
     },
   };
 
@@ -66,7 +67,7 @@ async function main(): Promise<void> {
     PermissionManagerProxy: {
       address: permissionManagerContract.address,
       abi: PermissionManagerArtifact.abi,
-      deployTransaction: permissionManagerContract.deployTransaction,
+      deployTransaction: await getRecipt(permissionManagerContract.deployTransaction),
     },
   };
 
@@ -92,7 +93,7 @@ async function main(): Promise<void> {
     EurPriceFeed: {
       address: eurPriceFeedContract.address,
       abi: EurPriceFeedArtifact.abi,
-      deployTransaction: eurPriceFeedContract.deployTransaction,
+      deployTransaction: await getRecipt(eurPriceFeedContract.deployTransaction),
     },
   };
 
@@ -116,7 +117,7 @@ async function main(): Promise<void> {
     OperationsRegistry: {
       address: operationsRegistryContract.address,
       abi: OperationsRegistryArtifact.abi,
-      deployTransaction: operationsRegistryContract.deployTransaction,
+      deployTransaction: await getRecipt(operationsRegistryContract.deployTransaction),
     },
   };
 
@@ -145,7 +146,7 @@ async function main(): Promise<void> {
     AuthorizationProxy: {
       address: authorizationContract.address,
       abi: AuthorizationArtifact.abi,
-      deployTransaction: authorizationContract.deployTransaction,
+      deployTransaction: await getRecipt(authorizationContract.deployTransaction),
     },
   };
 
@@ -166,7 +167,7 @@ async function main(): Promise<void> {
     XTokenWrapper: {
       address: xTokenWrapperContract.address,
       abi: XTokenWrapperArtifact.abi,
-      deployTransaction: xTokenWrapperContract.deployTransaction,
+      deployTransaction: await getRecipt(xTokenWrapperContract.deployTransaction),
     },
   };
 
@@ -194,7 +195,7 @@ async function main(): Promise<void> {
     XTokenFactory: {
       address: xTokenFactoryContract.address,
       abi: XTokenFactoryArtifact.abi,
-      deployTransaction: xTokenFactoryContract.deployTransaction,
+      deployTransaction: await getRecipt(xTokenFactoryContract.deployTransaction),
     },
   };
 
@@ -263,6 +264,18 @@ function stopLog(message: string) {
   spinner.succeed(message);
 }
 
+async function getRecipt(transactionResponse: TransactionResponse) {
+  const receipt = await transactionResponse.wait();
+  return {
+    ...transactionResponse,
+    ...receipt,
+    gasPrice: transactionResponse.gasPrice.toString(),
+    gasLimit: transactionResponse.gasLimit.toString(),
+    value: transactionResponse.value.toString(),
+    gasUsed: receipt.gasUsed.toString(),
+    cumulativeGasUsed: receipt.cumulativeGasUsed.toString(),
+  };
+}
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main()

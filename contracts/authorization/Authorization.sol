@@ -223,8 +223,16 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
             bytes4 operation = _operation;
             uint256 operationAmount;
 
-            if (_operation == ERC20_MINT || _operation == ERC20_BURN_FROM || _operation == ERC20_TRANSFER) {
-                (, uint256 amount) = abi.decode(_data[4:], (address, uint256));
+            // ERC20_TRANSFER uses _user, which is the sender, for authorizing
+
+            if (_operation == ERC20_TRANSFER) {
+                ( , uint256 amount) = abi.decode(_data[4:], (address, uint256));
+                operationAmount = amount;
+            }
+
+            if (_operation == ERC20_MINT || _operation == ERC20_BURN_FROM) {
+                (address account, uint256 amount) = abi.decode(_data[4:], (address, uint256));
+                user = account;
                 operationAmount = amount;
             }
 
@@ -298,7 +306,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
             IOperationsRegistry(operationsRegistry).tradingBalanceByOperation(_user, _operation);
         uint256 eurAmount = IEurPriceFeed(eurPriceFeed).calculateAmount(_asset, amount);
 
-        // Something wrong with proce feed
+        // Something wrong with price feed
         if (eurAmount == 0) {
             return false;
         }

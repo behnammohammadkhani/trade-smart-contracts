@@ -383,6 +383,7 @@ describe('Authorization', function () {
 
         // transferFrom
         it('should be able to transferFrom less than the allowed limit', async () => {
+          // need to rever because it has already transferred its limit
           await reverter.revert();
 
           await xTokenWrapperMockContract.wrap(xTokenContract.address, '10000');
@@ -817,7 +818,6 @@ describe('Authorization', function () {
       });
     });
 
-    //// Tier99
     describe('Tier 1 Rejected User', () => {
       describe('ERC20 Operations', () => {
         before(async () => {
@@ -937,5 +937,3 @@ describe('Authorization', function () {
     });
   });
 });
-
-// TODO - Add isAuthorized through CPK

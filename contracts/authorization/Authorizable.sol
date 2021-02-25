@@ -24,10 +24,8 @@ abstract contract Authorizable is Context {
      * @dev Throws if called by any account which is not authorized to execute the transaction.
      */
     modifier onlyAuthorized() {
-        // It uses tx.origin because user may use a CPK for interacting with the protocol
         require(
-            // solhint-disable-next-line avoid-tx-origin
-            authorization.isAuthorized(tx.origin, address(this), msg.sig, _msgData()),
+            authorization.isAuthorized(_msgSender(), address(this), msg.sig, _msgData()),
             "Authorizable: not authorized"
         );
         _;
