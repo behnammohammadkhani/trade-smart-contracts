@@ -26,8 +26,8 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     "SUSPENDED_ID()": FunctionFragment;
     "TIER_1_ID()": FunctionFragment;
     "TIER_2_ID()": FunctionFragment;
-    "assingTier1(address)": FunctionFragment;
-    "assingTier2(address,address)": FunctionFragment;
+    "assingTier1(address[])": FunctionFragment;
+    "assingTier2(tuple[])": FunctionFragment;
     "hasTier1(address)": FunctionFragment;
     "hasTier2(address)": FunctionFragment;
     "initialize(address)": FunctionFragment;
@@ -35,15 +35,15 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     "isSuspended(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "permissionItems()": FunctionFragment;
-    "rejectUser(address,address)": FunctionFragment;
+    "rejectUser(tuple[])": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "revokeTier1(address)": FunctionFragment;
-    "revokeTier2(address,address)": FunctionFragment;
+    "revokeTier1(address[])": FunctionFragment;
+    "revokeTier2(tuple[])": FunctionFragment;
     "setPermissionItems(address)": FunctionFragment;
-    "suspendUser(address,address)": FunctionFragment;
+    "suspendUser(tuple[])": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "unrejectUser(address,address)": FunctionFragment;
-    "unsuspendUser(address,address)": FunctionFragment;
+    "unrejectUser(tuple[])": FunctionFragment;
+    "unsuspendUser(tuple[])": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -56,10 +56,13 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "TIER_1_ID", values?: undefined): string;
   encodeFunctionData(functionFragment: "TIER_2_ID", values?: undefined): string;
-  encodeFunctionData(functionFragment: "assingTier1", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "assingTier1",
+    values: [string[]]
+  ): string;
   encodeFunctionData(
     functionFragment: "assingTier2",
-    values: [string, string]
+    values: [{ user: string; proxy: string }[]]
   ): string;
   encodeFunctionData(functionFragment: "hasTier1", values: [string]): string;
   encodeFunctionData(functionFragment: "hasTier2", values: [string]): string;
@@ -73,16 +76,19 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "rejectUser",
-    values: [string, string]
+    values: [{ user: string; proxy: string }[]]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "revokeTier1", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "revokeTier1",
+    values: [string[]]
+  ): string;
   encodeFunctionData(
     functionFragment: "revokeTier2",
-    values: [string, string]
+    values: [{ user: string; proxy: string }[]]
   ): string;
   encodeFunctionData(
     functionFragment: "setPermissionItems",
@@ -90,7 +96,7 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "suspendUser",
-    values: [string, string]
+    values: [{ user: string; proxy: string }[]]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -98,11 +104,11 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "unrejectUser",
-    values: [string, string]
+    values: [{ user: string; proxy: string }[]]
   ): string;
   encodeFunctionData(
     functionFragment: "unsuspendUser",
-    values: [string, string]
+    values: [{ user: string; proxy: string }[]]
   ): string;
 
   decodeFunctionResult(
@@ -210,24 +216,22 @@ export class PermissionManager extends Contract {
     "TIER_2_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     assingTier1(
-      _proxy: string,
+      _accounts: string[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "assingTier1(address)"(
-      _proxy: string,
+    "assingTier1(address[])"(
+      _accounts: string[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     assingTier2(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "assingTier2(address,address)"(
-      _user: string,
-      _proxy: string,
+    "assingTier2(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -281,14 +285,12 @@ export class PermissionManager extends Contract {
     "permissionItems()"(overrides?: CallOverrides): Promise<[string]>;
 
     rejectUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "rejectUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "rejectUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -297,24 +299,22 @@ export class PermissionManager extends Contract {
     "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
 
     revokeTier1(
-      _proxy: string,
+      _accounts: string[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "revokeTier1(address)"(
-      _proxy: string,
+    "revokeTier1(address[])"(
+      _accounts: string[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     revokeTier2(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "revokeTier2(address,address)"(
-      _user: string,
-      _proxy: string,
+    "revokeTier2(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -329,14 +329,12 @@ export class PermissionManager extends Contract {
     ): Promise<ContractTransaction>;
 
     suspendUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "suspendUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "suspendUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -351,26 +349,22 @@ export class PermissionManager extends Contract {
     ): Promise<ContractTransaction>;
 
     unrejectUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "unrejectUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "unrejectUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     unsuspendUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "unsuspendUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "unsuspendUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
@@ -392,24 +386,22 @@ export class PermissionManager extends Contract {
   "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   assingTier1(
-    _proxy: string,
+    _accounts: string[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "assingTier1(address)"(
-    _proxy: string,
+  "assingTier1(address[])"(
+    _accounts: string[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   assingTier2(
-    _user: string,
-    _proxy: string,
+    _usersProxies: { user: string; proxy: string }[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "assingTier2(address,address)"(
-    _user: string,
-    _proxy: string,
+  "assingTier2(tuple[])"(
+    _usersProxies: { user: string; proxy: string }[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -460,14 +452,12 @@ export class PermissionManager extends Contract {
   "permissionItems()"(overrides?: CallOverrides): Promise<string>;
 
   rejectUser(
-    _user: string,
-    _proxy: string,
+    _usersProxies: { user: string; proxy: string }[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "rejectUser(address,address)"(
-    _user: string,
-    _proxy: string,
+  "rejectUser(tuple[])"(
+    _usersProxies: { user: string; proxy: string }[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -476,24 +466,22 @@ export class PermissionManager extends Contract {
   "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   revokeTier1(
-    _proxy: string,
+    _accounts: string[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "revokeTier1(address)"(
-    _proxy: string,
+  "revokeTier1(address[])"(
+    _accounts: string[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   revokeTier2(
-    _user: string,
-    _proxy: string,
+    _usersProxies: { user: string; proxy: string }[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "revokeTier2(address,address)"(
-    _user: string,
-    _proxy: string,
+  "revokeTier2(tuple[])"(
+    _usersProxies: { user: string; proxy: string }[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -508,14 +496,12 @@ export class PermissionManager extends Contract {
   ): Promise<ContractTransaction>;
 
   suspendUser(
-    _user: string,
-    _proxy: string,
+    _usersProxies: { user: string; proxy: string }[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "suspendUser(address,address)"(
-    _user: string,
-    _proxy: string,
+  "suspendUser(tuple[])"(
+    _usersProxies: { user: string; proxy: string }[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -530,26 +516,22 @@ export class PermissionManager extends Contract {
   ): Promise<ContractTransaction>;
 
   unrejectUser(
-    _user: string,
-    _proxy: string,
+    _usersProxies: { user: string; proxy: string }[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "unrejectUser(address,address)"(
-    _user: string,
-    _proxy: string,
+  "unrejectUser(tuple[])"(
+    _usersProxies: { user: string; proxy: string }[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   unsuspendUser(
-    _user: string,
-    _proxy: string,
+    _usersProxies: { user: string; proxy: string }[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "unsuspendUser(address,address)"(
-    _user: string,
-    _proxy: string,
+  "unsuspendUser(tuple[])"(
+    _usersProxies: { user: string; proxy: string }[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -570,22 +552,20 @@ export class PermissionManager extends Contract {
 
     "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    assingTier1(_proxy: string, overrides?: CallOverrides): Promise<void>;
+    assingTier1(_accounts: string[], overrides?: CallOverrides): Promise<void>;
 
-    "assingTier1(address)"(
-      _proxy: string,
+    "assingTier1(address[])"(
+      _accounts: string[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     assingTier2(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "assingTier2(address,address)"(
-      _user: string,
-      _proxy: string,
+    "assingTier2(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -636,14 +616,12 @@ export class PermissionManager extends Contract {
     "permissionItems()"(overrides?: CallOverrides): Promise<string>;
 
     rejectUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "rejectUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "rejectUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -651,22 +629,20 @@ export class PermissionManager extends Contract {
 
     "renounceOwnership()"(overrides?: CallOverrides): Promise<void>;
 
-    revokeTier1(_proxy: string, overrides?: CallOverrides): Promise<void>;
+    revokeTier1(_accounts: string[], overrides?: CallOverrides): Promise<void>;
 
-    "revokeTier1(address)"(
-      _proxy: string,
+    "revokeTier1(address[])"(
+      _accounts: string[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     revokeTier2(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "revokeTier2(address,address)"(
-      _user: string,
-      _proxy: string,
+    "revokeTier2(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -681,14 +657,12 @@ export class PermissionManager extends Contract {
     ): Promise<boolean>;
 
     suspendUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "suspendUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "suspendUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -703,26 +677,22 @@ export class PermissionManager extends Contract {
     ): Promise<void>;
 
     unrejectUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "unrejectUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "unrejectUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     unsuspendUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "unsuspendUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "unsuspendUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -753,22 +723,20 @@ export class PermissionManager extends Contract {
 
     "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    assingTier1(_proxy: string, overrides?: Overrides): Promise<BigNumber>;
+    assingTier1(_accounts: string[], overrides?: Overrides): Promise<BigNumber>;
 
-    "assingTier1(address)"(
-      _proxy: string,
+    "assingTier1(address[])"(
+      _accounts: string[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     assingTier2(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "assingTier2(address,address)"(
-      _user: string,
-      _proxy: string,
+    "assingTier2(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -822,14 +790,12 @@ export class PermissionManager extends Contract {
     "permissionItems()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     rejectUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "rejectUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "rejectUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -837,22 +803,20 @@ export class PermissionManager extends Contract {
 
     "renounceOwnership()"(overrides?: Overrides): Promise<BigNumber>;
 
-    revokeTier1(_proxy: string, overrides?: Overrides): Promise<BigNumber>;
+    revokeTier1(_accounts: string[], overrides?: Overrides): Promise<BigNumber>;
 
-    "revokeTier1(address)"(
-      _proxy: string,
+    "revokeTier1(address[])"(
+      _accounts: string[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     revokeTier2(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "revokeTier2(address,address)"(
-      _user: string,
-      _proxy: string,
+    "revokeTier2(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -867,14 +831,12 @@ export class PermissionManager extends Contract {
     ): Promise<BigNumber>;
 
     suspendUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "suspendUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "suspendUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -889,26 +851,22 @@ export class PermissionManager extends Contract {
     ): Promise<BigNumber>;
 
     unrejectUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "unrejectUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "unrejectUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     unsuspendUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "unsuspendUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "unsuspendUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<BigNumber>;
   };
@@ -931,24 +889,22 @@ export class PermissionManager extends Contract {
     "TIER_2_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     assingTier1(
-      _proxy: string,
+      _accounts: string[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "assingTier1(address)"(
-      _proxy: string,
+    "assingTier1(address[])"(
+      _accounts: string[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     assingTier2(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "assingTier2(address,address)"(
-      _user: string,
-      _proxy: string,
+    "assingTier2(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -1013,14 +969,12 @@ export class PermissionManager extends Contract {
     ): Promise<PopulatedTransaction>;
 
     rejectUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "rejectUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "rejectUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -1029,24 +983,22 @@ export class PermissionManager extends Contract {
     "renounceOwnership()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     revokeTier1(
-      _proxy: string,
+      _accounts: string[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "revokeTier1(address)"(
-      _proxy: string,
+    "revokeTier1(address[])"(
+      _accounts: string[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     revokeTier2(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "revokeTier2(address,address)"(
-      _user: string,
-      _proxy: string,
+    "revokeTier2(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -1061,14 +1013,12 @@ export class PermissionManager extends Contract {
     ): Promise<PopulatedTransaction>;
 
     suspendUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "suspendUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "suspendUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -1083,26 +1033,22 @@ export class PermissionManager extends Contract {
     ): Promise<PopulatedTransaction>;
 
     unrejectUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "unrejectUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "unrejectUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     unsuspendUser(
-      _user: string,
-      _proxy: string,
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "unsuspendUser(address,address)"(
-      _user: string,
-      _proxy: string,
+    "unsuspendUser(tuple[])"(
+      _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };
