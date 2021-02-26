@@ -1,5 +1,6 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.7.0;
+pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
@@ -15,6 +16,11 @@ import "hardhat/console.sol";
  * @dev Provide tier based permissions assignments and revoking functions
  */
 contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManagerStorage {
+    struct UserProxy {
+        address user;
+        address proxy;
+    }
+
     /**
      * @dev Emitted when `permissionItems` address is setted.
      */
@@ -58,155 +64,188 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
     }
 
     /**
-     * @dev assigns Tier1 permission to user's `_proxy`.
+     * @dev assigns Tier1 permission to the list `_accounts`.
      *
      * Requirements:
      *
      * - the caller must be the owner.
-     * - `_proxy` should not have Tier1 already assigned.
+     * - each address in `_accounts` should not have Tier1 already assigned.
      *
-     * @param _proxy The address of the user's proxy.
+     * @param _accounts The addresses to assign Tier1.
      */
-    function assingTier1(address _proxy) public onlyOwner {
-        require(!hasTier1(_proxy), "PermissionManager: Proxy already has Tier 1 assigned");
-        PermissionItems(permissionItems).mint(_proxy, TIER_1_ID, 1, "");
-    }
-
-    /**
-     * @dev assigns Tier2 permission to `_user` and its `_proxy`.
-     *
-     * Requirements:
-     *
-     * - the caller must be the owner.
-     * - `_user` should not have Tier2 already assigned.
-     * - `_proxy` should not have Tier2 already assigned.
-     *
-     * @param _user The address of the user.
-     * @param _proxy The address of the user's proxy.
-     */
-    function assingTier2(address _user, address _proxy) public onlyOwner {
-        require(!hasTier2(_user), "PermissionManager: Address already has Tier 2 assigned");
-        require(!hasTier2(_proxy), "PermissionManager: Proxy already has Tier 2 assigned");
-
-        PermissionItems(permissionItems).mint(_user, TIER_2_ID, 1, "");
-        PermissionItems(permissionItems).mint(_proxy, TIER_2_ID, 1, "");
-    }
-
-    /**
-     * @dev suspends pemissions effects on `_user`.
-     *
-     * Requirements:
-     *
-     * - the caller must be the owner.
-     * - `_user` should not be already suspended.
-     *
-     * @param _user The address of the user.
-     * @param _proxy [Optional] The address of the user's proxy if it is not address zero.
-     */
-    function suspendUser(address _user, address _proxy) public onlyOwner {
-        require(!isSuspended(_user), "PermissionManager: Address is already suspended");
-        PermissionItems(permissionItems).mint(_user, SUSPENDED_ID, 1, "");
-
-        if (_proxy != address(0)) {
-            require(!isSuspended(_proxy), "PermissionManager: Proxy is already suspended");
-            PermissionItems(permissionItems).mint(_proxy, SUSPENDED_ID, 1, "");
+    function assingTier1(address[] memory _accounts) public onlyOwner {
+        for (uint256 i = 0; i < _accounts.length; i++) {
+            require(!hasTier1(_accounts[i]), "PermissionManager: Address already has Tier 1 assigned");
+            PermissionItems(permissionItems).mint(_accounts[i], TIER_1_ID, 1, "");
         }
     }
 
     /**
-     * @dev Assigns Reject permission to `_user`.
+     * @dev assigns Tier2 permission to a list of users and proxies.
      *
      * Requirements:
      *
      * - the caller must be the owner.
-     * - `_user` should not be already rejected.
+     * - All user addresses in `_usersProxies` should not have Tier2 already assigned.
+     * - All proxy addresses in `_usersProxies` should not have Tier2 already assigned.
      *
-     * @param _user The address of the user.
-     * @param _proxy [Optional] The address of the user's proxy if it is not address zero.
+     * @param _usersProxies The addresses of the users and proxies.
+     *                      An array of the struct UserProxy where user and proxy are bout required.
      */
-    function rejectUser(address _user, address _proxy) public onlyOwner {
-        require(!isRejected(_user), "PermissionManager: Address is already rejected");
-        PermissionItems(permissionItems).mint(_user, REJECTED_ID, 1, "");
+    function assingTier2(UserProxy[] memory _usersProxies) public onlyOwner {
+        for (uint256 i = 0; i < _usersProxies.length; i++) {
+            UserProxy memory userProxy = _usersProxies[i];
+            require(!hasTier2(userProxy.user), "PermissionManager: Address already has Tier 2 assigned");
+            require(!hasTier2(userProxy.proxy), "PermissionManager: Proxy already has Tier 2 assigned");
 
-        if (_proxy != address(0)) {
-            require(!isRejected(_proxy), "PermissionManager: Proxy is already rejected");
-            PermissionItems(permissionItems).mint(_proxy, REJECTED_ID, 1, "");
+            PermissionItems(permissionItems).mint(userProxy.user, TIER_2_ID, 1, "");
+            PermissionItems(permissionItems).mint(userProxy.proxy, TIER_2_ID, 1, "");
         }
     }
 
     /**
-     * @dev removes Tier1 permission user's `_proxy`.
+     * @dev suspends pemissions effects to a list of users and proxies.
      *
      * Requirements:
      *
      * - the caller must be the owner.
-     * - `_proxy` should have Tier1 assigned.
+     * - All user addresses in `_usersProxies` should not be already suspended.
+     * - All proxy addresses in `_usersProxies` should not be already suspended.
      *
-     * @param _proxy The address of the user's proxy.
+     * @param _usersProxies The addresses of the users and proxies.
+     *                      An array of the struct UserProxy where is required
+     *                      but proxy can be optional if it is set to zero address.
      */
-    function revokeTier1(address _proxy) public onlyOwner {
-        require(hasTier1(_proxy), "PermissionManager: Proxy doesn't has Tier 1 assigned");
-        PermissionItems(permissionItems).burn(_proxy, TIER_1_ID, 1);
-    }
+    function suspendUser(UserProxy[] memory _usersProxies) public onlyOwner {
+        for (uint256 i = 0; i < _usersProxies.length; i++) {
+            UserProxy memory userProxy = _usersProxies[i];
+            require(!isSuspended(userProxy.user), "PermissionManager: Address is already suspended");
+            PermissionItems(permissionItems).mint(userProxy.user, SUSPENDED_ID, 1, "");
 
-    /**
-     * @dev removes Tier2 permission from `_user` and its `_proxy`.
-     *
-     * Requirements:
-     *
-     * - the caller must be the owner.
-     * - `_user` should have Tier2 assigned.
-     *
-     * @param _user The address of the user.
-     * @param _proxy The address of the user's proxy.
-     */
-    function revokeTier2(address _user, address _proxy) public onlyOwner {
-        require(hasTier2(_user), "PermissionManager: Address doesn't has Tier 2 assigned");
-        require(hasTier2(_proxy), "PermissionManager: Proxy doesn't has Tier 2 assigned");
-
-        PermissionItems(permissionItems).burn(_user, TIER_2_ID, 1);
-        PermissionItems(permissionItems).burn(_proxy, TIER_2_ID, 1);
-    }
-
-    /**
-     * @dev re-activates pemissions effects on `_user`.
-     *
-     * Requirements:
-     *
-     * - the caller must be the owner.
-     * - `_user` should be suspended.
-     *
-     * @param _user The address of the user.
-     * @param _proxy [Optional] The address of the user's proxy if it is not address zero.
-     */
-    function unsuspendUser(address _user, address _proxy) public onlyOwner {
-        require(isSuspended(_user), "PermissionManager: Address is not currently suspended");
-        PermissionItems(permissionItems).burn(_user, SUSPENDED_ID, 1);
-
-        if (_proxy != address(0)) {
-            require(isSuspended(_proxy), "PermissionManager: Proxy is not currently suspended");
-            PermissionItems(permissionItems).burn(_proxy, SUSPENDED_ID, 1);
+            if (userProxy.proxy != address(0)) {
+                require(!isSuspended(userProxy.proxy), "PermissionManager: Proxy is already suspended");
+                PermissionItems(permissionItems).mint(userProxy.proxy, SUSPENDED_ID, 1, "");
+            }
         }
     }
 
     /**
-     * @dev Removes Reject permission from `_user`.
+     * @dev Assigns Reject permission to a list of users and proxies.
      *
      * Requirements:
      *
      * - the caller must be the owner.
-     * - `_user` should be rejected.
+     * - All user addresses in `_usersProxies` should not be already rejected.
+     * - All proxy addresses in `_usersProxies` should not be already rejected.
      *
-     * @param _user The address of the user.
-     * @param _proxy [Optional] The address of the user's proxy if it is not address zero.
+     *
+     * @param _usersProxies The addresses of the users and proxies.
+     *                      An array of the struct UserProxy where is required
+     *                      but proxy can be optional if it is set to zero address.
      */
-    function unrejectUser(address _user, address _proxy) public onlyOwner {
-        require(isRejected(_user), "PermissionManager: Address is not currently rejected");
-        PermissionItems(permissionItems).burn(_user, REJECTED_ID, 1);
+    function rejectUser(UserProxy[] memory _usersProxies) public onlyOwner {
+        for (uint256 i = 0; i < _usersProxies.length; i++) {
+            UserProxy memory userProxy = _usersProxies[i];
+            require(!isRejected(userProxy.user), "PermissionManager: Address is already rejected");
+            PermissionItems(permissionItems).mint(userProxy.user, REJECTED_ID, 1, "");
 
-        if (_proxy != address(0)) {
-            require(isRejected(_proxy), "PermissionManager: Proxy is not currently rejected");
-            PermissionItems(permissionItems).burn(_proxy, REJECTED_ID, 1);
+            if (userProxy.proxy != address(0)) {
+                require(!isRejected(userProxy.proxy), "PermissionManager: Proxy is already rejected");
+                PermissionItems(permissionItems).mint(userProxy.proxy, REJECTED_ID, 1, "");
+            }
+        }
+    }
+
+    /**
+     * @dev removes Tier1 permission from the list `_accounts`.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - each address in `_accounts` should have Tier1 assigned.
+     *
+     * @param _accounts The addresses to revoke Tier1.
+     */
+    function revokeTier1(address[] memory _accounts) public onlyOwner {
+        for (uint256 i = 0; i < _accounts.length; i++) {
+            require(hasTier1(_accounts[i]), "PermissionManager: Address doesn't has Tier 1 assigned");
+            PermissionItems(permissionItems).burn(_accounts[i], TIER_1_ID, 1);
+        }
+    }
+
+    /**
+     * @dev removes Tier2 permission from a list of users and proxies.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - All user addresses in `_usersProxies` should have Tier2 assigned.
+     * - All proxy addresses in should have Tier2 assigned.
+     *
+     * @param _usersProxies The addresses of the users and proxies.
+     *                      An array of the struct UserProxy where user and proxy are bout required.
+     */
+    function revokeTier2(UserProxy[] memory _usersProxies) public onlyOwner {
+        for (uint256 i = 0; i < _usersProxies.length; i++) {
+            UserProxy memory userProxy = _usersProxies[i];
+            require(hasTier2(userProxy.user), "PermissionManager: Address doesn't has Tier 2 assigned");
+            require(hasTier2(userProxy.proxy), "PermissionManager: Proxy doesn't has Tier 2 assigned");
+
+            PermissionItems(permissionItems).burn(userProxy.user, TIER_2_ID, 1);
+            PermissionItems(permissionItems).burn(userProxy.proxy, TIER_2_ID, 1);
+        }
+    }
+
+    /**
+     * @dev re-activates pemissions effects on a list of users and proxies.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - All user addresses in `_usersProxies` should be suspended.
+     * - All proxy addresses in `_usersProxies` should be suspended.
+     *
+     * @param _usersProxies The addresses of the users and proxies.
+     *                      An array of the struct UserProxy where is required
+     *                      but proxy can be optional if it is set to zero address.
+     */
+    function unsuspendUser(UserProxy[] memory _usersProxies) public onlyOwner {
+        for (uint256 i = 0; i < _usersProxies.length; i++) {
+            UserProxy memory userProxy = _usersProxies[i];
+            require(isSuspended(userProxy.user), "PermissionManager: Address is not currently suspended");
+            PermissionItems(permissionItems).burn(userProxy.user, SUSPENDED_ID, 1);
+
+            if (userProxy.proxy != address(0)) {
+                require(isSuspended(userProxy.proxy), "PermissionManager: Proxy is not currently suspended");
+                PermissionItems(permissionItems).burn(userProxy.proxy, SUSPENDED_ID, 1);
+            }
+        }
+    }
+
+    /**
+     * @dev Removes Reject permission from a list of users and proxies.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - All user addresses in `_usersProxies` should be rejected.
+     * - All proxy addresses in `_usersProxies` should be rejected.
+     *
+     *
+     * @param _usersProxies The addresses of the users and proxies.
+     *                      An array of the struct UserProxy where is required
+     *                      but proxy can be optional if it is set to zero address.
+     */
+    function unrejectUser(UserProxy[] memory _usersProxies) public onlyOwner {
+        for (uint256 i = 0; i < _usersProxies.length; i++) {
+            UserProxy memory userProxy = _usersProxies[i];
+            require(isRejected(userProxy.user), "PermissionManager: Address is not currently rejected");
+            PermissionItems(permissionItems).burn(userProxy.user, REJECTED_ID, 1);
+
+            if (userProxy.proxy != address(0)) {
+                require(isRejected(userProxy.proxy), "PermissionManager: Proxy is not currently rejected");
+                PermissionItems(permissionItems).burn(userProxy.proxy, REJECTED_ID, 1);
+            }
         }
     }
 

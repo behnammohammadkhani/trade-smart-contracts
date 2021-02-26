@@ -8,21 +8,21 @@ Provide tier based permissions assignments and revoking functions
 
 - `setPermissionItems(address _permissionItems) (public)`
 
-- `assingTier1(address _proxy) (public)`
+- `assingTier1(address[] _accounts) (public)`
 
-- `assingTier2(address _user, address _proxy) (public)`
+- `assingTier2(struct PermissionManager.UserProxy[] _usersProxies) (public)`
 
-- `suspendUser(address _user, address _proxy) (public)`
+- `suspendUser(struct PermissionManager.UserProxy[] _usersProxies) (public)`
 
-- `rejectUser(address _user, address _proxy) (public)`
+- `rejectUser(struct PermissionManager.UserProxy[] _usersProxies) (public)`
 
-- `revokeTier1(address _proxy) (public)`
+- `revokeTier1(address[] _accounts) (public)`
 
-- `revokeTier2(address _user, address _proxy) (public)`
+- `revokeTier2(struct PermissionManager.UserProxy[] _usersProxies) (public)`
 
-- `unsuspendUser(address _user, address _proxy) (public)`
+- `unsuspendUser(struct PermissionManager.UserProxy[] _usersProxies) (public)`
 
-- `unrejectUser(address _user, address _proxy) (public)`
+- `unrejectUser(struct PermissionManager.UserProxy[] _usersProxies) (public)`
 
 - `_hasItem(address _user, uint256 itemId) (internal)`
 
@@ -66,131 +66,149 @@ Requirements:
 
 - `_permissionItems`: The address of the new Pemissions module.
 
-### Function `assingTier1(address _proxy) public`
+### Function `assingTier1(address[] _accounts) public`
 
-assigns Tier1 permission to user's `_proxy`.
-
-Requirements:
-
-- the caller must be the owner.
-
-- `_proxy` should not have Tier1 already assigned.
-
-#### Parameters:
-
-- `_proxy`: The address of the user's proxy.
-
-### Function `assingTier2(address _user, address _proxy) public`
-
-assigns Tier2 permission to `_user` and its `_proxy`.
+assigns Tier1 permission to the list `_accounts`.
 
 Requirements:
 
 - the caller must be the owner.
 
-- `_user` should not have Tier2 already assigned.
-
-- `_proxy` should not have Tier2 already assigned.
+- each address in `_accounts` should not have Tier1 already assigned.
 
 #### Parameters:
 
-- `_user`: The address of the user.
+- `_accounts`: The addresses to assign Tier1.
 
-- `_proxy`: The address of the user's proxy.
+### Function `assingTier2(struct PermissionManager.UserProxy[] _usersProxies) public`
 
-### Function `suspendUser(address _user, address _proxy) public`
-
-suspends pemissions effects on `_user`.
+assigns Tier2 permission to a list of users and proxies.
 
 Requirements:
 
 - the caller must be the owner.
 
-- `_user` should not be already suspended.
+- All user addresses in `_usersProxies` should not have Tier2 already assigned.
+
+- All proxy addresses in `_usersProxies` should not have Tier2 already assigned.
 
 #### Parameters:
 
-- `_user`: The address of the user.
+- `_usersProxies`: The addresses of the users and proxies.
 
-- `_proxy`: [Optional] The address of the user's proxy if it is not address zero.
+                     An array of the struct UserProxy where user and proxy are bout required.
 
-### Function `rejectUser(address _user, address _proxy) public`
+### Function `suspendUser(struct PermissionManager.UserProxy[] _usersProxies) public`
 
-Assigns Reject permission to `_user`.
+suspends pemissions effects to a list of users and proxies.
 
 Requirements:
 
 - the caller must be the owner.
 
-- `_user` should not be already rejected.
+- All user addresses in `_usersProxies` should not be already suspended.
+
+- All proxy addresses in `_usersProxies` should not be already suspended.
 
 #### Parameters:
 
-- `_user`: The address of the user.
+- `_usersProxies`: The addresses of the users and proxies.
 
-- `_proxy`: [Optional] The address of the user's proxy if it is not address zero.
+                     An array of the struct UserProxy where is required
 
-### Function `revokeTier1(address _proxy) public`
+                     but proxy can be optional if it is set to zero address.
 
-removes Tier1 permission user's `_proxy`.
+### Function `rejectUser(struct PermissionManager.UserProxy[] _usersProxies) public`
+
+Assigns Reject permission to a list of users and proxies.
 
 Requirements:
 
 - the caller must be the owner.
 
-- `_proxy` should have Tier1 assigned.
+- All user addresses in `_usersProxies` should not be already rejected.
+
+- All proxy addresses in `_usersProxies` should not be already rejected.
 
 #### Parameters:
 
-- `_proxy`: The address of the user's proxy.
+- `_usersProxies`: The addresses of the users and proxies.
 
-### Function `revokeTier2(address _user, address _proxy) public`
+                     An array of the struct UserProxy where is required
 
-removes Tier2 permission from `_user` and its `_proxy`.
+                     but proxy can be optional if it is set to zero address.
+
+### Function `revokeTier1(address[] _accounts) public`
+
+removes Tier1 permission from the list `_accounts`.
 
 Requirements:
 
 - the caller must be the owner.
 
-- `_user` should have Tier2 assigned.
+- each address in `_accounts` should have Tier1 assigned.
 
 #### Parameters:
 
-- `_user`: The address of the user.
+- `_accounts`: The addresses to revoke Tier1.
 
-- `_proxy`: The address of the user's proxy.
+### Function `revokeTier2(struct PermissionManager.UserProxy[] _usersProxies) public`
 
-### Function `unsuspendUser(address _user, address _proxy) public`
-
-re-activates pemissions effects on `_user`.
+removes Tier2 permission from a list of users and proxies.
 
 Requirements:
 
 - the caller must be the owner.
 
-- `_user` should be suspended.
+- All user addresses in `_usersProxies` should have Tier2 assigned.
+
+- All proxy addresses in should have Tier2 assigned.
 
 #### Parameters:
 
-- `_user`: The address of the user.
+- `_usersProxies`: The addresses of the users and proxies.
 
-- `_proxy`: [Optional] The address of the user's proxy if it is not address zero.
+                     An array of the struct UserProxy where user and proxy are bout required.
 
-### Function `unrejectUser(address _user, address _proxy) public`
+### Function `unsuspendUser(struct PermissionManager.UserProxy[] _usersProxies) public`
 
-Removes Reject permission from `_user`.
+re-activates pemissions effects on a list of users and proxies.
 
 Requirements:
 
 - the caller must be the owner.
 
-- `_user` should be rejected.
+- All user addresses in `_usersProxies` should be suspended.
+
+- All proxy addresses in `_usersProxies` should be suspended.
 
 #### Parameters:
 
-- `_user`: The address of the user.
+- `_usersProxies`: The addresses of the users and proxies.
 
-- `_proxy`: [Optional] The address of the user's proxy if it is not address zero.
+                     An array of the struct UserProxy where is required
+
+                     but proxy can be optional if it is set to zero address.
+
+### Function `unrejectUser(struct PermissionManager.UserProxy[] _usersProxies) public`
+
+Removes Reject permission from a list of users and proxies.
+
+Requirements:
+
+- the caller must be the owner.
+
+- All user addresses in `_usersProxies` should be rejected.
+
+- All proxy addresses in `_usersProxies` should be rejected.
+
+#### Parameters:
+
+- `_usersProxies`: The addresses of the users and proxies.
+
+                     An array of the struct UserProxy where is required
+
+                     but proxy can be optional if it is set to zero address.
 
 ### Function `_hasItem(address _user, uint256 itemId) → bool internal`
 

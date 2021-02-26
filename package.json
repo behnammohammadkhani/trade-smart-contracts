@@ -67,7 +67,8 @@
     "typechain": "hardhat typechain",
     "doc:uml": "sol2uml ./contracts -i mocks,test -f png -o ./docs/uml/swarm-markets.png",
     "docify": "node docify.js",
-    "deploy:rinkeby": "hardhat run --network rinkeby scripts/deploy.ts"
+    "deploy:rinkeby": "hardhat run --network rinkeby scripts/deploy.ts",
+    "deploy:kovan": "hardhat run --network kovan scripts/deploy.ts"
   },
   "husky": {
     "hooks": {
