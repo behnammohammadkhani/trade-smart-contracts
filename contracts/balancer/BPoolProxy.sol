@@ -67,16 +67,19 @@ contract BPoolProxy is Ownable, ISwap {
     }
 
     function _setRegistry(address _registry) internal {
+        require(_registry != address(0), "registry is the zero address");
         emit RegistrySetted(_registry);
         registry = IBRegistry(_registry);
     }
 
     function _setProtocolFee(address _protocolFee) internal {
+        require(_protocolFee != address(0), "protocolFee is the zero address");
         emit ProtocolFeeSetted(_protocolFee);
         protocolFee = IProtocolFee(_protocolFee);
     }
 
     function _setFeeReceiver(address _feeReceiver) internal {
+        require(_feeReceiver != address(0), "feeReceiver is the zero address");
         emit FeeReceiverSetted(_feeReceiver);
         feeReceiver = _feeReceiver;
     }
@@ -92,13 +95,13 @@ contract BPoolProxy is Ownable, ISwap {
 
         for (uint256 i = 0; i < swaps.length; i++) {
             Swap memory swap = swaps[i];
-            IXToken SwapTokenIn = IXToken(swap.tokenIn);
+            IXToken swapTokenIn = IXToken(swap.tokenIn);
             IBPool pool = IBPool(swap.pool);
 
-            if (SwapTokenIn.allowance(address(this), swap.pool) > 0) {
-                SwapTokenIn.approve(swap.pool, 0);
+            if (swapTokenIn.allowance(address(this), swap.pool) > 0) {
+                swapTokenIn.approve(swap.pool, 0);
             }
-            SwapTokenIn.approve(swap.pool, swap.swapAmount);
+            swapTokenIn.approve(swap.pool, swap.swapAmount);
 
             (uint256 tokenAmountOut, ) =
                 pool.swapExactAmountIn(
@@ -129,13 +132,13 @@ contract BPoolProxy is Ownable, ISwap {
 
         for (uint256 i = 0; i < swaps.length; i++) {
             Swap memory swap = swaps[i];
-            IXToken SwapTokenIn = IXToken(swap.tokenIn);
+            IXToken swapTokenIn = IXToken(swap.tokenIn);
             IBPool pool = IBPool(swap.pool);
 
-            if (SwapTokenIn.allowance(address(this), swap.pool) > 0) {
-                SwapTokenIn.approve(swap.pool, 0);
+            if (swapTokenIn.allowance(address(this), swap.pool) > 0) {
+                swapTokenIn.approve(swap.pool, 0);
             }
-            SwapTokenIn.approve(swap.pool, swap.limitReturnAmount);
+            swapTokenIn.approve(swap.pool, swap.limitReturnAmount);
 
             (uint256 tokenAmountIn, ) =
                 pool.swapExactAmountOut(
@@ -168,7 +171,7 @@ contract BPoolProxy is Ownable, ISwap {
             uint256 tokenAmountOut;
             for (uint256 k = 0; k < swapSequences[i].length; k++) {
                 Swap memory swap = swapSequences[i][k];
-                IXToken SwapTokenIn = IXToken(swap.tokenIn);
+                IXToken swapTokenIn = IXToken(swap.tokenIn);
                 if (k == 1) {
                     // Makes sure that on the second swap the output of the first was used
                     // so there is not intermediate token leftover
@@ -176,10 +179,10 @@ contract BPoolProxy is Ownable, ISwap {
                 }
 
                 IBPool pool = IBPool(swap.pool);
-                if (SwapTokenIn.allowance(address(this), swap.pool) > 0) {
-                    SwapTokenIn.approve(swap.pool, 0);
+                if (swapTokenIn.allowance(address(this), swap.pool) > 0) {
+                    swapTokenIn.approve(swap.pool, 0);
                 }
-                SwapTokenIn.approve(swap.pool, swap.swapAmount);
+                swapTokenIn.approve(swap.pool, swap.swapAmount);
                 (tokenAmountOut, ) = pool.swapExactAmountIn(
                     swap.tokenIn,
                     swap.swapAmount,
@@ -193,6 +196,8 @@ contract BPoolProxy is Ownable, ISwap {
         }
 
         require(totalAmountOut >= minTotalAmountOut, "ERR_LIMIT_OUT");
+
+        transferFromAll(tokenIn, protocolFee.multihopBatch(swapSequences, totalAmountIn), feeReceiver);
 
         transferAll(tokenOut, totalAmountOut);
         transferAll(tokenIn, getBalance(tokenIn));
@@ -211,13 +216,13 @@ contract BPoolProxy is Ownable, ISwap {
             // Specific code for a simple swap and a multihop (2 swaps in sequence)
             if (swapSequences[i].length == 1) {
                 Swap memory swap = swapSequences[i][0];
-                IXToken SwapTokenIn = IXToken(swap.tokenIn);
+                IXToken swapTokenIn = IXToken(swap.tokenIn);
 
                 IBPool pool = IBPool(swap.pool);
-                if (SwapTokenIn.allowance(address(this), swap.pool) > 0) {
-                    SwapTokenIn.approve(swap.pool, 0);
+                if (swapTokenIn.allowance(address(this), swap.pool) > 0) {
+                    swapTokenIn.approve(swap.pool, 0);
                 }
-                SwapTokenIn.approve(swap.pool, swap.limitReturnAmount);
+                swapTokenIn.approve(swap.pool, swap.limitReturnAmount);
 
                 (tokenAmountInFirstSwap, ) = pool.swapExactAmountOut(
                     swap.tokenIn,
@@ -244,10 +249,10 @@ contract BPoolProxy is Ownable, ISwap {
 
                 //// Buy intermediateTokenAmount of token B with A in the first pool
                 Swap memory firstSwap = swapSequences[i][0];
-                IXToken FirstSwapTokenIn = IXToken(firstSwap.tokenIn);
+                IXToken firstswapTokenIn = IXToken(firstSwap.tokenIn);
                 IBPool poolFirstSwap = IBPool(firstSwap.pool);
-                if (FirstSwapTokenIn.allowance(address(this), firstSwap.pool) < uint256(-1)) {
-                    FirstSwapTokenIn.approve(firstSwap.pool, uint256(-1));
+                if (firstswapTokenIn.allowance(address(this), firstSwap.pool) < uint256(-1)) {
+                    firstswapTokenIn.approve(firstSwap.pool, uint256(-1));
                 }
 
                 (tokenAmountInFirstSwap, ) = poolFirstSwap.swapExactAmountOut(
@@ -259,9 +264,9 @@ contract BPoolProxy is Ownable, ISwap {
                 );
 
                 //// Buy the final amount of token C desired
-                IXToken SecondSwapTokenIn = IXToken(secondSwap.tokenIn);
-                if (SecondSwapTokenIn.allowance(address(this), secondSwap.pool) < uint256(-1)) {
-                    SecondSwapTokenIn.approve(secondSwap.pool, uint256(-1));
+                IXToken secondswapTokenIn = IXToken(secondSwap.tokenIn);
+                if (secondswapTokenIn.allowance(address(this), secondSwap.pool) < uint256(-1)) {
+                    secondswapTokenIn.approve(secondSwap.pool, uint256(-1));
                 }
 
                 poolSecondSwap.swapExactAmountOut(
@@ -276,6 +281,8 @@ contract BPoolProxy is Ownable, ISwap {
         }
 
         require(totalAmountIn <= maxTotalAmountIn, "ERR_LIMIT_IN");
+
+        transferFromAll(tokenIn, protocolFee.multihopBatch(swapSequences, totalAmountIn), feeReceiver);
 
         transferAll(tokenOut, getBalance(tokenOut));
         transferAll(tokenIn, getBalance(tokenIn));
@@ -488,7 +495,7 @@ contract BPoolProxy is Ownable, ISwap {
         uint256 amount,
         address receiver
     ) internal returns (bool) {
-        require(token.transferFrom(msg.sender, address(this), amount), "ERR_TRANSFER_FAILED");
+        require(token.transferFrom(msg.sender, receiver, amount), "ERR_TRANSFER_FAILED");
     }
 
     function getBalance(IXToken token) internal view returns (uint256) {

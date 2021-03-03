@@ -6,8 +6,8 @@ contract ChainlinkAggregatorMock {
     int256 public price;
 
     constructor(uint256 _decimals, int256 _price) public {
-      decimals = _decimals;
-      price = _price;
+        decimals = _decimals;
+        price = _price;
     }
 
     function latestAnswer() external view returns (int256) {

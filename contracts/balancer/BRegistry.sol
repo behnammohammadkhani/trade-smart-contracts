@@ -44,7 +44,7 @@ contract BRegistry {
     mapping(bytes32 => SortedPools) private _pools;
     mapping(address => mapping(bytes32 => PoolPairInfo)) private _infos;
 
-    IBFactory bfactory;
+    IBFactory public bfactory;
 
     constructor(address _bfactory) public {
         bfactory = IBFactory(_bfactory);

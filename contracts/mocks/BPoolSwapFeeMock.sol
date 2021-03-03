@@ -2,18 +2,18 @@ pragma solidity ^0.7.0;
 
 import "hardhat/console.sol";
 
-contract BPoolSwapFeeMock  {
-  uint private _swapFee;
+contract BPoolSwapFeeMock {
+    uint256 private _swapFee;
 
-  constructor(uint swapFee) public {
-    setSwapFee(swapFee);
-  }
+    constructor(uint256 swapFee) public {
+        setSwapFee(swapFee);
+    }
 
-  function setSwapFee(uint swapFee) public {
-    _swapFee = swapFee;
-  }
+    function setSwapFee(uint256 swapFee) public {
+        _swapFee = swapFee;
+    }
 
-  function getSwapFee() public returns (uint) {
-    return _swapFee;
-  }
+    function getSwapFee() public returns (uint256) {
+        return _swapFee;
+    }
 }
