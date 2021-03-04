@@ -10,6 +10,8 @@ import "./IBPool.sol";
 import "./IBRegistry.sol";
 import "./IProtocolFee.sol";
 
+import "hardhat/console.sol";
+
 /**
  * @title BPoolProxy
  * @author Protofire
@@ -91,7 +93,7 @@ contract BPoolProxy is Ownable, ISwap {
         uint256 totalAmountIn,
         uint256 minTotalAmountOut
     ) public returns (uint256 totalAmountOut) {
-        transferFromAll(tokenIn, totalAmountIn, address(this));
+        transferFromAll(tokenIn, totalAmountIn);
 
         for (uint256 i = 0; i < swaps.length; i++) {
             Swap memory swap = swaps[i];
@@ -116,7 +118,7 @@ contract BPoolProxy is Ownable, ISwap {
 
         require(totalAmountOut >= minTotalAmountOut, "ERR_LIMIT_OUT");
 
-        transferFromAll(tokenIn, protocolFee.batchFee(swaps, totalAmountIn), feeReceiver);
+        transferFeeFrom(tokenIn, protocolFee.batchFee(swaps, totalAmountIn));
 
         transferAll(tokenOut, totalAmountOut);
         transferAll(tokenIn, getBalance(tokenIn));
@@ -128,7 +130,7 @@ contract BPoolProxy is Ownable, ISwap {
         IXToken tokenOut,
         uint256 maxTotalAmountIn
     ) public returns (uint256 totalAmountIn) {
-        transferFromAll(tokenIn, maxTotalAmountIn, address(this));
+        transferFromAll(tokenIn, maxTotalAmountIn);
 
         for (uint256 i = 0; i < swaps.length; i++) {
             Swap memory swap = swaps[i];
@@ -152,7 +154,7 @@ contract BPoolProxy is Ownable, ISwap {
         }
         require(totalAmountIn <= maxTotalAmountIn, "ERR_LIMIT_IN");
 
-        transferFromAll(tokenIn, protocolFee.batchFee(swaps, totalAmountIn), feeReceiver);
+        transferFeeFrom(tokenIn, protocolFee.batchFee(swaps, totalAmountIn));
 
         transferAll(tokenOut, getBalance(tokenOut));
         transferAll(tokenIn, getBalance(tokenIn));
@@ -165,7 +167,7 @@ contract BPoolProxy is Ownable, ISwap {
         uint256 totalAmountIn,
         uint256 minTotalAmountOut
     ) public returns (uint256 totalAmountOut) {
-        transferFromAll(tokenIn, totalAmountIn, address(this));
+        transferFromAll(tokenIn, totalAmountIn);
 
         for (uint256 i = 0; i < swapSequences.length; i++) {
             uint256 tokenAmountOut;
@@ -197,7 +199,7 @@ contract BPoolProxy is Ownable, ISwap {
 
         require(totalAmountOut >= minTotalAmountOut, "ERR_LIMIT_OUT");
 
-        transferFromAll(tokenIn, protocolFee.multihopBatch(swapSequences, totalAmountIn), feeReceiver);
+        transferFeeFrom(tokenIn, protocolFee.multihopBatch(swapSequences, totalAmountIn));
 
         transferAll(tokenOut, totalAmountOut);
         transferAll(tokenIn, getBalance(tokenIn));
@@ -209,7 +211,7 @@ contract BPoolProxy is Ownable, ISwap {
         IXToken tokenOut,
         uint256 maxTotalAmountIn
     ) public returns (uint256 totalAmountIn) {
-        transferFromAll(tokenIn, maxTotalAmountIn, address(this));
+        transferFromAll(tokenIn, maxTotalAmountIn);
 
         for (uint256 i = 0; i < swapSequences.length; i++) {
             uint256 tokenAmountInFirstSwap;
@@ -282,7 +284,7 @@ contract BPoolProxy is Ownable, ISwap {
 
         require(totalAmountIn <= maxTotalAmountIn, "ERR_LIMIT_IN");
 
-        transferFromAll(tokenIn, protocolFee.multihopBatch(swapSequences, totalAmountIn), feeReceiver);
+        transferFeeFrom(tokenIn, protocolFee.multihopBatch(swapSequences, totalAmountIn));
 
         transferAll(tokenOut, getBalance(tokenOut));
         transferAll(tokenIn, getBalance(tokenIn));
@@ -490,12 +492,12 @@ contract BPoolProxy is Ownable, ISwap {
         return totalOutput;
     }
 
-    function transferFromAll(
-        IXToken token,
-        uint256 amount,
-        address receiver
-    ) internal returns (bool) {
-        require(token.transferFrom(msg.sender, receiver, amount), "ERR_TRANSFER_FAILED");
+    function transferFromAll(IXToken token, uint256 amount) internal returns (bool) {
+        require(token.transferFrom(msg.sender, address(this), amount), "ERR_TRANSFER_FAILED");
+    }
+
+    function transferFeeFrom(IXToken token, uint256 amount) internal returns (bool) {
+        require(token.transferFrom(msg.sender, feeReceiver, amount), "ERR_FEE_TRANSFER_FAILED");
     }
 
     function getBalance(IXToken token) internal view returns (uint256) {

@@ -25,6 +25,7 @@ interface BRegistryInterface extends ethers.utils.Interface {
     "_getEffectiveLiquidityForPoolsPurge(address,address,address[])": FunctionFragment;
     "addPoolPair(address,address,address)": FunctionFragment;
     "addPools(address[],address,address)": FunctionFragment;
+    "bfactory()": FunctionFragment;
     "getBestPools(address,address)": FunctionFragment;
     "getBestPoolsWithLimit(address,address,uint256)": FunctionFragment;
     "getPairInfo(address,address,address)": FunctionFragment;
@@ -45,6 +46,7 @@ interface BRegistryInterface extends ethers.utils.Interface {
     functionFragment: "addPools",
     values: [string[], string, string]
   ): string;
+  encodeFunctionData(functionFragment: "bfactory", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getBestPools",
     values: [string, string]
@@ -79,6 +81,7 @@ interface BRegistryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "addPools", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "bfactory", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getBestPools",
     data: BytesLike
@@ -165,6 +168,10 @@ export class BRegistry extends Contract {
       token2: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    bfactory(overrides?: CallOverrides): Promise<[string]>;
+
+    "bfactory()"(overrides?: CallOverrides): Promise<[string]>;
 
     getBestPools(
       fromToken: string,
@@ -301,6 +308,10 @@ export class BRegistry extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  bfactory(overrides?: CallOverrides): Promise<string>;
+
+  "bfactory()"(overrides?: CallOverrides): Promise<string>;
+
   getBestPools(
     fromToken: string,
     destToken: string,
@@ -435,6 +446,10 @@ export class BRegistry extends Contract {
       token2: string,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
+
+    bfactory(overrides?: CallOverrides): Promise<string>;
+
+    "bfactory()"(overrides?: CallOverrides): Promise<string>;
 
     getBestPools(
       fromToken: string,
@@ -587,6 +602,10 @@ export class BRegistry extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    bfactory(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "bfactory()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     getBestPools(
       fromToken: string,
       destToken: string,
@@ -710,6 +729,10 @@ export class BRegistry extends Contract {
       token2: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    bfactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "bfactory()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getBestPools(
       fromToken: string,
