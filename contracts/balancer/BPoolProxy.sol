@@ -4,7 +4,9 @@ pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155Holder.sol";
 import "../token/IXToken.sol";
+import "../token/IXTokenWrapper.sol";
 import "./ISwap.sol";
 import "./IBPool.sol";
 import "./IBRegistry.sol";
@@ -21,7 +23,7 @@ import "hardhat/console.sol";
  * https://docs.balancer.finance/smart-contracts/exchange-proxy
  * (https://etherscan.io/address/0x3E66B66Fd1d0b02fDa6C811Da9E0547970DB2f21#code)
  */
-contract BPoolProxy is Ownable, ISwap {
+contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
     using SafeMath for uint256;
 
     struct Pool {
@@ -38,6 +40,7 @@ contract BPoolProxy is Ownable, ISwap {
 
     IBRegistry public registry;
     IProtocolFee public protocolFee;
+    IXTokenWrapper public xTokenWrapper;
     address public feeReceiver;
 
     event RegistrySetted(address registry);
@@ -46,14 +49,18 @@ contract BPoolProxy is Ownable, ISwap {
 
     event FeeReceiverSetted(address feeReceiver);
 
+    event XTokenWrapperSetted(address xTokenWrapper);
+
     constructor(
         address _registry,
         address _protocolFee,
-        address _feeReceiver
+        address _feeReceiver,
+        address _xTokenWrapper
     ) public {
         _setRegistry(_registry);
         _setProtocolFee(_protocolFee);
         _setFeeReceiver(_feeReceiver);
+        _setXTokenWrapper(_xTokenWrapper);
     }
 
     function setRegistry(address _registry) external onlyOwner {
@@ -66,6 +73,10 @@ contract BPoolProxy is Ownable, ISwap {
 
     function setFeeReceiver(address _feeReceiver) external onlyOwner {
         _setFeeReceiver(_feeReceiver);
+    }
+
+    function setXTokenWrapper(address _xTokenWrapper) external onlyOwner {
+        _setXTokenWrapper(_xTokenWrapper);
     }
 
     function _setRegistry(address _registry) internal {
@@ -86,6 +97,12 @@ contract BPoolProxy is Ownable, ISwap {
         feeReceiver = _feeReceiver;
     }
 
+    function _setXTokenWrapper(address _xTokenWrapper) internal {
+        require(_xTokenWrapper != address(0), "xTokenWrapper is the zero address");
+        emit FeeReceiverSetted(_xTokenWrapper);
+        xTokenWrapper = IXTokenWrapper(_xTokenWrapper);
+    }
+
     function batchSwapExactIn(
         Swap[] memory swaps,
         IXToken tokenIn,
@@ -93,7 +110,7 @@ contract BPoolProxy is Ownable, ISwap {
         uint256 totalAmountIn,
         uint256 minTotalAmountOut
     ) public returns (uint256 totalAmountOut) {
-        transferFromAll(tokenIn, totalAmountIn);
+        transferFrom(tokenIn, totalAmountIn);
 
         for (uint256 i = 0; i < swaps.length; i++) {
             Swap memory swap = swaps[i];
@@ -120,8 +137,8 @@ contract BPoolProxy is Ownable, ISwap {
 
         transferFeeFrom(tokenIn, protocolFee.batchFee(swaps, totalAmountIn));
 
-        transferAll(tokenOut, totalAmountOut);
-        transferAll(tokenIn, getBalance(tokenIn));
+        transfer(tokenOut, totalAmountOut);
+        transfer(tokenIn, getBalance(tokenIn));
     }
 
     function batchSwapExactOut(
@@ -130,7 +147,7 @@ contract BPoolProxy is Ownable, ISwap {
         IXToken tokenOut,
         uint256 maxTotalAmountIn
     ) public returns (uint256 totalAmountIn) {
-        transferFromAll(tokenIn, maxTotalAmountIn);
+        transferFrom(tokenIn, maxTotalAmountIn);
 
         for (uint256 i = 0; i < swaps.length; i++) {
             Swap memory swap = swaps[i];
@@ -156,8 +173,8 @@ contract BPoolProxy is Ownable, ISwap {
 
         transferFeeFrom(tokenIn, protocolFee.batchFee(swaps, totalAmountIn));
 
-        transferAll(tokenOut, getBalance(tokenOut));
-        transferAll(tokenIn, getBalance(tokenIn));
+        transfer(tokenOut, getBalance(tokenOut));
+        transfer(tokenIn, getBalance(tokenIn));
     }
 
     function multihopBatchSwapExactIn(
@@ -167,7 +184,7 @@ contract BPoolProxy is Ownable, ISwap {
         uint256 totalAmountIn,
         uint256 minTotalAmountOut
     ) public returns (uint256 totalAmountOut) {
-        transferFromAll(tokenIn, totalAmountIn);
+        transferFrom(tokenIn, totalAmountIn);
 
         for (uint256 i = 0; i < swapSequences.length; i++) {
             uint256 tokenAmountOut;
@@ -201,8 +218,8 @@ contract BPoolProxy is Ownable, ISwap {
 
         transferFeeFrom(tokenIn, protocolFee.multihopBatch(swapSequences, totalAmountIn));
 
-        transferAll(tokenOut, totalAmountOut);
-        transferAll(tokenIn, getBalance(tokenIn));
+        transfer(tokenOut, totalAmountOut);
+        transfer(tokenIn, getBalance(tokenIn));
     }
 
     function multihopBatchSwapExactOut(
@@ -211,7 +228,7 @@ contract BPoolProxy is Ownable, ISwap {
         IXToken tokenOut,
         uint256 maxTotalAmountIn
     ) public returns (uint256 totalAmountIn) {
-        transferFromAll(tokenIn, maxTotalAmountIn);
+        transferFrom(tokenIn, maxTotalAmountIn);
 
         for (uint256 i = 0; i < swapSequences.length; i++) {
             uint256 tokenAmountInFirstSwap;
@@ -286,8 +303,8 @@ contract BPoolProxy is Ownable, ISwap {
 
         transferFeeFrom(tokenIn, protocolFee.multihopBatch(swapSequences, totalAmountIn));
 
-        transferAll(tokenOut, getBalance(tokenOut));
-        transferAll(tokenIn, getBalance(tokenIn));
+        transfer(tokenOut, getBalance(tokenOut));
+        transfer(tokenIn, getBalance(tokenIn));
     }
 
     function smartSwapExactIn(
@@ -314,6 +331,147 @@ contract BPoolProxy is Ownable, ISwap {
         (swaps, ) = viewSplitExactOut(address(tokenIn), address(tokenOut), totalAmountOut, nPools);
 
         totalAmountIn = batchSwapExactOut(swaps, tokenIn, tokenOut, maxTotalAmountIn);
+    }
+
+    function joinPool(
+        address pool,
+        uint256 poolAmountOut,
+        uint256[] calldata maxAmountsIn
+    ) public {
+        address[] memory tokens = IBPool(pool).getCurrentTokens();
+
+        // pull xTokens
+        for (uint256 i = 0; i < tokens.length; i++) {
+            transferFrom(IXToken(tokens[i]), maxAmountsIn[i]);
+            IXToken(tokens[i]).approve(pool, maxAmountsIn[i]);
+        }
+
+        IBPool(pool).joinPool(poolAmountOut, maxAmountsIn);
+
+        // push remaining xTokens
+        for (uint256 i = 0; i < tokens.length; i++) {
+            transfer(IXToken(tokens[i]), getBalance(IXToken(tokens[i])));
+        }
+
+        // Wrap balancer liquidity tokens into its representing xToken
+        require(xTokenWrapper.wrap(pool, poolAmountOut), "ERR_WRAP_POOL");
+
+        transfer(IXToken(xTokenWrapper.tokenToXToken(pool)), poolAmountOut);
+    }
+
+    function exitPool(
+        address pool,
+        uint256 poolAmountIn,
+        uint256[] calldata minAmountsOut
+    ) external {
+        address wrappedLPT = xTokenWrapper.tokenToXToken(pool);
+
+        // pull wrapped liquitity tokens
+        transferFrom(IXToken(wrappedLPT), poolAmountIn);
+
+        // unwrap wrapped liquitity tokens
+        require(xTokenWrapper.unwrap(wrappedLPT, poolAmountIn), "ERR_UNWRAP_POOL");
+
+        // LPT do not need to be approved when exit
+        IBPool(pool).exitPool(poolAmountIn, minAmountsOut);
+
+        // push xTokens
+        address[] memory tokens = IBPool(pool).getCurrentTokens();
+        for (uint256 i = 0; i < tokens.length; i++) {
+            transfer(IXToken(tokens[i]), getBalance(IXToken(tokens[i])));
+        }
+    }
+
+    function joinswapExternAmountIn(
+        address pool,
+        address tokenIn,
+        uint256 tokenAmountIn,
+        uint256 minPoolAmountOut
+    ) external returns (uint256 poolAmountOut) {
+        // pull xToken
+        transferFrom(IXToken(tokenIn), tokenAmountIn);
+        IXToken(tokenIn).approve(pool, tokenAmountIn);
+
+        poolAmountOut = IBPool(pool).joinswapExternAmountIn(tokenIn, tokenAmountIn, minPoolAmountOut);
+
+        // push remaining xTokens
+        transfer(IXToken(tokenIn), getBalance(IXToken(tokenIn)));
+
+        // Wrap balancer liquidity tokens into its representing xToken
+        require(xTokenWrapper.wrap(pool, poolAmountOut), "ERR_WRAP_POOL");
+
+        transfer(IXToken(xTokenWrapper.tokenToXToken(pool)), poolAmountOut);
+    }
+
+    function joinswapPoolAmountOut(
+        address pool,
+        address tokenIn,
+        uint256 poolAmountOut,
+        uint256 maxAmountIn
+    ) external returns (uint256 tokenAmountIn) {
+        // pull xToken
+        transferFrom(IXToken(tokenIn), maxAmountIn);
+        IXToken(tokenIn).approve(pool, maxAmountIn);
+
+        tokenAmountIn = IBPool(pool).joinswapPoolAmountOut(tokenIn, poolAmountOut, maxAmountIn);
+
+        // push remaining xTokens
+        transfer(IXToken(tokenIn), getBalance(IXToken(tokenIn)));
+
+        // Wrap balancer liquidity tokens into its representing xToken
+        require(xTokenWrapper.wrap(pool, poolAmountOut), "ERR_WRAP_POOL");
+
+        transfer(IXToken(xTokenWrapper.tokenToXToken(pool)), poolAmountOut);
+    }
+
+    function exitswapPoolAmountIn(
+        address pool,
+        address tokenOut,
+        uint256 poolAmountIn,
+        uint256 minAmountOut
+    ) external returns (uint256 tokenAmountOut) {
+        address wrappedLPT = xTokenWrapper.tokenToXToken(pool);
+
+        // pull wrapped liquitity tokens
+        transferFrom(IXToken(wrappedLPT), poolAmountIn);
+
+        // unwrap wrapped liquitity tokens
+        require(xTokenWrapper.unwrap(wrappedLPT, poolAmountIn), "ERR_UNWRAP_POOL");
+
+        // LPT do not need to be approved when exit
+        tokenAmountOut = IBPool(pool).exitswapPoolAmountIn(tokenOut, poolAmountIn, minAmountOut);
+
+        // push xToken
+        transfer(IXToken(tokenOut), tokenAmountOut);
+    }
+
+    function exitswapExternAmountOut(
+        address pool,
+        address tokenOut,
+        uint256 tokenAmountOut,
+        uint256 maxPoolAmountIn
+    ) external returns (uint256 poolAmountIn) {
+        address wrappedLPT = xTokenWrapper.tokenToXToken(pool);
+
+        // pull wrapped liquitity tokens
+        transferFrom(IXToken(wrappedLPT), maxPoolAmountIn);
+
+        // unwrap wrapped liquitity tokens
+        require(xTokenWrapper.unwrap(wrappedLPT, maxPoolAmountIn), "ERR_UNWRAP_POOL");
+
+        // LPT do not need to be approved when exit
+        poolAmountIn = IBPool(pool).exitswapExternAmountOut(tokenOut, tokenAmountOut, maxPoolAmountIn);
+
+        // push xToken
+        transfer(IXToken(tokenOut), tokenAmountOut);
+
+        uint256 remainingLPT = maxPoolAmountIn.sub(poolAmountIn);
+        if (remainingLPT > 0) {
+            // Wrap remaining balancer liquidity tokens into its representing xToken
+            require(xTokenWrapper.wrap(pool, remainingLPT), "ERR_WRAP_POOL");
+
+            transfer(IXToken(wrappedLPT), remainingLPT);
+        }
     }
 
     function viewSplitExactIn(
@@ -492,7 +650,7 @@ contract BPoolProxy is Ownable, ISwap {
         return totalOutput;
     }
 
-    function transferFromAll(IXToken token, uint256 amount) internal returns (bool) {
+    function transferFrom(IXToken token, uint256 amount) internal returns (bool) {
         require(token.transferFrom(msg.sender, address(this), amount), "ERR_TRANSFER_FAILED");
     }
 
@@ -504,7 +662,7 @@ contract BPoolProxy is Ownable, ISwap {
         return token.balanceOf(address(this));
     }
 
-    function transferAll(IXToken token, uint256 amount) internal returns (bool) {
+    function transfer(IXToken token, uint256 amount) internal returns (bool) {
         if (amount == 0) {
             return true;
         }

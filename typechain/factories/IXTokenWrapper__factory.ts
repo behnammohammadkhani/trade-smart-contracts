@@ -5,14 +5,14 @@
 import { Contract, Signer } from "ethers";
 import { Provider } from "@ethersproject/providers";
 
-import type { IAuthorization } from "../IAuthorization";
+import type { IXTokenWrapper } from "../IXTokenWrapper";
 
-export class IAuthorization__factory {
+export class IXTokenWrapper__factory {
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IAuthorization {
-    return new Contract(address, _abi, signerOrProvider) as IAuthorization;
+  ): IXTokenWrapper {
+    return new Contract(address, _abi, signerOrProvider) as IXTokenWrapper;
   }
 }
 
@@ -21,31 +21,36 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_user",
+        name: "operator",
         type: "address",
       },
       {
         internalType: "address",
-        name: "_asset",
+        name: "from",
         type: "address",
       },
       {
-        internalType: "bytes4",
-        name: "_operation",
-        type: "bytes4",
+        internalType: "uint256[]",
+        name: "ids",
+        type: "uint256[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "values",
+        type: "uint256[]",
       },
       {
         internalType: "bytes",
-        name: "_data",
+        name: "data",
         type: "bytes",
       },
     ],
-    name: "isAuthorized",
+    name: "onERC1155BatchReceived",
     outputs: [
       {
-        internalType: "bool",
+        internalType: "bytes4",
         name: "",
-        type: "bool",
+        type: "bytes4",
       },
     ],
     stateMutability: "nonpayable",
@@ -55,87 +60,93 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_eurPriceFeed",
+        name: "operator",
         type: "address",
       },
-    ],
-    name: "setEurPriceFeed",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "address",
-        name: "_operationsRegistry",
+        name: "from",
         type: "address",
       },
-    ],
-    name: "setOperationsRegistry",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_permissions",
-        type: "address",
-      },
-    ],
-    name: "setPermissions",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_poolFactory",
-        type: "address",
-      },
-    ],
-    name: "setPoolFactory",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "uint256",
-        name: "_tradingLimit",
+        name: "id",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
+      {
+        internalType: "bytes",
+        name: "data",
+        type: "bytes",
+      },
+    ],
+    name: "onERC1155Received",
+    outputs: [
+      {
+        internalType: "bytes4",
+        name: "",
+        type: "bytes4",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes4",
+        name: "interfaceId",
+        type: "bytes4",
+      },
+    ],
+    name: "supportsInterface",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_token",
+        type: "address",
+      },
+    ],
+    name: "tokenToXToken",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_xToken",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_amount",
         type: "uint256",
       },
     ],
-    name: "setTradingLimint",
+    name: "unwrap",
     outputs: [
       {
         internalType: "bool",
@@ -150,11 +161,16 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_xTokenWrapper",
+        name: "_token",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
+      },
     ],
-    name: "setXTokenWrapper",
+    name: "wrap",
     outputs: [
       {
         internalType: "bool",
@@ -162,7 +178,26 @@ const _abi = [
         type: "bool",
       },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_xToken",
+        type: "address",
+      },
+    ],
+    name: "xTokenToToken",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
 ];

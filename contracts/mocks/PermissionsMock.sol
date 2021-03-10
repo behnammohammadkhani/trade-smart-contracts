@@ -22,4 +22,8 @@ contract PermissionsMock is ERC1155 {
     function rejectUser(address _user) public {
         _mint(_user, 3, 1, "");
     }
+
+    function setAsProtocolContract(address _user) public {
+        _mint(_user, 4, 1, "");
+    }
 }

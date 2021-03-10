@@ -26,7 +26,9 @@ interface IAuthorizationInterface extends ethers.utils.Interface {
     "setEurPriceFeed(address)": FunctionFragment;
     "setOperationsRegistry(address)": FunctionFragment;
     "setPermissions(address)": FunctionFragment;
+    "setPoolFactory(address)": FunctionFragment;
     "setTradingLimint(uint256)": FunctionFragment;
+    "setXTokenWrapper(address)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -46,8 +48,16 @@ interface IAuthorizationInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "setPoolFactory",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setTradingLimint",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setXTokenWrapper",
+    values: [string]
   ): string;
 
   decodeFunctionResult(
@@ -67,7 +77,15 @@ interface IAuthorizationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setPoolFactory",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setTradingLimint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setXTokenWrapper",
     data: BytesLike
   ): Result;
 
@@ -134,6 +152,16 @@ export class IAuthorization extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    setPoolFactory(
+      _poolFactory: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setPoolFactory(address)"(
+      _poolFactory: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     setTradingLimint(
       _tradingLimit: BigNumberish,
       overrides?: Overrides
@@ -141,6 +169,16 @@ export class IAuthorization extends Contract {
 
     "setTradingLimint(uint256)"(
       _tradingLimit: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
@@ -191,6 +229,16 @@ export class IAuthorization extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  setPoolFactory(
+    _poolFactory: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setPoolFactory(address)"(
+    _poolFactory: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   setTradingLimint(
     _tradingLimit: BigNumberish,
     overrides?: Overrides
@@ -198,6 +246,16 @@ export class IAuthorization extends Contract {
 
   "setTradingLimint(uint256)"(
     _tradingLimit: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setXTokenWrapper(
+    _xTokenWrapper: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setXTokenWrapper(address)"(
+    _xTokenWrapper: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -248,6 +306,16 @@ export class IAuthorization extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    setPoolFactory(
+      _poolFactory: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "setPoolFactory(address)"(
+      _poolFactory: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     setTradingLimint(
       _tradingLimit: BigNumberish,
       overrides?: CallOverrides
@@ -255,6 +323,16 @@ export class IAuthorization extends Contract {
 
     "setTradingLimint(uint256)"(
       _tradingLimit: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
@@ -308,6 +386,16 @@ export class IAuthorization extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    setPoolFactory(
+      _poolFactory: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setPoolFactory(address)"(
+      _poolFactory: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     setTradingLimint(
       _tradingLimit: BigNumberish,
       overrides?: Overrides
@@ -315,6 +403,16 @@ export class IAuthorization extends Contract {
 
     "setTradingLimint(uint256)"(
       _tradingLimit: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
   };
@@ -366,6 +464,16 @@ export class IAuthorization extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    setPoolFactory(
+      _poolFactory: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setPoolFactory(address)"(
+      _poolFactory: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     setTradingLimint(
       _tradingLimit: BigNumberish,
       overrides?: Overrides
@@ -373,6 +481,16 @@ export class IAuthorization extends Contract {
 
     "setTradingLimint(uint256)"(
       _tradingLimit: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };

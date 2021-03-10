@@ -14,6 +14,8 @@ abstract contract AuthorizationStorage {
     address public permissions;
     address public eurPriceFeed;
     address public operationsRegistry;
+    address public poolFactory;
+    address public xTokenWrapper;
     uint256 public tradingLimit;
 
     bool public paused;
@@ -29,4 +31,5 @@ abstract contract AuthorizationStorage {
     uint256 public constant TIER_1_ID = 1;
     uint256 public constant TIER_2_ID = 2;
     uint256 public constant REJECTED_ID = 3;
+    uint256 public constant PROTOCOL_CONTRACT = 4;
 }

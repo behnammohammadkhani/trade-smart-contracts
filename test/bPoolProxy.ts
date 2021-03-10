@@ -27,7 +27,7 @@ let daiVegeta: ERC20Detailed;
 
 const MOCKED_PROTOCOL_FEE_AMOUNT = 10;
 
-describe('ProtocolFee', function () {
+describe('BPoolProxy', function () {
   const reverter = new Reverter();
 
   before(async () => {
