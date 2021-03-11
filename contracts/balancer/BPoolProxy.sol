@@ -354,6 +354,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         }
 
         // Wrap balancer liquidity tokens into its representing xToken
+        IBPool(pool).approve(address(xTokenWrapper), poolAmountOut);
         require(xTokenWrapper.wrap(pool, poolAmountOut), "ERR_WRAP_POOL");
 
         transfer(IXToken(xTokenWrapper.tokenToXToken(pool)), poolAmountOut);
@@ -394,10 +395,8 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
 
         poolAmountOut = IBPool(pool).joinswapExternAmountIn(tokenIn, tokenAmountIn, minPoolAmountOut);
 
-        // push remaining xTokens
-        transfer(IXToken(tokenIn), getBalance(IXToken(tokenIn)));
-
         // Wrap balancer liquidity tokens into its representing xToken
+        IBPool(pool).approve(address(xTokenWrapper), poolAmountOut);
         require(xTokenWrapper.wrap(pool, poolAmountOut), "ERR_WRAP_POOL");
 
         transfer(IXToken(xTokenWrapper.tokenToXToken(pool)), poolAmountOut);
@@ -419,6 +418,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         transfer(IXToken(tokenIn), getBalance(IXToken(tokenIn)));
 
         // Wrap balancer liquidity tokens into its representing xToken
+        IBPool(pool).approve(address(xTokenWrapper), poolAmountOut);
         require(xTokenWrapper.wrap(pool, poolAmountOut), "ERR_WRAP_POOL");
 
         transfer(IXToken(xTokenWrapper.tokenToXToken(pool)), poolAmountOut);
@@ -468,6 +468,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         uint256 remainingLPT = maxPoolAmountIn.sub(poolAmountIn);
         if (remainingLPT > 0) {
             // Wrap remaining balancer liquidity tokens into its representing xToken
+            IBPool(pool).approve(address(xTokenWrapper), remainingLPT);
             require(xTokenWrapper.wrap(pool, remainingLPT), "ERR_WRAP_POOL");
 
             transfer(IXToken(wrappedLPT), remainingLPT);

@@ -22,15 +22,53 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface BPoolMockInterface extends ethers.utils.Interface {
   functions: {
+    "_extactAmount()": FunctionFragment;
+    "_tokens(uint256)": FunctionFragment;
+    "allowance(address,address)": FunctionFragment;
+    "approve(address,uint256)": FunctionFragment;
+    "balanceOf(address)": FunctionFragment;
     "calcInGivenOut(uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "calcOutGivenIn(uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "decimals()": FunctionFragment;
+    "decreaseAllowance(address,uint256)": FunctionFragment;
+    "exitPool(uint256,uint256[])": FunctionFragment;
+    "exitswapExternAmountOut(address,uint256,uint256)": FunctionFragment;
+    "exitswapPoolAmountIn(address,uint256,uint256)": FunctionFragment;
     "getBalance(address)": FunctionFragment;
+    "getCurrentTokens()": FunctionFragment;
     "getDenormalizedWeight(address)": FunctionFragment;
     "getSwapFee()": FunctionFragment;
+    "increaseAllowance(address,uint256)": FunctionFragment;
+    "joinPool(uint256,uint256[])": FunctionFragment;
+    "joinswapExternAmountIn(address,uint256,uint256)": FunctionFragment;
+    "joinswapPoolAmountOut(address,uint256,uint256)": FunctionFragment;
+    "name()": FunctionFragment;
+    "setExtactAmount(bool)": FunctionFragment;
     "swapExactAmountIn(address,uint256,address,uint256,uint256)": FunctionFragment;
     "swapExactAmountOut(address,uint256,address,uint256,uint256)": FunctionFragment;
+    "symbol()": FunctionFragment;
+    "totalSupply()": FunctionFragment;
+    "transfer(address,uint256)": FunctionFragment;
+    "transferFrom(address,address,uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "_extactAmount",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_tokens",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "allowance",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "approve",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
     functionFragment: "calcInGivenOut",
     values: [
@@ -53,7 +91,28 @@ interface BPoolMockInterface extends ethers.utils.Interface {
       BigNumberish
     ]
   ): string;
+  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "decreaseAllowance",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "exitPool",
+    values: [BigNumberish, BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "exitswapExternAmountOut",
+    values: [string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "exitswapPoolAmountIn",
+    values: [string, BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "getBalance", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "getCurrentTokens",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getDenormalizedWeight",
     values: [string]
@@ -63,6 +122,27 @@ interface BPoolMockInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "increaseAllowance",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "joinPool",
+    values: [BigNumberish, BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "joinswapExternAmountIn",
+    values: [string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "joinswapPoolAmountOut",
+    values: [string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "setExtactAmount",
+    values: [boolean]
+  ): string;
+  encodeFunctionData(
     functionFragment: "swapExactAmountIn",
     values: [string, BigNumberish, string, BigNumberish, BigNumberish]
   ): string;
@@ -70,7 +150,28 @@ interface BPoolMockInterface extends ethers.utils.Interface {
     functionFragment: "swapExactAmountOut",
     values: [string, BigNumberish, string, BigNumberish, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "totalSupply",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transfer",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferFrom",
+    values: [string, string, BigNumberish]
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "_extactAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "_tokens", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "calcInGivenOut",
     data: BytesLike
@@ -79,12 +180,48 @@ interface BPoolMockInterface extends ethers.utils.Interface {
     functionFragment: "calcOutGivenIn",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "decreaseAllowance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "exitPool", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "exitswapExternAmountOut",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "exitswapPoolAmountIn",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getBalance", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getCurrentTokens",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getDenormalizedWeight",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getSwapFee", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "increaseAllowance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "joinPool", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "joinswapExternAmountIn",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "joinswapPoolAmountOut",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setExtactAmount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "swapExactAmountIn",
     data: BytesLike
@@ -93,8 +230,24 @@ interface BPoolMockInterface extends ethers.utils.Interface {
     functionFragment: "swapExactAmountOut",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "totalSupply",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "transferFrom",
+    data: BytesLike
+  ): Result;
 
-  events: {};
+  events: {
+    "Approval(address,address,uint256)": EventFragment;
+    "Transfer(address,address,uint256)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
 export class BPoolMock extends Contract {
@@ -111,6 +264,48 @@ export class BPoolMock extends Contract {
   interface: BPoolMockInterface;
 
   functions: {
+    _extactAmount(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "_extactAmount()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    _tokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+
+    "_tokens(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    allowance(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "allowance(address,address)"(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    approve(
+      spender: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "approve(address,uint256)"(
+      spender: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "balanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     calcInGivenOut(
       tokenBalanceIn: BigNumberish,
       tokenWeightIn: BigNumberish,
@@ -151,12 +346,76 @@ export class BPoolMock extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    decimals(overrides?: CallOverrides): Promise<[number]>;
+
+    "decimals()"(overrides?: CallOverrides): Promise<[number]>;
+
+    decreaseAllowance(
+      spender: string,
+      subtractedValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "decreaseAllowance(address,uint256)"(
+      spender: string,
+      subtractedValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    exitPool(
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "exitPool(uint256,uint256[])"(
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    exitswapExternAmountOut(
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "exitswapExternAmountOut(address,uint256,uint256)"(
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    exitswapPoolAmountIn(
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "exitswapPoolAmountIn(address,uint256,uint256)"(
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     getBalance(token: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "getBalance(address)"(
       token: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    getCurrentTokens(
+      overrides?: CallOverrides
+    ): Promise<[string[]] & { tokens: string[] }>;
+
+    "getCurrentTokens()"(
+      overrides?: CallOverrides
+    ): Promise<[string[]] & { tokens: string[] }>;
 
     getDenormalizedWeight(
       token: string,
@@ -171,6 +430,72 @@ export class BPoolMock extends Contract {
     getSwapFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "getSwapFee()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    increaseAllowance(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "increaseAllowance(address,uint256)"(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    joinPool(
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "joinPool(uint256,uint256[])"(
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    joinswapExternAmountIn(
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "joinswapExternAmountIn(address,uint256,uint256)"(
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    joinswapPoolAmountOut(
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "joinswapPoolAmountOut(address,uint256,uint256)"(
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    name(overrides?: CallOverrides): Promise<[string]>;
+
+    "name()"(overrides?: CallOverrides): Promise<[string]>;
+
+    setExtactAmount(
+      exact: boolean,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setExtactAmount(bool)"(
+      exact: boolean,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     swapExactAmountIn(
       tokenIn: string,
@@ -207,7 +532,83 @@ export class BPoolMock extends Contract {
       maxPrice: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    symbol(overrides?: CallOverrides): Promise<[string]>;
+
+    "symbol()"(overrides?: CallOverrides): Promise<[string]>;
+
+    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    transfer(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "transfer(address,uint256)"(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    transferFrom(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "transferFrom(address,address,uint256)"(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
   };
+
+  _extactAmount(overrides?: CallOverrides): Promise<boolean>;
+
+  "_extactAmount()"(overrides?: CallOverrides): Promise<boolean>;
+
+  _tokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+  "_tokens(uint256)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  allowance(
+    owner: string,
+    spender: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "allowance(address,address)"(
+    owner: string,
+    spender: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  approve(
+    spender: string,
+    amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "approve(address,uint256)"(
+    spender: string,
+    amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  "balanceOf(address)"(
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   calcInGivenOut(
     tokenBalanceIn: BigNumberish,
@@ -249,12 +650,72 @@ export class BPoolMock extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  decimals(overrides?: CallOverrides): Promise<number>;
+
+  "decimals()"(overrides?: CallOverrides): Promise<number>;
+
+  decreaseAllowance(
+    spender: string,
+    subtractedValue: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "decreaseAllowance(address,uint256)"(
+    spender: string,
+    subtractedValue: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  exitPool(
+    poolAmountIn: BigNumberish,
+    minAmountsOut: BigNumberish[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "exitPool(uint256,uint256[])"(
+    poolAmountIn: BigNumberish,
+    minAmountsOut: BigNumberish[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  exitswapExternAmountOut(
+    tokenOut: string,
+    tokenAmountOut: BigNumberish,
+    maxPoolAmountIn: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "exitswapExternAmountOut(address,uint256,uint256)"(
+    tokenOut: string,
+    tokenAmountOut: BigNumberish,
+    maxPoolAmountIn: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  exitswapPoolAmountIn(
+    tokenOut: string,
+    poolAmountIn: BigNumberish,
+    minAmountOut: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "exitswapPoolAmountIn(address,uint256,uint256)"(
+    tokenOut: string,
+    poolAmountIn: BigNumberish,
+    minAmountOut: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   getBalance(token: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   "getBalance(address)"(
     token: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  getCurrentTokens(overrides?: CallOverrides): Promise<string[]>;
+
+  "getCurrentTokens()"(overrides?: CallOverrides): Promise<string[]>;
 
   getDenormalizedWeight(
     token: string,
@@ -269,6 +730,72 @@ export class BPoolMock extends Contract {
   getSwapFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   "getSwapFee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  increaseAllowance(
+    spender: string,
+    addedValue: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "increaseAllowance(address,uint256)"(
+    spender: string,
+    addedValue: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  joinPool(
+    poolAmountOut: BigNumberish,
+    maxAmountsIn: BigNumberish[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "joinPool(uint256,uint256[])"(
+    poolAmountOut: BigNumberish,
+    maxAmountsIn: BigNumberish[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  joinswapExternAmountIn(
+    tokenIn: string,
+    tokenAmountIn: BigNumberish,
+    minPoolAmountOut: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "joinswapExternAmountIn(address,uint256,uint256)"(
+    tokenIn: string,
+    tokenAmountIn: BigNumberish,
+    minPoolAmountOut: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  joinswapPoolAmountOut(
+    tokenIn: string,
+    poolAmountOut: BigNumberish,
+    maxAmountIn: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "joinswapPoolAmountOut(address,uint256,uint256)"(
+    tokenIn: string,
+    poolAmountOut: BigNumberish,
+    maxAmountIn: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  name(overrides?: CallOverrides): Promise<string>;
+
+  "name()"(overrides?: CallOverrides): Promise<string>;
+
+  setExtactAmount(
+    exact: boolean,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setExtactAmount(bool)"(
+    exact: boolean,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   swapExactAmountIn(
     tokenIn: string,
@@ -306,7 +833,83 @@ export class BPoolMock extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  symbol(overrides?: CallOverrides): Promise<string>;
+
+  "symbol()"(overrides?: CallOverrides): Promise<string>;
+
+  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  transfer(
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "transfer(address,uint256)"(
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  transferFrom(
+    sender: string,
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "transferFrom(address,address,uint256)"(
+    sender: string,
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   callStatic: {
+    _extactAmount(overrides?: CallOverrides): Promise<boolean>;
+
+    "_extactAmount()"(overrides?: CallOverrides): Promise<boolean>;
+
+    _tokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+    "_tokens(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    allowance(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "allowance(address,address)"(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    approve(
+      spender: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "approve(address,uint256)"(
+      spender: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "balanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     calcInGivenOut(
       tokenBalanceIn: BigNumberish,
       tokenWeightIn: BigNumberish,
@@ -347,12 +950,72 @@ export class BPoolMock extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    decimals(overrides?: CallOverrides): Promise<number>;
+
+    "decimals()"(overrides?: CallOverrides): Promise<number>;
+
+    decreaseAllowance(
+      spender: string,
+      subtractedValue: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "decreaseAllowance(address,uint256)"(
+      spender: string,
+      subtractedValue: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    exitPool(
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "exitPool(uint256,uint256[])"(
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    exitswapExternAmountOut(
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "exitswapExternAmountOut(address,uint256,uint256)"(
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    exitswapPoolAmountIn(
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "exitswapPoolAmountIn(address,uint256,uint256)"(
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getBalance(token: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "getBalance(address)"(
       token: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getCurrentTokens(overrides?: CallOverrides): Promise<string[]>;
+
+    "getCurrentTokens()"(overrides?: CallOverrides): Promise<string[]>;
 
     getDenormalizedWeight(
       token: string,
@@ -367,6 +1030,69 @@ export class BPoolMock extends Contract {
     getSwapFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getSwapFee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    increaseAllowance(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "increaseAllowance(address,uint256)"(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    joinPool(
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "joinPool(uint256,uint256[])"(
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    joinswapExternAmountIn(
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "joinswapExternAmountIn(address,uint256,uint256)"(
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    joinswapPoolAmountOut(
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "joinswapPoolAmountOut(address,uint256,uint256)"(
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    name(overrides?: CallOverrides): Promise<string>;
+
+    "name()"(overrides?: CallOverrides): Promise<string>;
+
+    setExtactAmount(exact: boolean, overrides?: CallOverrides): Promise<void>;
+
+    "setExtactAmount(bool)"(
+      exact: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     swapExactAmountIn(
       tokenIn: string,
@@ -403,11 +1129,95 @@ export class BPoolMock extends Contract {
       maxPrice: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber]>;
+
+    symbol(overrides?: CallOverrides): Promise<string>;
+
+    "symbol()"(overrides?: CallOverrides): Promise<string>;
+
+    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    transfer(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "transfer(address,uint256)"(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    transferFrom(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "transferFrom(address,address,uint256)"(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
-  filters: {};
+  filters: {
+    Approval(
+      owner: string | null,
+      spender: string | null,
+      value: null
+    ): EventFilter;
+
+    Transfer(from: string | null, to: string | null, value: null): EventFilter;
+  };
 
   estimateGas: {
+    _extactAmount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "_extactAmount()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    _tokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "_tokens(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    allowance(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "allowance(address,address)"(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    approve(
+      spender: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "approve(address,uint256)"(
+      spender: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "balanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     calcInGivenOut(
       tokenBalanceIn: BigNumberish,
       tokenWeightIn: BigNumberish,
@@ -448,12 +1258,72 @@ export class BPoolMock extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    decimals(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "decimals()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    decreaseAllowance(
+      spender: string,
+      subtractedValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "decreaseAllowance(address,uint256)"(
+      spender: string,
+      subtractedValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    exitPool(
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "exitPool(uint256,uint256[])"(
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    exitswapExternAmountOut(
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "exitswapExternAmountOut(address,uint256,uint256)"(
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    exitswapPoolAmountIn(
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "exitswapPoolAmountIn(address,uint256,uint256)"(
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     getBalance(token: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "getBalance(address)"(
       token: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getCurrentTokens(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getCurrentTokens()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getDenormalizedWeight(
       token: string,
@@ -468,6 +1338,69 @@ export class BPoolMock extends Contract {
     getSwapFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getSwapFee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    increaseAllowance(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "increaseAllowance(address,uint256)"(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    joinPool(
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "joinPool(uint256,uint256[])"(
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    joinswapExternAmountIn(
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "joinswapExternAmountIn(address,uint256,uint256)"(
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    joinswapPoolAmountOut(
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "joinswapPoolAmountOut(address,uint256,uint256)"(
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    name(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "name()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setExtactAmount(exact: boolean, overrides?: Overrides): Promise<BigNumber>;
+
+    "setExtactAmount(bool)"(
+      exact: boolean,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     swapExactAmountIn(
       tokenIn: string,
@@ -502,11 +1435,93 @@ export class BPoolMock extends Contract {
       tokenOut: string,
       tokenAmountOut: BigNumberish,
       maxPrice: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    symbol(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "symbol()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    transfer(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "transfer(address,uint256)"(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    transferFrom(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "transferFrom(address,address,uint256)"(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    _extactAmount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "_extactAmount()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    _tokens(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "_tokens(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    allowance(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "allowance(address,address)"(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    approve(
+      spender: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "approve(address,uint256)"(
+      spender: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    balanceOf(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "balanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     calcInGivenOut(
       tokenBalanceIn: BigNumberish,
       tokenWeightIn: BigNumberish,
@@ -545,6 +1560,62 @@ export class BPoolMock extends Contract {
       tokenAmountIn: BigNumberish,
       swapFee: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "decimals()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    decreaseAllowance(
+      spender: string,
+      subtractedValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "decreaseAllowance(address,uint256)"(
+      spender: string,
+      subtractedValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    exitPool(
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "exitPool(uint256,uint256[])"(
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    exitswapExternAmountOut(
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "exitswapExternAmountOut(address,uint256,uint256)"(
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    exitswapPoolAmountIn(
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "exitswapPoolAmountIn(address,uint256,uint256)"(
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     getBalance(
@@ -554,6 +1625,12 @@ export class BPoolMock extends Contract {
 
     "getBalance(address)"(
       token: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getCurrentTokens(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "getCurrentTokens()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -571,6 +1648,72 @@ export class BPoolMock extends Contract {
 
     "getSwapFee()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    increaseAllowance(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "increaseAllowance(address,uint256)"(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    joinPool(
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "joinPool(uint256,uint256[])"(
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    joinswapExternAmountIn(
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "joinswapExternAmountIn(address,uint256,uint256)"(
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    joinswapPoolAmountOut(
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "joinswapPoolAmountOut(address,uint256,uint256)"(
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "name()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setExtactAmount(
+      exact: boolean,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setExtactAmount(bool)"(
+      exact: boolean,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     swapExactAmountIn(
       tokenIn: string,
       tokenAmountIn: BigNumberish,
@@ -604,6 +1747,40 @@ export class BPoolMock extends Contract {
       tokenOut: string,
       tokenAmountOut: BigNumberish,
       maxPrice: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "symbol()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "totalSupply()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    transfer(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "transfer(address,uint256)"(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    transferFrom(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "transferFrom(address,address,uint256)"(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };
