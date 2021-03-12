@@ -10,6 +10,12 @@ import "./IProtocolFee.sol";
 
 import "hardhat/console.sol";
 
+/**
+ * @title ProtocolFee
+ * @author Protofire
+ * @dev Module for swap fee calculations.
+ *
+ */
 contract ProtocolFee is Ownable, IProtocolFee {
     using SafeMath for uint256;
 

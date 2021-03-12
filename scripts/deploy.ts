@@ -10,6 +10,9 @@ import {
   Authorization,
   XTokenWrapper,
   XTokenFactory,
+  ProtocolFee,
+  BRegistry,
+  BPoolProxy,
 } from '../typechain';
 
 import ora, { Ora } from 'ora';
@@ -25,10 +28,24 @@ import OperationsRegistryArtifact from '../artifacts/contracts/authorization/Ope
 import AuthorizationArtifact from '../artifacts/contracts/authorization/Authorization.sol/Authorization.json';
 import XTokenWrapperArtifact from '../artifacts/contracts/token/XTokenWrapper.sol/XTokenWrapper.json';
 import XTokenFactoryArtifact from '../artifacts/contracts/token/XTokenFactory.sol/XTokenFactory.json';
+import ProtocolFeeArtifact from '../artifacts/contracts/balancer/ProtocolFee.sol/ProtocolFee.json';
+import BRegistryArtifact from '../artifacts/contracts/balancer/BRegistry.sol/BRegistry.json';
+import BPoolProxyArtifact from '../artifacts/contracts/balancer/BPoolProxy.sol/BPoolProxy.json';
 
 let spinner: Ora;
 
-const requiredConfigs = ['EUR_USD_FEED', 'ETH_USD_FEED', 'TRAIDING_LIMIT'];
+const PROTOCOL_CONTRACT = 4;
+const POOL_CREATOR = 5;
+
+const requiredConfigs = [
+  'EUR_USD_FEED',
+  'ETH_USD_FEED',
+  'TRAIDING_LIMIT',
+  'BFACTORY',
+  'PROTOCOL_FEE',
+  'MIN_PROTOCOL_FEE',
+  'FEE_RECEIVER',
+];
 requiredConfigs.forEach(conf => assert(process.env[conf], `Missing configuration variable: ${conf}`));
 
 async function main(): Promise<void> {
@@ -126,35 +143,6 @@ async function main(): Promise<void> {
     `OperationsRegistry deployed - txHash: ${operationsRegistryContract.deployTransaction.hash} - address: ${operationsRegistryContract.address}`,
   );
 
-  // Deploy Authorization
-  // PermissionItems
-  // EurPriceFeed
-  // OperationsRegistry
-  // Trade Limit
-  startLog('Deploying Authorization contract');
-  const AuthorizationFactory: ContractFactory = await ethers.getContractFactory('Authorization');
-  const authorizationContract: Authorization = (await upgrades.deployProxy(AuthorizationFactory, [
-    permissionItemsContract.address,
-    eurPriceFeedContract.address,
-    operationsRegistryContract.address,
-    process.env.TRAIDING_LIMIT,
-    false,
-  ])) as Authorization;
-
-  deploymentData = {
-    ...deploymentData,
-    AuthorizationProxy: {
-      address: authorizationContract.address,
-      abi: AuthorizationArtifact.abi,
-      deployTransaction: await getRecipt(authorizationContract.deployTransaction),
-    },
-  };
-
-  await write(deploymentData);
-  stopLog(
-    `Authorization deployed - txHash: ${authorizationContract.deployTransaction.hash} - address: ${authorizationContract.address}`,
-  );
-
   // Deploy xTokenWrapper
   startLog('Deploying XTokenWrapper contract');
   const XTokenWrapperFactory: ContractFactory = await ethers.getContractFactory('XTokenWrapper');
@@ -174,6 +162,39 @@ async function main(): Promise<void> {
   await write(deploymentData);
   stopLog(
     `XTokenWrapper deployed - txHash: ${xTokenWrapperContract.deployTransaction.hash} - address: ${xTokenWrapperContract.address}`,
+  );
+
+  // Deploy Authorization
+  // PermissionItems
+  // EurPriceFeed
+  // OperationsRegistry
+  // Balancer BFactory address
+  // XTokenWrapper address
+  // Trade Limit
+  startLog('Deploying Authorization contract');
+  const AuthorizationFactory: ContractFactory = await ethers.getContractFactory('Authorization');
+  const authorizationContract: Authorization = (await upgrades.deployProxy(AuthorizationFactory, [
+    permissionItemsContract.address,
+    eurPriceFeedContract.address,
+    operationsRegistryContract.address,
+    process.env.BFACTORY,
+    xTokenWrapperContract.address,
+    process.env.TRAIDING_LIMIT,
+    false,
+  ])) as Authorization;
+
+  deploymentData = {
+    ...deploymentData,
+    AuthorizationProxy: {
+      address: authorizationContract.address,
+      abi: AuthorizationArtifact.abi,
+      deployTransaction: await getRecipt(authorizationContract.deployTransaction),
+    },
+  };
+
+  await write(deploymentData);
+  stopLog(
+    `Authorization deployed - txHash: ${authorizationContract.deployTransaction.hash} - address: ${authorizationContract.address}`,
   );
 
   // Deploy xTokenFactory
@@ -204,6 +225,84 @@ async function main(): Promise<void> {
     `XTokenFactory deployed - txHash: ${xTokenFactoryContract.deployTransaction.hash} - address: ${xTokenFactoryContract.address}`,
   );
 
+  // Deploy ProtocolFee
+  // _protocolFee
+  // _minProtocolFee
+  startLog('Deploying ProtocolFee contract');
+  const ProtocolFeeFactory: ContractFactory = await ethers.getContractFactory('ProtocolFee');
+  const protocolFeeContract: ProtocolFee = (await ProtocolFeeFactory.deploy(
+    process.env.PROTOCOL_FEE,
+    process.env.MIN_PROTOCOL_FEE,
+  )) as ProtocolFee;
+  updatetLog(`Deploying ProtocolFee contract - txHash: ${protocolFeeContract.deployTransaction.hash}`);
+  await protocolFeeContract.deployed();
+
+  deploymentData = {
+    ...deploymentData,
+    ProtocolFee: {
+      address: protocolFeeContract.address,
+      abi: ProtocolFeeArtifact.abi,
+      deployTransaction: await getRecipt(protocolFeeContract.deployTransaction),
+    },
+  };
+
+  await write(deploymentData);
+  stopLog(
+    `ProtocolFee deployed - txHash: ${protocolFeeContract.deployTransaction.hash} - address: ${protocolFeeContract.address}`,
+  );
+
+  // Deploy BRegistry
+  // BFactory
+  startLog('Deploying BRegistry contract');
+  const BRegistryFactory: ContractFactory = await ethers.getContractFactory('BRegistry');
+  const bRegistryContract: BRegistry = (await BRegistryFactory.deploy(process.env.BFACTORY)) as BRegistry;
+  updatetLog(`Deploying BRegistry contract - txHash: ${bRegistryContract.deployTransaction.hash}`);
+  await bRegistryContract.deployed();
+
+  deploymentData = {
+    ...deploymentData,
+    BRegistry: {
+      address: bRegistryContract.address,
+      abi: BRegistryArtifact.abi,
+      deployTransaction: await getRecipt(bRegistryContract.deployTransaction),
+    },
+  };
+
+  await write(deploymentData);
+  stopLog(
+    `BRegistry deployed - txHash: ${bRegistryContract.deployTransaction.hash} - address: ${bRegistryContract.address}`,
+  );
+
+  // Deploy BPoolProxy
+  // BRegistry
+  // ProtocolFee
+  // FEE_RECEIVER
+  // XTokenWrapper
+  startLog('Deploying BPoolProxy contract');
+  const BPoolProxyFactory: ContractFactory = await ethers.getContractFactory('BPoolProxy');
+  const bPoolProxyContract: BPoolProxy = (await BPoolProxyFactory.deploy(
+    bRegistryContract.address,
+    protocolFeeContract.address,
+    process.env.FEE_RECEIVER,
+    xTokenWrapperContract.address,
+  )) as BPoolProxy;
+  updatetLog(`Deploying BPoolProxy contract - txHash: ${bPoolProxyContract.deployTransaction.hash}`);
+  await bPoolProxyContract.deployed();
+
+  deploymentData = {
+    ...deploymentData,
+    BPoolProxy: {
+      address: bPoolProxyContract.address,
+      abi: BPoolProxyArtifact.abi,
+      deployTransaction: await getRecipt(bPoolProxyContract.deployTransaction),
+    },
+  };
+
+  await write(deploymentData);
+  stopLog(
+    `BPoolProxy deployed - txHash: ${bPoolProxyContract.deployTransaction.hash} - address: ${bPoolProxyContract.address}`,
+  );
+
   // Configure xTokenWrapper, setRegistryManager(xTokenFactory)
   startLog('Granting xTokenWrapper REGISTRY_MANAGER_ROL to XTokenFactory contract');
   const rmTx = await xTokenWrapperContract.setRegistryManager(xTokenFactoryContract.address);
@@ -224,6 +323,20 @@ async function main(): Promise<void> {
   updatetLog(`Granting EurPriceFeed FEEDS_MANAGER_ROL to XTokenFactory contract - txHash: ${fmTx.hash}`);
   await fmTx.wait();
   stopLog(`Granted EurPriceFeed FEEDS_MANAGER_ROL to XTokenFactory contract - txHash: ${fmTx.hash}`);
+
+  //Grant PROTOCOL_CONTRACT permission to BPoolProxy
+  startLog('Granting PROTOCOL_CONTRACT permission to BPoolProxy contract');
+  const proConTx = await permissionManagerContract.assignItem(PROTOCOL_CONTRACT, [bPoolProxyContract.address]);
+  updatetLog(`Granting PROTOCOL_CONTRACT permission to BPoolProxy contract - txHash: ${proConTx.hash}`);
+  await proConTx.wait();
+  stopLog(`Granting PROTOCOL_CONTRACT permission to BPoolProxy contract - txHash: ${proConTx.hash}`);
+
+  //Grant POOL_CREATOR permission to BPoolProxy
+  startLog('Granting POOL_CREATOR permission to BPoolProxy contract');
+  const poolCTx = await permissionManagerContract.assignItem(POOL_CREATOR, [process.env.POOL_CREATOR]);
+  updatetLog(`Granting POOL_CREATOR permission to BPoolProxy contract - txHash: ${poolCTx.hash}`);
+  await poolCTx.wait();
+  stopLog(`Granting POOL_CREATOR permission to BPoolProxy contract - txHash: ${poolCTx.hash}`);
 }
 
 async function read(): Promise<any> {

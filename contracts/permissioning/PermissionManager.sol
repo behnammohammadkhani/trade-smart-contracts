@@ -249,6 +249,42 @@ contract PermissionManager is Initializable, OwnableUpgradeable, PermissionManag
         }
     }
 
+    /**
+     * @dev assigns specific item `_itemId` to the list `_accounts`.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - each address in `_accounts` should not have `_itemId` already assigned.
+     *
+     * @param _itemId Item to be assigned.
+     * @param _accounts The addresses to assign Tier1.
+     */
+    function assignItem(uint256 _itemId, address[] memory _accounts) public onlyOwner {
+        for (uint256 i = 0; i < _accounts.length; i++) {
+            require(!_hasItem(_accounts[i], _itemId), "PermissionManager: Account is assigned with item");
+            PermissionItems(permissionItems).mint(_accounts[i], _itemId, 1, "");
+        }
+    }
+
+    /**
+     * @dev removes specific item `_itemId` to the list `_accounts`.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - each address in `_accounts` should have `_itemId` already assigned.
+     *
+     * @param _itemId Item to be removeded
+     * @param _accounts The addresses to assign Tier1.
+     */
+    function removeItem(uint256 _itemId, address[] memory _accounts) public onlyOwner {
+        for (uint256 i = 0; i < _accounts.length; i++) {
+            require(_hasItem(_accounts[i], _itemId), "PermissionManager: Account is not assigned with item");
+            PermissionItems(permissionItems).burn(_accounts[i], _itemId, 1);
+        }
+    }
+
     function _hasItem(address _user, uint256 itemId) internal view returns (bool) {
         if (PermissionItems(permissionItems).balanceOf(_user, itemId) == 0) {
             return false;
