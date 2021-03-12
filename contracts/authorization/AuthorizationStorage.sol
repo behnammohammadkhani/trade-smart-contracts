@@ -25,6 +25,7 @@ abstract contract AuthorizationStorage {
     bytes4 public constant ERC20_APPROVE = bytes4(keccak256("approve(address,uint256)"));
     bytes4 public constant ERC20_MINT = bytes4(keccak256("mint(address,uint256)"));
     bytes4 public constant ERC20_BURN_FROM = bytes4(keccak256("burnFrom(address,uint256)"));
+    bytes4 public constant BFACTORY_NEW_POOL = bytes4(keccak256("newBPool()"));
 
     // Constants for Permissions ID
     uint256 public constant SUSPENDED_ID = 0;
@@ -32,4 +33,5 @@ abstract contract AuthorizationStorage {
     uint256 public constant TIER_2_ID = 2;
     uint256 public constant REJECTED_ID = 3;
     uint256 public constant PROTOCOL_CONTRACT = 4;
+    uint256 public constant POOL_CREATOR = 5;
 }

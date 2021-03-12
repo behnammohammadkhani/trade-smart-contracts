@@ -31,6 +31,7 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
+    "setAsPoolCreator(address)": FunctionFragment;
     "setAsProtocolContract(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "suspendUser(address)": FunctionFragment;
@@ -63,6 +64,10 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
     values: [string, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAsPoolCreator",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setAsProtocolContract",
@@ -103,6 +108,10 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setApprovalForAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setAsPoolCreator",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -260,6 +269,16 @@ export class PermissionsMock extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    setAsPoolCreator(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setAsPoolCreator(address)"(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     setAsProtocolContract(
       _user: string,
       overrides?: Overrides
@@ -412,6 +431,16 @@ export class PermissionsMock extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  setAsPoolCreator(
+    _user: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setAsPoolCreator(address)"(
+    _user: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   setAsProtocolContract(
     _user: string,
     overrides?: Overrides
@@ -552,6 +581,13 @@ export class PermissionsMock extends Contract {
     "setApprovalForAll(address,bool)"(
       operator: string,
       approved: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setAsPoolCreator(_user: string, overrides?: CallOverrides): Promise<void>;
+
+    "setAsPoolCreator(address)"(
+      _user: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -722,6 +758,13 @@ export class PermissionsMock extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    setAsPoolCreator(_user: string, overrides?: Overrides): Promise<BigNumber>;
+
+    "setAsPoolCreator(address)"(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     setAsProtocolContract(
       _user: string,
       overrides?: Overrides
@@ -869,6 +912,16 @@ export class PermissionsMock extends Contract {
     "setApprovalForAll(address,bool)"(
       operator: string,
       approved: boolean,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setAsPoolCreator(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setAsPoolCreator(address)"(
+      _user: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 

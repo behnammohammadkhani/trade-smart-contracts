@@ -38,6 +38,7 @@ let authorizationContract: Authorization;
 let authorizationContractKakaroto: Authorization;
 let operationsRegistryContract: OperationsRegistry;
 let bFactoryContract: BFactoryMock;
+let bFactoryContractKakaroto: BFactoryMock;
 
 const tradingLimit = ethers.constants.One.mul(5000);
 
@@ -79,6 +80,8 @@ describe('Authorization', function () {
     bFactoryContract = (await BFactoryMockFactory.deploy()) as BFactoryMock;
     await bFactoryContract.deployed();
 
+    bFactoryContractKakaroto = bFactoryContract.connect(kakaroto);
+
     authorizationContract = (await upgrades.deployProxy(Authorization, [
       permissionsContract.address,
       eurPriceFeedContract.address,
@@ -88,6 +91,9 @@ describe('Authorization', function () {
       tradingLimit,
       false,
     ])) as Authorization;
+    await authorizationContract.deployed();
+
+    await bFactoryContract.setAuthorization(authorizationContract.address);
 
     xTokenContract = (await xTokenFactory.deploy(
       'Authorizable Token',
@@ -1075,7 +1081,6 @@ describe('Authorization', function () {
         await reverter.revert();
 
         await permissionsContract.setAsProtocolContract(deployerAddress);
-        // await permissionsContract.setAsProtocolContract(xTokenWrapperMockContract.address);
         await bFactoryContract.setIsBPoolAnswer(true);
 
         expect(await bFactoryContract.isBPool(xTokenContract.address)).to.equal(true);
@@ -1203,6 +1208,24 @@ describe('Authorization', function () {
             );
           });
         });
+      });
+    });
+
+    describe('Pool Creator', () => {
+      before(async () => {
+        await reverter.revert();
+
+        await permissionsContract.setAsPoolCreator(deployerAddress);
+
+        await reverter.snapshot();
+      });
+
+      it('non pool creator user should no be able to create new pools', async () => {
+        await expect(bFactoryContractKakaroto.newBPool()).to.be.revertedWith('Authorizable: not authorized');
+      });
+
+      it('pool creator user should be able to create new pools', async () => {
+        await expect(bFactoryContract.newBPool()).to.emit(bFactoryContract, 'LOG_NEW_POOL').withArgs(deployerAddress);
       });
     });
   });
