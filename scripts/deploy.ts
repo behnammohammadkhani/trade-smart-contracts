@@ -13,6 +13,7 @@ import {
   ProtocolFee,
   BRegistry,
   BPoolProxy,
+  IBFactory,
 } from '../typechain';
 
 import ora, { Ora } from 'ora';
@@ -45,6 +46,7 @@ const requiredConfigs = [
   'PROTOCOL_FEE',
   'MIN_PROTOCOL_FEE',
   'FEE_RECEIVER',
+  'POOL_CREATOR_USER',
 ];
 requiredConfigs.forEach(conf => assert(process.env[conf], `Missing configuration variable: ${conf}`));
 
@@ -303,6 +305,13 @@ async function main(): Promise<void> {
     `BPoolProxy deployed - txHash: ${bPoolProxyContract.deployTransaction.hash} - address: ${bPoolProxyContract.address}`,
   );
 
+  // Set PermissionManager as the MINTER/BURNER of PermissionItems
+  startLog('Setting PermisisonManager as PermissionItems admin');
+  const piaTx = await permissionItemsContract.setAdmin(permissionManagerContract.address);
+  updatetLog(`Setting PermisisonManager as PermissionItems admin - txHash: ${piaTx.hash}`);
+  await piaTx.wait();
+  stopLog(`Done setting PermisisonManager as PermissionItems admin - txHash: ${piaTx.hash}`);
+
   // Configure xTokenWrapper, setRegistryManager(xTokenFactory)
   startLog('Granting xTokenWrapper REGISTRY_MANAGER_ROL to XTokenFactory contract');
   const rmTx = await xTokenWrapperContract.setRegistryManager(xTokenFactoryContract.address);
@@ -331,12 +340,41 @@ async function main(): Promise<void> {
   await proConTx.wait();
   stopLog(`Granting PROTOCOL_CONTRACT permission to BPoolProxy contract - txHash: ${proConTx.hash}`);
 
-  //Grant POOL_CREATOR permission to BPoolProxy
-  startLog('Granting POOL_CREATOR permission to BPoolProxy contract');
-  const poolCTx = await permissionManagerContract.assignItem(POOL_CREATOR, [process.env.POOL_CREATOR]);
-  updatetLog(`Granting POOL_CREATOR permission to BPoolProxy contract - txHash: ${poolCTx.hash}`);
-  await poolCTx.wait();
-  stopLog(`Granting POOL_CREATOR permission to BPoolProxy contract - txHash: ${poolCTx.hash}`);
+  // POOL_CREATOR_USER is required
+  if (process.env.POOL_CREATOR_USER) {
+    //Grant POOL_CREATOR permission to Admin
+    startLog('Granting POOL_CREATOR permission to Amin');
+    const poolCTx = await permissionManagerContract.assignItem(POOL_CREATOR, [process.env.POOL_CREATOR_USER]);
+    updatetLog(`Granting POOL_CREATOR permission to Admin - txHash: ${poolCTx.hash}`);
+    await poolCTx.wait();
+    stopLog(`Granting POOL_CREATOR permission to Admin - txHash: ${poolCTx.hash}`);
+  }
+
+  // BFACTORY is required
+  if (process.env.BFACTORY) {
+    const bFactoryContract: IBFactory = (await ethers.getContractAt('IBFactory', process.env.BFACTORY)) as IBFactory;
+
+    //Set BFactory - ExchaProxy, OperationsRegistry and Authorization
+    startLog('Setting PoolProxy contract as ExchangeProxy in BFactory');
+    const excPTx = await bFactoryContract.setExchProxy(bPoolProxyContract.address);
+    updatetLog(`Setting PoolProxy contract as ExchangeProxy in BFactory - txHash: ${excPTx.hash}`);
+    await excPTx.wait();
+    stopLog(`Setting PoolProxy contract as ExchangeProxy in BFactory - txHash: ${excPTx.hash}`);
+
+    //Set BFactory - ExchaProxy, OperationsRegistry and Authorization
+    startLog('Setting OperationsRegistry in BFactory');
+    const opRTx = await bFactoryContract.setOperationsRegistry(operationsRegistryContract.address);
+    updatetLog(`Setting OperationsRegistry in BFactory - txHash: ${opRTx.hash}`);
+    await opRTx.wait();
+    stopLog(`Setting OperationsRegistry in BFactory - txHash: ${opRTx.hash}`);
+
+    //Set BFactory - ExchaProxy, OperationsRegistry and Authorization
+    startLog('Setting Authorization in BFactory');
+    const authTx = await bFactoryContract.setAuthorization(authorizationContract.address);
+    updatetLog(`Setting Authorization in BFactory - txHash: ${authTx.hash}`);
+    await authTx.wait();
+    stopLog(`Setting Authorization in BFactory - txHash: ${authTx.hash}`);
+  }
 }
 
 async function read(): Promise<any> {

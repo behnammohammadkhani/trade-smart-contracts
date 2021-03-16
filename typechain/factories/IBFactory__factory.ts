@@ -49,4 +49,43 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_authorization",
+        type: "address",
+      },
+    ],
+    name: "setAuthorization",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "exchProxy",
+        type: "address",
+      },
+    ],
+    name: "setExchProxy",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "operationsRegistry",
+        type: "address",
+      },
+    ],
+    name: "setOperationsRegistry",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
