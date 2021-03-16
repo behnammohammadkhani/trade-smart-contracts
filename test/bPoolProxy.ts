@@ -66,6 +66,8 @@ describe('BPoolProxy', function () {
       protocolFeeContract.address,
       kakarotoAddress,
       xTokenWrapperContract.address,
+      ethers.constants.AddressZero,
+      ethers.constants.AddressZero,
     )) as BPoolProxy;
     await poolProxyContract.deployed();
 
@@ -222,6 +224,7 @@ describe('BPoolProxy', function () {
             wEth.address,
             ethers.constants.WeiPerEther.mul(1500),
             `${1e18}`,
+            false,
           ),
         ).to.be.reverted;
       });
@@ -247,6 +250,7 @@ describe('BPoolProxy', function () {
           wEth.address,
           ethers.constants.WeiPerEther.mul(1500),
           `${1e18}`,
+          false,
         );
 
         const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
@@ -281,6 +285,7 @@ describe('BPoolProxy', function () {
             dai.address,
             wEth.address,
             ethers.constants.WeiPerEther.mul(1500),
+            false,
           ),
         ).to.be.reverted;
       });
@@ -305,6 +310,7 @@ describe('BPoolProxy', function () {
           dai.address,
           wEth.address,
           ethers.constants.WeiPerEther.mul(1500),
+          false,
         );
 
         const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
@@ -342,6 +348,7 @@ describe('BPoolProxy', function () {
             wEth.address,
             ethers.constants.WeiPerEther.mul(1500),
             `${1e18}`,
+            false,
           ),
         ).to.be.reverted;
       });
@@ -369,6 +376,7 @@ describe('BPoolProxy', function () {
           wEth.address,
           ethers.constants.WeiPerEther.mul(1500),
           `${1e18}`,
+          false,
         );
 
         const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
@@ -405,6 +413,7 @@ describe('BPoolProxy', function () {
             dai.address,
             wEth.address,
             ethers.constants.WeiPerEther.mul(1500),
+            false,
           ),
         ).to.be.reverted;
       });
@@ -431,6 +440,7 @@ describe('BPoolProxy', function () {
           dai.address,
           wEth.address,
           ethers.constants.WeiPerEther.mul(1500),
+          false,
         );
 
         const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);

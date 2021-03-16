@@ -22,8 +22,8 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface BPoolProxyInterface extends ethers.utils.Interface {
   functions: {
-    "batchSwapExactIn(tuple[],address,address,uint256,uint256)": FunctionFragment;
-    "batchSwapExactOut(tuple[],address,address,uint256)": FunctionFragment;
+    "batchSwapExactIn(tuple[],address,address,uint256,uint256,bool)": FunctionFragment;
+    "batchSwapExactOut(tuple[],address,address,uint256,bool)": FunctionFragment;
     "exitPool(address,uint256,uint256[])": FunctionFragment;
     "exitswapExternAmountOut(address,address,uint256,uint256)": FunctionFragment;
     "exitswapPoolAmountIn(address,address,uint256,uint256)": FunctionFragment;
@@ -31,8 +31,8 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
     "joinPool(address,uint256,uint256[])": FunctionFragment;
     "joinswapExternAmountIn(address,address,uint256,uint256)": FunctionFragment;
     "joinswapPoolAmountOut(address,address,uint256,uint256)": FunctionFragment;
-    "multihopBatchSwapExactIn(tuple[][],address,address,uint256,uint256)": FunctionFragment;
-    "multihopBatchSwapExactOut(tuple[][],address,address,uint256)": FunctionFragment;
+    "multihopBatchSwapExactIn(tuple[][],address,address,uint256,uint256,bool)": FunctionFragment;
+    "multihopBatchSwapExactOut(tuple[][],address,address,uint256,bool)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -42,11 +42,15 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
     "setFeeReceiver(address)": FunctionFragment;
     "setProtocolFee(address)": FunctionFragment;
     "setRegistry(address)": FunctionFragment;
+    "setUtilityToken(address)": FunctionFragment;
+    "setUtilityTokenFeed(address)": FunctionFragment;
     "setXTokenWrapper(address)": FunctionFragment;
-    "smartSwapExactIn(address,address,uint256,uint256,uint256)": FunctionFragment;
-    "smartSwapExactOut(address,address,uint256,uint256,uint256)": FunctionFragment;
+    "smartSwapExactIn(address,address,uint256,uint256,uint256,bool)": FunctionFragment;
+    "smartSwapExactOut(address,address,uint256,uint256,uint256,bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "utilityToken()": FunctionFragment;
+    "utilityTokenFeed()": FunctionFragment;
     "viewSplitExactIn(address,address,uint256,uint256)": FunctionFragment;
     "viewSplitExactOut(address,address,uint256,uint256)": FunctionFragment;
     "xTokenWrapper()": FunctionFragment;
@@ -66,7 +70,8 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
       string,
       string,
       BigNumberish,
-      BigNumberish
+      BigNumberish,
+      boolean
     ]
   ): string;
   encodeFunctionData(
@@ -82,7 +87,8 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
       }[],
       string,
       string,
-      BigNumberish
+      BigNumberish,
+      boolean
     ]
   ): string;
   encodeFunctionData(
@@ -127,7 +133,8 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
       string,
       string,
       BigNumberish,
-      BigNumberish
+      BigNumberish,
+      boolean
     ]
   ): string;
   encodeFunctionData(
@@ -143,7 +150,8 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
       }[][],
       string,
       string,
-      BigNumberish
+      BigNumberish,
+      boolean
     ]
   ): string;
   encodeFunctionData(
@@ -174,16 +182,24 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "setRegistry", values: [string]): string;
   encodeFunctionData(
+    functionFragment: "setUtilityToken",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setUtilityTokenFeed",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setXTokenWrapper",
     values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "smartSwapExactIn",
-    values: [string, string, BigNumberish, BigNumberish, BigNumberish]
+    values: [string, string, BigNumberish, BigNumberish, BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "smartSwapExactOut",
-    values: [string, string, BigNumberish, BigNumberish, BigNumberish]
+    values: [string, string, BigNumberish, BigNumberish, BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -192,6 +208,14 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "utilityToken",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "utilityTokenFeed",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "viewSplitExactIn",
@@ -275,6 +299,14 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setUtilityToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setUtilityTokenFeed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setXTokenWrapper",
     data: BytesLike
   ): Result;
@@ -295,6 +327,14 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "utilityToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "utilityTokenFeed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "viewSplitExactIn",
     data: BytesLike
   ): Result;
@@ -312,6 +352,8 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
     "OwnershipTransferred(address,address)": EventFragment;
     "ProtocolFeeSetted(address)": EventFragment;
     "RegistrySetted(address)": EventFragment;
+    "UtilityTokenFeedSetted(address)": EventFragment;
+    "UtilityTokenSetted(address)": EventFragment;
     "XTokenWrapperSetted(address)": EventFragment;
   };
 
@@ -319,6 +361,8 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProtocolFeeSetted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RegistrySetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UtilityTokenFeedSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UtilityTokenSetted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "XTokenWrapperSetted"): EventFragment;
 }
 
@@ -349,10 +393,11 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "batchSwapExactIn(tuple[],address,address,uint256,uint256)"(
+    "batchSwapExactIn(tuple[],address,address,uint256,uint256,bool)"(
       swaps: {
         pool: string;
         tokenIn: string;
@@ -365,6 +410,7 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -380,10 +426,11 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "batchSwapExactOut(tuple[],address,address,uint256)"(
+    "batchSwapExactOut(tuple[],address,address,uint256,bool)"(
       swaps: {
         pool: string;
         tokenIn: string;
@@ -395,6 +442,7 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -507,10 +555,11 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "multihopBatchSwapExactIn(tuple[][],address,address,uint256,uint256)"(
+    "multihopBatchSwapExactIn(tuple[][],address,address,uint256,uint256,bool)"(
       swapSequences: {
         pool: string;
         tokenIn: string;
@@ -523,6 +572,7 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -538,10 +588,11 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "multihopBatchSwapExactOut(tuple[][],address,address,uint256)"(
+    "multihopBatchSwapExactOut(tuple[][],address,address,uint256,bool)"(
       swapSequences: {
         pool: string;
         tokenIn: string;
@@ -553,6 +604,7 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -638,6 +690,26 @@ export class BPoolProxy extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    setUtilityToken(
+      _utilityToken: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setUtilityToken(address)"(
+      _utilityToken: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setUtilityTokenFeed(
+      _utilityTokenFeed: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setUtilityTokenFeed(address)"(
+      _utilityTokenFeed: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     setXTokenWrapper(
       _xTokenWrapper: string,
       overrides?: Overrides
@@ -654,15 +726,17 @@ export class BPoolProxy extends Contract {
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "smartSwapExactIn(address,address,uint256,uint256,uint256)"(
+    "smartSwapExactIn(address,address,uint256,uint256,uint256,bool)"(
       tokenIn: string,
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -672,15 +746,17 @@ export class BPoolProxy extends Contract {
       totalAmountOut: BigNumberish,
       maxTotalAmountIn: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "smartSwapExactOut(address,address,uint256,uint256,uint256)"(
+    "smartSwapExactOut(address,address,uint256,uint256,uint256,bool)"(
       tokenIn: string,
       tokenOut: string,
       totalAmountOut: BigNumberish,
       maxTotalAmountIn: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -703,6 +779,14 @@ export class BPoolProxy extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    utilityToken(overrides?: CallOverrides): Promise<[string]>;
+
+    "utilityToken()"(overrides?: CallOverrides): Promise<[string]>;
+
+    utilityTokenFeed(overrides?: CallOverrides): Promise<[string]>;
+
+    "utilityTokenFeed()"(overrides?: CallOverrides): Promise<[string]>;
 
     viewSplitExactIn(
       tokenIn: string,
@@ -842,10 +926,11 @@ export class BPoolProxy extends Contract {
     tokenOut: string,
     totalAmountIn: BigNumberish,
     minTotalAmountOut: BigNumberish,
+    useUtilityToken: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "batchSwapExactIn(tuple[],address,address,uint256,uint256)"(
+  "batchSwapExactIn(tuple[],address,address,uint256,uint256,bool)"(
     swaps: {
       pool: string;
       tokenIn: string;
@@ -858,6 +943,7 @@ export class BPoolProxy extends Contract {
     tokenOut: string,
     totalAmountIn: BigNumberish,
     minTotalAmountOut: BigNumberish,
+    useUtilityToken: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -873,10 +959,11 @@ export class BPoolProxy extends Contract {
     tokenIn: string,
     tokenOut: string,
     maxTotalAmountIn: BigNumberish,
+    useUtilityToken: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "batchSwapExactOut(tuple[],address,address,uint256)"(
+  "batchSwapExactOut(tuple[],address,address,uint256,bool)"(
     swaps: {
       pool: string;
       tokenIn: string;
@@ -888,6 +975,7 @@ export class BPoolProxy extends Contract {
     tokenIn: string,
     tokenOut: string,
     maxTotalAmountIn: BigNumberish,
+    useUtilityToken: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -1000,10 +1088,11 @@ export class BPoolProxy extends Contract {
     tokenOut: string,
     totalAmountIn: BigNumberish,
     minTotalAmountOut: BigNumberish,
+    useUtilityToken: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "multihopBatchSwapExactIn(tuple[][],address,address,uint256,uint256)"(
+  "multihopBatchSwapExactIn(tuple[][],address,address,uint256,uint256,bool)"(
     swapSequences: {
       pool: string;
       tokenIn: string;
@@ -1016,6 +1105,7 @@ export class BPoolProxy extends Contract {
     tokenOut: string,
     totalAmountIn: BigNumberish,
     minTotalAmountOut: BigNumberish,
+    useUtilityToken: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -1031,10 +1121,11 @@ export class BPoolProxy extends Contract {
     tokenIn: string,
     tokenOut: string,
     maxTotalAmountIn: BigNumberish,
+    useUtilityToken: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "multihopBatchSwapExactOut(tuple[][],address,address,uint256)"(
+  "multihopBatchSwapExactOut(tuple[][],address,address,uint256,bool)"(
     swapSequences: {
       pool: string;
       tokenIn: string;
@@ -1046,6 +1137,7 @@ export class BPoolProxy extends Contract {
     tokenIn: string,
     tokenOut: string,
     maxTotalAmountIn: BigNumberish,
+    useUtilityToken: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -1131,6 +1223,26 @@ export class BPoolProxy extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  setUtilityToken(
+    _utilityToken: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setUtilityToken(address)"(
+    _utilityToken: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setUtilityTokenFeed(
+    _utilityTokenFeed: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setUtilityTokenFeed(address)"(
+    _utilityTokenFeed: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   setXTokenWrapper(
     _xTokenWrapper: string,
     overrides?: Overrides
@@ -1147,15 +1259,17 @@ export class BPoolProxy extends Contract {
     totalAmountIn: BigNumberish,
     minTotalAmountOut: BigNumberish,
     nPools: BigNumberish,
+    useUtilityToken: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "smartSwapExactIn(address,address,uint256,uint256,uint256)"(
+  "smartSwapExactIn(address,address,uint256,uint256,uint256,bool)"(
     tokenIn: string,
     tokenOut: string,
     totalAmountIn: BigNumberish,
     minTotalAmountOut: BigNumberish,
     nPools: BigNumberish,
+    useUtilityToken: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -1165,15 +1279,17 @@ export class BPoolProxy extends Contract {
     totalAmountOut: BigNumberish,
     maxTotalAmountIn: BigNumberish,
     nPools: BigNumberish,
+    useUtilityToken: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "smartSwapExactOut(address,address,uint256,uint256,uint256)"(
+  "smartSwapExactOut(address,address,uint256,uint256,uint256,bool)"(
     tokenIn: string,
     tokenOut: string,
     totalAmountOut: BigNumberish,
     maxTotalAmountIn: BigNumberish,
     nPools: BigNumberish,
+    useUtilityToken: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -1196,6 +1312,14 @@ export class BPoolProxy extends Contract {
     newOwner: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  utilityToken(overrides?: CallOverrides): Promise<string>;
+
+  "utilityToken()"(overrides?: CallOverrides): Promise<string>;
+
+  utilityTokenFeed(overrides?: CallOverrides): Promise<string>;
+
+  "utilityTokenFeed()"(overrides?: CallOverrides): Promise<string>;
 
   viewSplitExactIn(
     tokenIn: string,
@@ -1335,10 +1459,11 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "batchSwapExactIn(tuple[],address,address,uint256,uint256)"(
+    "batchSwapExactIn(tuple[],address,address,uint256,uint256,bool)"(
       swaps: {
         pool: string;
         tokenIn: string;
@@ -1351,6 +1476,7 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1366,10 +1492,11 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "batchSwapExactOut(tuple[],address,address,uint256)"(
+    "batchSwapExactOut(tuple[],address,address,uint256,bool)"(
       swaps: {
         pool: string;
         tokenIn: string;
@@ -1381,6 +1508,7 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1493,10 +1621,11 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "multihopBatchSwapExactIn(tuple[][],address,address,uint256,uint256)"(
+    "multihopBatchSwapExactIn(tuple[][],address,address,uint256,uint256,bool)"(
       swapSequences: {
         pool: string;
         tokenIn: string;
@@ -1509,6 +1638,7 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1524,10 +1654,11 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "multihopBatchSwapExactOut(tuple[][],address,address,uint256)"(
+    "multihopBatchSwapExactOut(tuple[][],address,address,uint256,bool)"(
       swapSequences: {
         pool: string;
         tokenIn: string;
@@ -1539,6 +1670,7 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1621,6 +1753,26 @@ export class BPoolProxy extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setUtilityToken(
+      _utilityToken: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setUtilityToken(address)"(
+      _utilityToken: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setUtilityTokenFeed(
+      _utilityTokenFeed: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setUtilityTokenFeed(address)"(
+      _utilityTokenFeed: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setXTokenWrapper(
       _xTokenWrapper: string,
       overrides?: CallOverrides
@@ -1637,15 +1789,17 @@ export class BPoolProxy extends Contract {
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "smartSwapExactIn(address,address,uint256,uint256,uint256)"(
+    "smartSwapExactIn(address,address,uint256,uint256,uint256,bool)"(
       tokenIn: string,
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1655,15 +1809,17 @@ export class BPoolProxy extends Contract {
       totalAmountOut: BigNumberish,
       maxTotalAmountIn: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "smartSwapExactOut(address,address,uint256,uint256,uint256)"(
+    "smartSwapExactOut(address,address,uint256,uint256,uint256,bool)"(
       tokenIn: string,
       tokenOut: string,
       totalAmountOut: BigNumberish,
       maxTotalAmountIn: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1686,6 +1842,14 @@ export class BPoolProxy extends Contract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    utilityToken(overrides?: CallOverrides): Promise<string>;
+
+    "utilityToken()"(overrides?: CallOverrides): Promise<string>;
+
+    utilityTokenFeed(overrides?: CallOverrides): Promise<string>;
+
+    "utilityTokenFeed()"(overrides?: CallOverrides): Promise<string>;
 
     viewSplitExactIn(
       tokenIn: string,
@@ -1824,6 +1988,10 @@ export class BPoolProxy extends Contract {
 
     RegistrySetted(registry: null): EventFilter;
 
+    UtilityTokenFeedSetted(utilityTokenFeed: null): EventFilter;
+
+    UtilityTokenSetted(utilityToken: null): EventFilter;
+
     XTokenWrapperSetted(xTokenWrapper: null): EventFilter;
   };
 
@@ -1841,10 +2009,11 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "batchSwapExactIn(tuple[],address,address,uint256,uint256)"(
+    "batchSwapExactIn(tuple[],address,address,uint256,uint256,bool)"(
       swaps: {
         pool: string;
         tokenIn: string;
@@ -1857,6 +2026,7 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -1872,10 +2042,11 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "batchSwapExactOut(tuple[],address,address,uint256)"(
+    "batchSwapExactOut(tuple[],address,address,uint256,bool)"(
       swaps: {
         pool: string;
         tokenIn: string;
@@ -1887,6 +2058,7 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -1999,10 +2171,11 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "multihopBatchSwapExactIn(tuple[][],address,address,uint256,uint256)"(
+    "multihopBatchSwapExactIn(tuple[][],address,address,uint256,uint256,bool)"(
       swapSequences: {
         pool: string;
         tokenIn: string;
@@ -2015,6 +2188,7 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -2030,10 +2204,11 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "multihopBatchSwapExactOut(tuple[][],address,address,uint256)"(
+    "multihopBatchSwapExactOut(tuple[][],address,address,uint256,bool)"(
       swapSequences: {
         pool: string;
         tokenIn: string;
@@ -2045,6 +2220,7 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -2127,6 +2303,26 @@ export class BPoolProxy extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    setUtilityToken(
+      _utilityToken: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setUtilityToken(address)"(
+      _utilityToken: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setUtilityTokenFeed(
+      _utilityTokenFeed: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setUtilityTokenFeed(address)"(
+      _utilityTokenFeed: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     setXTokenWrapper(
       _xTokenWrapper: string,
       overrides?: Overrides
@@ -2143,15 +2339,17 @@ export class BPoolProxy extends Contract {
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "smartSwapExactIn(address,address,uint256,uint256,uint256)"(
+    "smartSwapExactIn(address,address,uint256,uint256,uint256,bool)"(
       tokenIn: string,
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -2161,15 +2359,17 @@ export class BPoolProxy extends Contract {
       totalAmountOut: BigNumberish,
       maxTotalAmountIn: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "smartSwapExactOut(address,address,uint256,uint256,uint256)"(
+    "smartSwapExactOut(address,address,uint256,uint256,uint256,bool)"(
       tokenIn: string,
       tokenOut: string,
       totalAmountOut: BigNumberish,
       maxTotalAmountIn: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -2192,6 +2392,14 @@ export class BPoolProxy extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    utilityToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "utilityToken()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    utilityTokenFeed(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "utilityTokenFeed()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     viewSplitExactIn(
       tokenIn: string,
@@ -2244,10 +2452,11 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "batchSwapExactIn(tuple[],address,address,uint256,uint256)"(
+    "batchSwapExactIn(tuple[],address,address,uint256,uint256,bool)"(
       swaps: {
         pool: string;
         tokenIn: string;
@@ -2260,6 +2469,7 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -2275,10 +2485,11 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "batchSwapExactOut(tuple[],address,address,uint256)"(
+    "batchSwapExactOut(tuple[],address,address,uint256,bool)"(
       swaps: {
         pool: string;
         tokenIn: string;
@@ -2290,6 +2501,7 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -2402,10 +2614,11 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "multihopBatchSwapExactIn(tuple[][],address,address,uint256,uint256)"(
+    "multihopBatchSwapExactIn(tuple[][],address,address,uint256,uint256,bool)"(
       swapSequences: {
         pool: string;
         tokenIn: string;
@@ -2418,6 +2631,7 @@ export class BPoolProxy extends Contract {
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -2433,10 +2647,11 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "multihopBatchSwapExactOut(tuple[][],address,address,uint256)"(
+    "multihopBatchSwapExactOut(tuple[][],address,address,uint256,bool)"(
       swapSequences: {
         pool: string;
         tokenIn: string;
@@ -2448,6 +2663,7 @@ export class BPoolProxy extends Contract {
       tokenIn: string,
       tokenOut: string,
       maxTotalAmountIn: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -2533,6 +2749,26 @@ export class BPoolProxy extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    setUtilityToken(
+      _utilityToken: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setUtilityToken(address)"(
+      _utilityToken: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setUtilityTokenFeed(
+      _utilityTokenFeed: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setUtilityTokenFeed(address)"(
+      _utilityTokenFeed: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     setXTokenWrapper(
       _xTokenWrapper: string,
       overrides?: Overrides
@@ -2549,15 +2785,17 @@ export class BPoolProxy extends Contract {
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "smartSwapExactIn(address,address,uint256,uint256,uint256)"(
+    "smartSwapExactIn(address,address,uint256,uint256,uint256,bool)"(
       tokenIn: string,
       tokenOut: string,
       totalAmountIn: BigNumberish,
       minTotalAmountOut: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -2567,15 +2805,17 @@ export class BPoolProxy extends Contract {
       totalAmountOut: BigNumberish,
       maxTotalAmountIn: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "smartSwapExactOut(address,address,uint256,uint256,uint256)"(
+    "smartSwapExactOut(address,address,uint256,uint256,uint256,bool)"(
       tokenIn: string,
       tokenOut: string,
       totalAmountOut: BigNumberish,
       maxTotalAmountIn: BigNumberish,
       nPools: BigNumberish,
+      useUtilityToken: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -2597,6 +2837,16 @@ export class BPoolProxy extends Contract {
     "transferOwnership(address)"(
       newOwner: string,
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    utilityToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "utilityToken()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    utilityTokenFeed(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "utilityTokenFeed()"(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     viewSplitExactIn(
