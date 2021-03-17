@@ -3,6 +3,7 @@ pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC1155/ERC1155Holder.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 import "./IXToken.sol";
@@ -15,7 +16,7 @@ import "hardhat/console.sol";
  * @dev Contract module which provides an functionality for wrapping tokens into the corresponding XToken.
  *
  */
-contract XTokenWrapper is AccessControl {
+contract XTokenWrapper is AccessControl, ERC1155Holder {
     using SafeERC20 for IERC20;
 
     address public constant ETH_TOKEN_ADDRESS = address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
@@ -103,8 +104,6 @@ contract XTokenWrapper is AccessControl {
 
         require(amount > 0, "amount to wrap should be positive");
 
-        // Mint - if user is calling this through its CPK then the xTokens are sended to the CPK
-        // but user address is used for authorizing the operation
         IXToken(xTokenAddress).mint(_msgSender(), amount);
 
         return true;
@@ -126,8 +125,6 @@ contract XTokenWrapper is AccessControl {
         require(tokenAddress != address(0), "xToken is not registered");
         require(_amount > 0, "amount to wrap should be positive");
 
-        // BurnFrom - if user is calling this through its CPK then the xTokens are burned from the CPK
-        // but user address is used for authorizing the operation
         IXToken(_xToken).burnFrom(_msgSender(), _amount);
 
         if (tokenAddress != ETH_TOKEN_ADDRESS) {

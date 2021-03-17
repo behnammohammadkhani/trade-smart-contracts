@@ -23,6 +23,19 @@ export class PermissionManagerStorage__factory {
 const _abi = [
   {
     inputs: [],
+    name: "PROTOCOL_CONTRACT",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "REJECTED_ID",
     outputs: [
       {

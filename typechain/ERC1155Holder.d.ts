@@ -14,22 +14,17 @@ import {
   Contract,
   ContractTransaction,
   Overrides,
-  PayableOverrides,
   CallOverrides,
 } from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
-interface XTokenWrapperMockInterface extends ethers.utils.Interface {
+interface ERC1155HolderInterface extends ethers.utils.Interface {
   functions: {
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "unwrap(address,uint256)": FunctionFragment;
-    "wrap(address,uint256)": FunctionFragment;
-    "xToken()": FunctionFragment;
-    "xTokenToToken(address)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -44,19 +39,6 @@ interface XTokenWrapperMockInterface extends ethers.utils.Interface {
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "unwrap",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "wrap",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "xToken", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "xTokenToToken",
-    values: [string]
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "onERC1155BatchReceived",
@@ -70,18 +52,11 @@ interface XTokenWrapperMockInterface extends ethers.utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "unwrap", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "wrap", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "xToken", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "xTokenToToken",
-    data: BytesLike
-  ): Result;
 
   events: {};
 }
 
-export class XTokenWrapperMock extends Contract {
+export class ERC1155Holder extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -92,7 +67,7 @@ export class XTokenWrapperMock extends Contract {
   removeAllListeners(eventName: EventFilter | string): this;
   removeListener(eventName: any, listener: Listener): this;
 
-  interface: XTokenWrapperMockInterface;
+  interface: ERC1155HolderInterface;
 
   functions: {
     onERC1155BatchReceived(
@@ -140,44 +115,6 @@ export class XTokenWrapperMock extends Contract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    unwrap(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: PayableOverrides
-    ): Promise<ContractTransaction>;
-
-    "unwrap(address,uint256)"(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: PayableOverrides
-    ): Promise<ContractTransaction>;
-
-    wrap(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: PayableOverrides
-    ): Promise<ContractTransaction>;
-
-    "wrap(address,uint256)"(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: PayableOverrides
-    ): Promise<ContractTransaction>;
-
-    xToken(overrides?: CallOverrides): Promise<[string]>;
-
-    "xToken()"(overrides?: CallOverrides): Promise<[string]>;
-
-    xTokenToToken(
-      xToken: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "xTokenToToken(address)"(
-      xToken: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
   };
 
   onERC1155BatchReceived(
@@ -226,44 +163,6 @@ export class XTokenWrapperMock extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  unwrap(
-    _xToken: string,
-    _amount: BigNumberish,
-    overrides?: PayableOverrides
-  ): Promise<ContractTransaction>;
-
-  "unwrap(address,uint256)"(
-    _xToken: string,
-    _amount: BigNumberish,
-    overrides?: PayableOverrides
-  ): Promise<ContractTransaction>;
-
-  wrap(
-    _xToken: string,
-    _amount: BigNumberish,
-    overrides?: PayableOverrides
-  ): Promise<ContractTransaction>;
-
-  "wrap(address,uint256)"(
-    _xToken: string,
-    _amount: BigNumberish,
-    overrides?: PayableOverrides
-  ): Promise<ContractTransaction>;
-
-  xToken(overrides?: CallOverrides): Promise<string>;
-
-  "xToken()"(overrides?: CallOverrides): Promise<string>;
-
-  xTokenToToken(
-    xToken: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "xTokenToToken(address)"(
-    xToken: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
   callStatic: {
     onERC1155BatchReceived(
       arg0: string,
@@ -310,41 +209,6 @@ export class XTokenWrapperMock extends Contract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    unwrap(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "unwrap(address,uint256)"(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    wrap(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "wrap(address,uint256)"(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    xToken(overrides?: CallOverrides): Promise<string>;
-
-    "xToken()"(overrides?: CallOverrides): Promise<string>;
-
-    xTokenToToken(xToken: string, overrides?: CallOverrides): Promise<string>;
-
-    "xTokenToToken(address)"(
-      xToken: string,
-      overrides?: CallOverrides
-    ): Promise<string>;
   };
 
   filters: {};
@@ -395,41 +259,6 @@ export class XTokenWrapperMock extends Contract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    unwrap(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: PayableOverrides
-    ): Promise<BigNumber>;
-
-    "unwrap(address,uint256)"(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: PayableOverrides
-    ): Promise<BigNumber>;
-
-    wrap(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: PayableOverrides
-    ): Promise<BigNumber>;
-
-    "wrap(address,uint256)"(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: PayableOverrides
-    ): Promise<BigNumber>;
-
-    xToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "xToken()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    xTokenToToken(xToken: string, overrides?: Overrides): Promise<BigNumber>;
-
-    "xTokenToToken(address)"(
-      xToken: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -477,44 +306,6 @@ export class XTokenWrapperMock extends Contract {
     "supportsInterface(bytes4)"(
       interfaceId: BytesLike,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    unwrap(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: PayableOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "unwrap(address,uint256)"(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: PayableOverrides
-    ): Promise<PopulatedTransaction>;
-
-    wrap(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: PayableOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "wrap(address,uint256)"(
-      _xToken: string,
-      _amount: BigNumberish,
-      overrides?: PayableOverrides
-    ): Promise<PopulatedTransaction>;
-
-    xToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "xToken()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    xTokenToToken(
-      xToken: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "xTokenToToken(address)"(
-      xToken: string,
-      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };
 }

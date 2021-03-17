@@ -27,26 +27,31 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     "ERC20_MINT()": FunctionFragment;
     "ERC20_TRANSFER()": FunctionFragment;
     "ERC20_TRANSFER_FROM()": FunctionFragment;
+    "PROTOCOL_CONTRACT()": FunctionFragment;
     "REJECTED_ID()": FunctionFragment;
     "SUSPENDED_ID()": FunctionFragment;
     "TIER_1_ID()": FunctionFragment;
     "TIER_2_ID()": FunctionFragment;
     "eurPriceFeed()": FunctionFragment;
-    "initialize(address,address,address,uint256,bool)": FunctionFragment;
+    "initialize(address,address,address,address,address,uint256,bool)": FunctionFragment;
     "isAuthorized(address,address,bytes4,bytes)": FunctionFragment;
     "operationsRegistry()": FunctionFragment;
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "permissions()": FunctionFragment;
+    "poolFactory()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setEurPriceFeed(address)": FunctionFragment;
     "setOperationsRegistry(address)": FunctionFragment;
     "setPermissions(address)": FunctionFragment;
+    "setPoolFactory(address)": FunctionFragment;
     "setTradingLimint(uint256)": FunctionFragment;
+    "setXTokenWrapper(address)": FunctionFragment;
     "tradingLimit()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpause()": FunctionFragment;
+    "xTokenWrapper()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -70,6 +75,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "PROTOCOL_CONTRACT",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "REJECTED_ID",
     values?: undefined
   ): string;
@@ -85,7 +94,7 @@ interface AuthorizationInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, string, BigNumberish, boolean]
+    values: [string, string, string, string, string, BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "isAuthorized",
@@ -100,6 +109,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "permissions",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "poolFactory",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -119,8 +132,16 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "setPoolFactory",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setTradingLimint",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setXTokenWrapper",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "tradingLimit",
@@ -131,6 +152,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "xTokenWrapper",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "ERC20_APPROVE",
@@ -147,6 +172,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "ERC20_TRANSFER_FROM",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "PROTOCOL_CONTRACT",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -180,6 +209,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "poolFactory",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
@@ -196,7 +229,15 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setPoolFactory",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setTradingLimint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setXTokenWrapper",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -208,6 +249,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "xTokenWrapper",
+    data: BytesLike
+  ): Result;
 
   events: {
     "EurPriceFeedSetted(address)": EventFragment;
@@ -215,8 +260,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "PermissionsSetted(address)": EventFragment;
+    "PoolFactorySetted(address)": EventFragment;
     "TradingLimitSetted(uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
+    "XTokenWrapperSetted(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "EurPriceFeedSetted"): EventFragment;
@@ -224,8 +271,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PermissionsSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PoolFactorySetted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TradingLimitSetted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "XTokenWrapperSetted"): EventFragment;
 }
 
 export class Authorization extends Contract {
@@ -262,6 +311,10 @@ export class Authorization extends Contract {
 
     "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<[string]>;
 
+    PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "PROTOCOL_CONTRACT()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     REJECTED_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "REJECTED_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -286,15 +339,19 @@ export class Authorization extends Contract {
       _permissions: string,
       _eurPriceFeed: string,
       _operationsRegistry: string,
+      _poolFactory: string,
+      _xTokenWrapper: string,
       _tradingLimit: BigNumberish,
       _paused: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "initialize(address,address,address,uint256,bool)"(
+    "initialize(address,address,address,address,address,uint256,bool)"(
       _permissions: string,
       _eurPriceFeed: string,
       _operationsRegistry: string,
+      _poolFactory: string,
+      _xTokenWrapper: string,
       _tradingLimit: BigNumberish,
       _paused: boolean,
       overrides?: Overrides
@@ -336,6 +393,10 @@ export class Authorization extends Contract {
 
     "permissions()"(overrides?: CallOverrides): Promise<[string]>;
 
+    poolFactory(overrides?: CallOverrides): Promise<[string]>;
+
+    "poolFactory()"(overrides?: CallOverrides): Promise<[string]>;
+
     renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
 
     "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
@@ -370,6 +431,16 @@ export class Authorization extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    setPoolFactory(
+      _poolFactory: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setPoolFactory(address)"(
+      _poolFactory: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     setTradingLimint(
       _tradingLimit: BigNumberish,
       overrides?: Overrides
@@ -377,6 +448,16 @@ export class Authorization extends Contract {
 
     "setTradingLimint(uint256)"(
       _tradingLimit: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -397,6 +478,10 @@ export class Authorization extends Contract {
     unpause(overrides?: Overrides): Promise<ContractTransaction>;
 
     "unpause()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    xTokenWrapper(overrides?: CallOverrides): Promise<[string]>;
+
+    "xTokenWrapper()"(overrides?: CallOverrides): Promise<[string]>;
   };
 
   ERC20_APPROVE(overrides?: CallOverrides): Promise<string>;
@@ -418,6 +503,10 @@ export class Authorization extends Contract {
   ERC20_TRANSFER_FROM(overrides?: CallOverrides): Promise<string>;
 
   "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<string>;
+
+  PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "PROTOCOL_CONTRACT()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   REJECTED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -443,15 +532,19 @@ export class Authorization extends Contract {
     _permissions: string,
     _eurPriceFeed: string,
     _operationsRegistry: string,
+    _poolFactory: string,
+    _xTokenWrapper: string,
     _tradingLimit: BigNumberish,
     _paused: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "initialize(address,address,address,uint256,bool)"(
+  "initialize(address,address,address,address,address,uint256,bool)"(
     _permissions: string,
     _eurPriceFeed: string,
     _operationsRegistry: string,
+    _poolFactory: string,
+    _xTokenWrapper: string,
     _tradingLimit: BigNumberish,
     _paused: boolean,
     overrides?: Overrides
@@ -493,6 +586,10 @@ export class Authorization extends Contract {
 
   "permissions()"(overrides?: CallOverrides): Promise<string>;
 
+  poolFactory(overrides?: CallOverrides): Promise<string>;
+
+  "poolFactory()"(overrides?: CallOverrides): Promise<string>;
+
   renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
 
   "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
@@ -527,6 +624,16 @@ export class Authorization extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  setPoolFactory(
+    _poolFactory: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setPoolFactory(address)"(
+    _poolFactory: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   setTradingLimint(
     _tradingLimit: BigNumberish,
     overrides?: Overrides
@@ -534,6 +641,16 @@ export class Authorization extends Contract {
 
   "setTradingLimint(uint256)"(
     _tradingLimit: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setXTokenWrapper(
+    _xTokenWrapper: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setXTokenWrapper(address)"(
+    _xTokenWrapper: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -555,6 +672,10 @@ export class Authorization extends Contract {
 
   "unpause()"(overrides?: Overrides): Promise<ContractTransaction>;
 
+  xTokenWrapper(overrides?: CallOverrides): Promise<string>;
+
+  "xTokenWrapper()"(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     ERC20_APPROVE(overrides?: CallOverrides): Promise<string>;
 
@@ -575,6 +696,10 @@ export class Authorization extends Contract {
     ERC20_TRANSFER_FROM(overrides?: CallOverrides): Promise<string>;
 
     "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<string>;
+
+    PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "PROTOCOL_CONTRACT()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     REJECTED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -600,15 +725,19 @@ export class Authorization extends Contract {
       _permissions: string,
       _eurPriceFeed: string,
       _operationsRegistry: string,
+      _poolFactory: string,
+      _xTokenWrapper: string,
       _tradingLimit: BigNumberish,
       _paused: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "initialize(address,address,address,uint256,bool)"(
+    "initialize(address,address,address,address,address,uint256,bool)"(
       _permissions: string,
       _eurPriceFeed: string,
       _operationsRegistry: string,
+      _poolFactory: string,
+      _xTokenWrapper: string,
       _tradingLimit: BigNumberish,
       _paused: boolean,
       overrides?: CallOverrides
@@ -650,6 +779,10 @@ export class Authorization extends Contract {
 
     "permissions()"(overrides?: CallOverrides): Promise<string>;
 
+    poolFactory(overrides?: CallOverrides): Promise<string>;
+
+    "poolFactory()"(overrides?: CallOverrides): Promise<string>;
+
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     "renounceOwnership()"(overrides?: CallOverrides): Promise<void>;
@@ -684,6 +817,16 @@ export class Authorization extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    setPoolFactory(
+      _poolFactory: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "setPoolFactory(address)"(
+      _poolFactory: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     setTradingLimint(
       _tradingLimit: BigNumberish,
       overrides?: CallOverrides
@@ -691,6 +834,16 @@ export class Authorization extends Contract {
 
     "setTradingLimint(uint256)"(
       _tradingLimit: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -711,6 +864,10 @@ export class Authorization extends Contract {
     unpause(overrides?: CallOverrides): Promise<void>;
 
     "unpause()"(overrides?: CallOverrides): Promise<void>;
+
+    xTokenWrapper(overrides?: CallOverrides): Promise<string>;
+
+    "xTokenWrapper()"(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -727,9 +884,13 @@ export class Authorization extends Contract {
 
     PermissionsSetted(newPermissions: string | null): EventFilter;
 
+    PoolFactorySetted(poolFactory: string | null): EventFilter;
+
     TradingLimitSetted(newLimit: null): EventFilter;
 
     Unpaused(account: null): EventFilter;
+
+    XTokenWrapperSetted(xTokenWrapper: string | null): EventFilter;
   };
 
   estimateGas: {
@@ -752,6 +913,10 @@ export class Authorization extends Contract {
     ERC20_TRANSFER_FROM(overrides?: CallOverrides): Promise<BigNumber>;
 
     "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "PROTOCOL_CONTRACT()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     REJECTED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -777,15 +942,19 @@ export class Authorization extends Contract {
       _permissions: string,
       _eurPriceFeed: string,
       _operationsRegistry: string,
+      _poolFactory: string,
+      _xTokenWrapper: string,
       _tradingLimit: BigNumberish,
       _paused: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "initialize(address,address,address,uint256,bool)"(
+    "initialize(address,address,address,address,address,uint256,bool)"(
       _permissions: string,
       _eurPriceFeed: string,
       _operationsRegistry: string,
+      _poolFactory: string,
+      _xTokenWrapper: string,
       _tradingLimit: BigNumberish,
       _paused: boolean,
       overrides?: Overrides
@@ -827,6 +996,10 @@ export class Authorization extends Contract {
 
     "permissions()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    poolFactory(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "poolFactory()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     renounceOwnership(overrides?: Overrides): Promise<BigNumber>;
 
     "renounceOwnership()"(overrides?: Overrides): Promise<BigNumber>;
@@ -861,6 +1034,16 @@ export class Authorization extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    setPoolFactory(
+      _poolFactory: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setPoolFactory(address)"(
+      _poolFactory: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     setTradingLimint(
       _tradingLimit: BigNumberish,
       overrides?: Overrides
@@ -868,6 +1051,16 @@ export class Authorization extends Contract {
 
     "setTradingLimint(uint256)"(
       _tradingLimit: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -888,6 +1081,10 @@ export class Authorization extends Contract {
     unpause(overrides?: Overrides): Promise<BigNumber>;
 
     "unpause()"(overrides?: Overrides): Promise<BigNumber>;
+
+    xTokenWrapper(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "xTokenWrapper()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -919,6 +1116,12 @@ export class Authorization extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "PROTOCOL_CONTRACT()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     REJECTED_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "REJECTED_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -943,15 +1146,19 @@ export class Authorization extends Contract {
       _permissions: string,
       _eurPriceFeed: string,
       _operationsRegistry: string,
+      _poolFactory: string,
+      _xTokenWrapper: string,
       _tradingLimit: BigNumberish,
       _paused: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "initialize(address,address,address,uint256,bool)"(
+    "initialize(address,address,address,address,address,uint256,bool)"(
       _permissions: string,
       _eurPriceFeed: string,
       _operationsRegistry: string,
+      _poolFactory: string,
+      _xTokenWrapper: string,
       _tradingLimit: BigNumberish,
       _paused: boolean,
       overrides?: Overrides
@@ -997,6 +1204,10 @@ export class Authorization extends Contract {
 
     "permissions()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    poolFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "poolFactory()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     renounceOwnership(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "renounceOwnership()"(overrides?: Overrides): Promise<PopulatedTransaction>;
@@ -1031,6 +1242,16 @@ export class Authorization extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    setPoolFactory(
+      _poolFactory: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setPoolFactory(address)"(
+      _poolFactory: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     setTradingLimint(
       _tradingLimit: BigNumberish,
       overrides?: Overrides
@@ -1038,6 +1259,16 @@ export class Authorization extends Contract {
 
     "setTradingLimint(uint256)"(
       _tradingLimit: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -1058,5 +1289,9 @@ export class Authorization extends Contract {
     unpause(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "unpause()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    xTokenWrapper(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "xTokenWrapper()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

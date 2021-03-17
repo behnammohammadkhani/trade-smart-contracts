@@ -8,6 +8,7 @@ import {
   OperationsRegistry,
   XTokenWrapperMock,
   XToken,
+  BFactoryMock,
 } from '../typechain';
 import Reverter from './utils/reverter';
 
@@ -36,6 +37,7 @@ let permissionsContract: PermissionsMock;
 let authorizationContract: Authorization;
 let authorizationContractKakaroto: Authorization;
 let operationsRegistryContract: OperationsRegistry;
+let bFactoryContract: BFactoryMock;
 
 const tradingLimit = ethers.constants.One.mul(5000);
 
@@ -57,6 +59,7 @@ describe('Authorization', function () {
     const EurPriceFeed = await ethers.getContractFactory('EurPriceFeedMock');
     const OperationsRegistry = await ethers.getContractFactory('OperationsRegistry');
     const XTokenWrapperFactory = await ethers.getContractFactory('XTokenWrapperMock');
+    const BFactoryMockFactory = await ethers.getContractFactory('BFactoryMock');
 
     eurPriceFeedContract = (await EurPriceFeed.deploy()) as EurPriceFeedMock;
     await eurPriceFeedContract.deployed();
@@ -70,10 +73,18 @@ describe('Authorization', function () {
     await (await operationsRegistryContract.setAssetsManager(deployerAddress)).wait();
     await (await operationsRegistryContract.setFeedManager(deployerAddress)).wait();
 
+    xTokenWrapperMockContract = (await XTokenWrapperFactory.deploy()) as XTokenWrapperMock;
+    await xTokenWrapperMockContract.deployed();
+
+    bFactoryContract = (await BFactoryMockFactory.deploy()) as BFactoryMock;
+    await bFactoryContract.deployed();
+
     authorizationContract = (await upgrades.deployProxy(Authorization, [
       permissionsContract.address,
       eurPriceFeedContract.address,
       operationsRegistryContract.address,
+      bFactoryContract.address,
+      xTokenWrapperMockContract.address,
       tradingLimit,
       false,
     ])) as Authorization;
@@ -96,9 +107,6 @@ describe('Authorization', function () {
     xTokenContractVegeta = xTokenContract.connect(vegeta);
     xTokenContractKarpincho = xTokenContract.connect(karpincho);
 
-    xTokenWrapperMockContract = (await XTokenWrapperFactory.deploy()) as XTokenWrapperMock;
-    await xTokenWrapperMockContract.deployed();
-
     await xTokenContract.setWrapper(xTokenWrapperMockContract.address);
 
     xTokenWrapperMockContractKakaroto = xTokenWrapperMockContract.connect(kakaroto);
@@ -115,6 +123,8 @@ describe('Authorization', function () {
           permissionsContract.address,
           eurPriceFeedContract.address,
           operationsRegistryContract.address,
+          bFactoryContract.address,
+          xTokenWrapperMockContract.address,
           tradingLimit,
           false,
         ),
@@ -126,6 +136,8 @@ describe('Authorization', function () {
       const permissionsAddress = await authorizationContract.permissions();
       const eurPriceFeedAddress = await authorizationContract.eurPriceFeed();
       const operationsRegistryAddress = await authorizationContract.operationsRegistry();
+      const poolFactoryAddress = await authorizationContract.poolFactory();
+      const xTokenWrapperAddress = await authorizationContract.xTokenWrapper();
       const tradingLimitValue = await authorizationContract.tradingLimit();
       const pausedValue = await authorizationContract.paused();
 
@@ -133,6 +145,8 @@ describe('Authorization', function () {
       expect(permissionsAddress).to.equal(permissionsContract.address);
       expect(eurPriceFeedAddress).to.equal(eurPriceFeedContract.address);
       expect(operationsRegistryAddress).to.equal(operationsRegistryContract.address);
+      expect(poolFactoryAddress).to.equal(bFactoryContract.address);
+      expect(xTokenWrapperAddress).to.equal(xTokenWrapperMockContract.address);
       expect(tradingLimitValue).to.equal(tradingLimit.toString());
       expect(pausedValue).to.equal(false);
     });
@@ -161,6 +175,18 @@ describe('Authorization', function () {
       ).to.be.revertedWith('Ownable: caller is not the owner');
     });
 
+    it('Should not allow to set pool factory address to non owner', async function () {
+      await expect(authorizationContractKakaroto.setPoolFactory(bFactoryContract.address)).to.be.revertedWith(
+        'Ownable: caller is not the owner',
+      );
+    });
+
+    it('Should not allow to set xTokenWrapper address to non owner', async function () {
+      await expect(
+        authorizationContractKakaroto.setXTokenWrapper(xTokenWrapperMockContract.address),
+      ).to.be.revertedWith('Ownable: caller is not the owner');
+    });
+
     it('Should not allow to set trading limit to non owner', async function () {
       await expect(authorizationContractKakaroto.setTradingLimint(tradingLimit)).to.be.revertedWith(
         'Ownable: caller is not the owner',
@@ -175,7 +201,7 @@ describe('Authorization', function () {
       await expect(authorizationContractKakaroto.unpause()).to.be.revertedWith('Ownable: caller is not the owner');
     });
 
-    it('Should allow to set permissinos address to owner', async function () {
+    it('Should allow to set permissions address to owner', async function () {
       const PermissionsMock = await ethers.getContractFactory('PermissionsMock');
       const newPermissionsContract = (await PermissionsMock.deploy('')) as PermissionsMock;
       await newPermissionsContract.deployed();
@@ -208,6 +234,28 @@ describe('Authorization', function () {
 
       const operationsRegistryAddress = await authorizationContract.operationsRegistry();
       expect(operationsRegistryAddress).to.equal(newOperationsRegistryContract.address);
+    });
+
+    it('Should allow to set pool factory address to owner', async function () {
+      const BFactoryMockFactrory = await ethers.getContractFactory('BFactoryMock');
+      const newPoolFactoryContract = (await BFactoryMockFactrory.deploy()) as BFactoryMock;
+      await newPoolFactoryContract.deployed();
+
+      await authorizationContract.setPoolFactory(newPoolFactoryContract.address);
+
+      const poolFactoryAddress = await authorizationContract.poolFactory();
+      expect(poolFactoryAddress).to.equal(newPoolFactoryContract.address);
+    });
+
+    it('Should allow to set xTokenWrapper address to owner', async function () {
+      const XTokenWrapperFactory = await ethers.getContractFactory('XTokenWrapperMock');
+      const newXTokenWrapperContract = (await XTokenWrapperFactory.deploy()) as XTokenWrapperMock;
+      await newXTokenWrapperContract.deployed();
+
+      await authorizationContract.setXTokenWrapper(newXTokenWrapperContract.address);
+
+      const xTokenWrapperAddress = await authorizationContract.xTokenWrapper();
+      expect(xTokenWrapperAddress).to.equal(newXTokenWrapperContract.address);
     });
 
     it('Should allow to set trading limit to owner', async function () {
@@ -262,6 +310,13 @@ describe('Authorization', function () {
 
     describe('Tier 0 User - Protocol Unpaused', () => {
       describe('ERC20 Operations', () => {
+        // zero amount operations
+        it('should allow zero amount operations', async () => {
+          await xTokenWrapperMockContractKarpincho.wrap(xTokenContract.address, 0);
+          await xTokenWrapperMockContractKarpincho.unwrap(xTokenContract.address, 0);
+          await xTokenContractKarpincho.transfer(deployerAddress, 0);
+          await xTokenContractKakaroto.transferFrom(karpinchoAddress, deployerAddress, 0);
+        });
         // mint
         it('should not be able to wrap', async () => {
           await expect(xTokenWrapperMockContractKarpincho.wrap(xTokenContract.address, 1)).to.be.revertedWith(
@@ -297,6 +352,13 @@ describe('Authorization', function () {
       describe('ERC20 Operations', () => {
         before(async () => {
           await reverter.revert();
+        });
+
+        it('should allow zero amount operations', async () => {
+          await xTokenWrapperMockContractKakaroto.wrap(xTokenContract.address, 0);
+          await xTokenWrapperMockContractKakaroto.unwrap(xTokenContract.address, 0);
+          await xTokenContractKakaroto.transfer(deployerAddress, 0);
+          await xTokenContractKarpincho.transferFrom(kakarotoAddress, deployerAddress, 0);
         });
 
         // mint
@@ -425,6 +487,13 @@ describe('Authorization', function () {
           await reverter.revert();
         });
 
+        it('should allow zero amount operations', async () => {
+          await xTokenWrapperMockContractVegeta.wrap(xTokenContract.address, 0);
+          await xTokenWrapperMockContractVegeta.unwrap(xTokenContract.address, 0);
+          await xTokenContractVegeta.transfer(deployerAddress, 0);
+          await xTokenContractKarpincho.transferFrom(vegetaAddress, deployerAddress, 0);
+        });
+
         // mint
         it('should be able to wrap less than the allowed limit', async () => {
           await xTokenWrapperMockContractVegeta.wrap(xTokenContract.address, '1');
@@ -545,6 +614,21 @@ describe('Authorization', function () {
           await authorizationContract.pause();
         });
 
+        it('should not allow zero amount operations', async () => {
+          await expect(xTokenWrapperMockContractKakaroto.wrap(xTokenContract.address, 0)).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+          await expect(xTokenWrapperMockContractKakaroto.unwrap(xTokenContract.address, 0)).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+          await expect(xTokenContractKakaroto.transfer(deployerAddress, 0)).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+          await expect(xTokenContractKarpincho.transferFrom(kakarotoAddress, deployerAddress, 0)).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+        });
+
         // mint
         it('should not be able to wrap', async () => {
           const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
@@ -601,6 +685,21 @@ describe('Authorization', function () {
           await xTokenContract.transfer(vegetaAddress, '1');
 
           await authorizationContract.pause();
+        });
+
+        it('should not allow zero amount operations', async () => {
+          await expect(xTokenWrapperMockContractVegeta.wrap(xTokenContract.address, 0)).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+          await expect(xTokenWrapperMockContractVegeta.unwrap(xTokenContract.address, 0)).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+          await expect(xTokenContractVegeta.transfer(deployerAddress, 0)).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
+          await expect(xTokenContractKarpincho.transferFrom(vegetaAddress, deployerAddress, 0)).to.be.revertedWith(
+            'Authorizable: not authorized',
+          );
         });
 
         // mint
@@ -660,6 +759,13 @@ describe('Authorization', function () {
           await xTokenContract.transfer(kakarotoAddress, '15');
 
           await permissionsContract.suspendUser(kakarotoAddress);
+        });
+
+        it('should allow zero amount operations', async () => {
+          await xTokenWrapperMockContractKakaroto.wrap(xTokenContract.address, 0);
+          await xTokenWrapperMockContractKakaroto.unwrap(xTokenContract.address, 0);
+          await xTokenContractKakaroto.transfer(deployerAddress, 0);
+          await xTokenContractKarpincho.transferFrom(kakarotoAddress, deployerAddress, 0);
         });
 
         // mint
@@ -744,6 +850,13 @@ describe('Authorization', function () {
           await xTokenContract.transfer(kakarotoAddress, '15');
 
           await permissionsContract.suspendUser(vegetaAddress);
+        });
+
+        it('should allow zero amount operations', async () => {
+          await xTokenWrapperMockContractVegeta.wrap(xTokenContract.address, 0);
+          await xTokenWrapperMockContractVegeta.unwrap(xTokenContract.address, 0);
+          await xTokenContractVegeta.transfer(deployerAddress, 0);
+          await xTokenContractKarpincho.transferFrom(vegetaAddress, deployerAddress, 0);
         });
 
         // mint
@@ -836,6 +949,13 @@ describe('Authorization', function () {
           await reverter.revert();
         });
 
+        it('should allow zero amount operations', async () => {
+          await xTokenWrapperMockContractKakaroto.wrap(xTokenContract.address, 0);
+          await xTokenWrapperMockContractKakaroto.unwrap(xTokenContract.address, 0);
+          await xTokenContractKakaroto.transfer(deployerAddress, 0);
+          await xTokenContractKarpincho.transferFrom(kakarotoAddress, deployerAddress, 0);
+        });
+
         // mint
         it('should not be able to wrap', async () => {
           const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
@@ -886,9 +1006,23 @@ describe('Authorization', function () {
         before(async () => {
           await reverter.revert();
 
+          await xTokenWrapperMockContract.wrap(xTokenContract.address, '30');
+          await xTokenContract.transfer(vegetaAddress, '15');
+
           await permissionsContract.rejectUser(vegetaAddress);
 
           await reverter.snapshot();
+        });
+
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should allow zero amount operations', async () => {
+          await xTokenWrapperMockContractVegeta.wrap(xTokenContract.address, 0);
+          await xTokenWrapperMockContractVegeta.unwrap(xTokenContract.address, 0);
+          await xTokenContractVegeta.transfer(deployerAddress, 0);
+          await xTokenContractKarpincho.transferFrom(vegetaAddress, deployerAddress, 0);
         });
 
         // mint
@@ -932,6 +1066,142 @@ describe('Authorization', function () {
 
           const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
           expect(vegetaBalance).to.equal(vegetaInitialBalance);
+        });
+      });
+    });
+
+    describe('xLPT', () => {
+      before(async () => {
+        await reverter.revert();
+
+        await permissionsContract.setAsProtocolContract(deployerAddress);
+        // await permissionsContract.setAsProtocolContract(xTokenWrapperMockContract.address);
+        await bFactoryContract.setIsBPoolAnswer(true);
+
+        expect(await bFactoryContract.isBPool(xTokenContract.address)).to.equal(true);
+
+        await reverter.snapshot();
+      });
+
+      describe('PROTOCOL_CONTRACT address', () => {
+        describe('ERC20 Operations', () => {
+          // mint
+          it('should be able to wrap unlimited LPT', async () => {
+            const deployerBallanceBefore = await xTokenContract.balanceOf(deployerAddress);
+            await xTokenWrapperMockContract.wrap(xTokenContract.address, tradingLimit.mul(100));
+            const deployerBallanceAfter = await xTokenContract.balanceOf(deployerAddress);
+
+            expect(deployerBallanceAfter).to.equal(deployerBallanceBefore.add(tradingLimit.mul(100)));
+          });
+
+          // transfer
+          it('should be able to transfer unlimited LPT', async () => {
+            const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+            const kakarotoInitialBalance = await xTokenContract.balanceOf(kakarotoAddress);
+            const karpinchoInitialBalance = await xTokenContract.balanceOf(karpinchoAddress);
+
+            await xTokenContract.transfer(vegetaAddress, '10000');
+            await xTokenContract.transfer(kakarotoAddress, '10000');
+            await xTokenContract.transfer(karpinchoAddress, '10000');
+
+            const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
+            const kakarotoBalance = await xTokenContract.balanceOf(kakarotoAddress);
+            const karpinchoBalance = await xTokenContract.balanceOf(karpinchoAddress);
+            expect(vegetaBalance).to.equal(vegetaInitialBalance.add('10000'));
+            expect(kakarotoBalance).to.equal(kakarotoInitialBalance.add('10000'));
+            expect(karpinchoBalance).to.equal(karpinchoInitialBalance.add('10000'));
+          });
+
+          // transferFrom
+          it('should be able to transferFrom unlimited LPT', async () => {
+            const vegetaInitialBalance = await xTokenContract.balanceOf(vegetaAddress);
+            await xTokenContractVegeta.approve(deployerAddress, '10000');
+
+            await xTokenContract.transferFrom(vegetaAddress, deployerAddress, '10000');
+
+            const vegetaBalance = await xTokenContract.balanceOf(vegetaAddress);
+
+            expect(vegetaBalance).to.equal(vegetaInitialBalance.sub('10000'));
+          });
+
+          // burn
+          it('should be able to burn unlimited LPT', async () => {
+            const delpoyerInitialBalance = await xTokenContract.balanceOf(deployerAddress);
+
+            await xTokenWrapperMockContract.unwrap(xTokenContract.address, delpoyerInitialBalance);
+
+            const delpoyerBalance = await xTokenContract.balanceOf(deployerAddress);
+
+            expect(delpoyerBalance).to.equal('0');
+          });
+        });
+      });
+
+      describe('NON PROTOCOL_CONTRACT address', () => {
+        describe('ERC20 Operations', () => {
+          before(async () => {
+            await reverter.revert();
+
+            await xTokenWrapperMockContract.wrap(xTokenContract.address, tradingLimit.mul(100));
+            await xTokenContract.transfer(vegetaAddress, '10000');
+
+            await xTokenContract.approve(vegetaAddress, '10000');
+            await xTokenContract.approve(kakarotoAddress, '10000');
+            await xTokenContract.approve(karpinchoAddress, '10000');
+
+            await reverter.snapshot();
+          });
+          // mint
+          it('should not be able to wrap xLPT', async () => {
+            await expect(xTokenWrapperMockContractVegeta.wrap(xTokenContract.address, 1)).to.be.revertedWith(
+              'Authorizable: not authorized',
+            );
+            await expect(xTokenWrapperMockContractKakaroto.wrap(xTokenContract.address, 1)).to.be.revertedWith(
+              'Authorizable: not authorized',
+            );
+            await expect(xTokenWrapperMockContractKarpincho.wrap(xTokenContract.address, 1)).to.be.revertedWith(
+              'Authorizable: not authorized',
+            );
+          });
+
+          // burn
+          it('should not be able to unwrap xLPT', async () => {
+            await expect(xTokenWrapperMockContractVegeta.unwrap(xTokenContract.address, 1)).to.be.revertedWith(
+              'Authorizable: not authorized',
+            );
+            await expect(xTokenWrapperMockContractKakaroto.unwrap(xTokenContract.address, 1)).to.be.revertedWith(
+              'Authorizable: not authorized',
+            );
+            await expect(xTokenWrapperMockContractKarpincho.unwrap(xTokenContract.address, 1)).to.be.revertedWith(
+              'Authorizable: not authorized',
+            );
+          });
+
+          // transfer
+          it('should not be able to transfer xLPT', async () => {
+            await expect(xTokenContractVegeta.transfer(deployerAddress, 1)).to.be.revertedWith(
+              'Authorizable: not authorized',
+            );
+            await expect(xTokenContractKakaroto.transfer(deployerAddress, 1)).to.be.revertedWith(
+              'Authorizable: not authorized',
+            );
+            await expect(xTokenContractKarpincho.transfer(deployerAddress, 1)).to.be.revertedWith(
+              'Authorizable: not authorized',
+            );
+          });
+
+          // transferFrom
+          it('should not be able to transferFrom xLPT', async () => {
+            await expect(xTokenContractVegeta.transferFrom(deployerAddress, deployerAddress, 1)).to.be.revertedWith(
+              'Authorizable: not authorized',
+            );
+            await expect(xTokenContractKakaroto.transferFrom(deployerAddress, deployerAddress, 1)).to.be.revertedWith(
+              'Authorizable: not authorized',
+            );
+            await expect(xTokenContractKakaroto.transferFrom(deployerAddress, deployerAddress, 1)).to.be.revertedWith(
+              'Authorizable: not authorized',
+            );
+          });
         });
       });
     });

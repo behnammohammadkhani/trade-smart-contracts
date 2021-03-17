@@ -24,9 +24,17 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
   functions: {
     "batchSwapExactIn(tuple[],address,address,uint256,uint256)": FunctionFragment;
     "batchSwapExactOut(tuple[],address,address,uint256)": FunctionFragment;
+    "exitPool(address,uint256,uint256[])": FunctionFragment;
+    "exitswapExternAmountOut(address,address,uint256,uint256)": FunctionFragment;
+    "exitswapPoolAmountIn(address,address,uint256,uint256)": FunctionFragment;
     "feeReceiver()": FunctionFragment;
+    "joinPool(address,uint256,uint256[])": FunctionFragment;
+    "joinswapExternAmountIn(address,address,uint256,uint256)": FunctionFragment;
+    "joinswapPoolAmountOut(address,address,uint256,uint256)": FunctionFragment;
     "multihopBatchSwapExactIn(tuple[][],address,address,uint256,uint256)": FunctionFragment;
     "multihopBatchSwapExactOut(tuple[][],address,address,uint256)": FunctionFragment;
+    "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
+    "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "protocolFee()": FunctionFragment;
     "registry()": FunctionFragment;
@@ -34,11 +42,14 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
     "setFeeReceiver(address)": FunctionFragment;
     "setProtocolFee(address)": FunctionFragment;
     "setRegistry(address)": FunctionFragment;
+    "setXTokenWrapper(address)": FunctionFragment;
     "smartSwapExactIn(address,address,uint256,uint256,uint256)": FunctionFragment;
     "smartSwapExactOut(address,address,uint256,uint256,uint256)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "viewSplitExactIn(address,address,uint256,uint256)": FunctionFragment;
     "viewSplitExactOut(address,address,uint256,uint256)": FunctionFragment;
+    "xTokenWrapper()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -75,8 +86,32 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "exitPool",
+    values: [string, BigNumberish, BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "exitswapExternAmountOut",
+    values: [string, string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "exitswapPoolAmountIn",
+    values: [string, string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "feeReceiver",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "joinPool",
+    values: [string, BigNumberish, BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "joinswapExternAmountIn",
+    values: [string, string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "joinswapPoolAmountOut",
+    values: [string, string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "multihopBatchSwapExactIn",
@@ -111,6 +146,14 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
       BigNumberish
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "onERC1155BatchReceived",
+    values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onERC1155Received",
+    values: [string, string, BigNumberish, BigNumberish, BytesLike]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "protocolFee",
@@ -131,12 +174,20 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "setRegistry", values: [string]): string;
   encodeFunctionData(
+    functionFragment: "setXTokenWrapper",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "smartSwapExactIn",
     values: [string, string, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "smartSwapExactOut",
     values: [string, string, BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -150,6 +201,10 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
     functionFragment: "viewSplitExactOut",
     values: [string, string, BigNumberish, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "xTokenWrapper",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "batchSwapExactIn",
@@ -159,8 +214,26 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
     functionFragment: "batchSwapExactOut",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "exitPool", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "exitswapExternAmountOut",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "exitswapPoolAmountIn",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "feeReceiver",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "joinPool", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "joinswapExternAmountIn",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "joinswapPoolAmountOut",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -169,6 +242,14 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "multihopBatchSwapExactOut",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "onERC1155BatchReceived",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "onERC1155Received",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -194,11 +275,19 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setXTokenWrapper",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "smartSwapExactIn",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "smartSwapExactOut",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -213,18 +302,24 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
     functionFragment: "viewSplitExactOut",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "xTokenWrapper",
+    data: BytesLike
+  ): Result;
 
   events: {
     "FeeReceiverSetted(address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "ProtocolFeeSetted(address)": EventFragment;
     "RegistrySetted(address)": EventFragment;
+    "XTokenWrapperSetted(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "FeeReceiverSetted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProtocolFeeSetted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RegistrySetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "XTokenWrapperSetted"): EventFragment;
 }
 
 export class BPoolProxy extends Contract {
@@ -303,9 +398,101 @@ export class BPoolProxy extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    exitPool(
+      pool: string,
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "exitPool(address,uint256,uint256[])"(
+      pool: string,
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    exitswapExternAmountOut(
+      pool: string,
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "exitswapExternAmountOut(address,address,uint256,uint256)"(
+      pool: string,
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    exitswapPoolAmountIn(
+      pool: string,
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "exitswapPoolAmountIn(address,address,uint256,uint256)"(
+      pool: string,
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     feeReceiver(overrides?: CallOverrides): Promise<[string]>;
 
     "feeReceiver()"(overrides?: CallOverrides): Promise<[string]>;
+
+    joinPool(
+      pool: string,
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "joinPool(address,uint256,uint256[])"(
+      pool: string,
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    joinswapExternAmountIn(
+      pool: string,
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "joinswapExternAmountIn(address,address,uint256,uint256)"(
+      pool: string,
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    joinswapPoolAmountOut(
+      pool: string,
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "joinswapPoolAmountOut(address,address,uint256,uint256)"(
+      pool: string,
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     multihopBatchSwapExactIn(
       swapSequences: {
@@ -369,6 +556,42 @@ export class BPoolProxy extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    onERC1155BatchReceived(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    onERC1155Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "onERC1155Received(address,address,uint256,uint256,bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     "owner()"(overrides?: CallOverrides): Promise<[string]>;
@@ -415,6 +638,16 @@ export class BPoolProxy extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     smartSwapExactIn(
       tokenIn: string,
       tokenOut: string,
@@ -450,6 +683,16 @@ export class BPoolProxy extends Contract {
       nPools: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "supportsInterface(bytes4)"(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     transferOwnership(
       newOwner: string,
@@ -580,6 +823,10 @@ export class BPoolProxy extends Contract {
         totalOutput: BigNumber;
       }
     >;
+
+    xTokenWrapper(overrides?: CallOverrides): Promise<[string]>;
+
+    "xTokenWrapper()"(overrides?: CallOverrides): Promise<[string]>;
   };
 
   batchSwapExactIn(
@@ -644,9 +891,101 @@ export class BPoolProxy extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  exitPool(
+    pool: string,
+    poolAmountIn: BigNumberish,
+    minAmountsOut: BigNumberish[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "exitPool(address,uint256,uint256[])"(
+    pool: string,
+    poolAmountIn: BigNumberish,
+    minAmountsOut: BigNumberish[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  exitswapExternAmountOut(
+    pool: string,
+    tokenOut: string,
+    tokenAmountOut: BigNumberish,
+    maxPoolAmountIn: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "exitswapExternAmountOut(address,address,uint256,uint256)"(
+    pool: string,
+    tokenOut: string,
+    tokenAmountOut: BigNumberish,
+    maxPoolAmountIn: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  exitswapPoolAmountIn(
+    pool: string,
+    tokenOut: string,
+    poolAmountIn: BigNumberish,
+    minAmountOut: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "exitswapPoolAmountIn(address,address,uint256,uint256)"(
+    pool: string,
+    tokenOut: string,
+    poolAmountIn: BigNumberish,
+    minAmountOut: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   feeReceiver(overrides?: CallOverrides): Promise<string>;
 
   "feeReceiver()"(overrides?: CallOverrides): Promise<string>;
+
+  joinPool(
+    pool: string,
+    poolAmountOut: BigNumberish,
+    maxAmountsIn: BigNumberish[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "joinPool(address,uint256,uint256[])"(
+    pool: string,
+    poolAmountOut: BigNumberish,
+    maxAmountsIn: BigNumberish[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  joinswapExternAmountIn(
+    pool: string,
+    tokenIn: string,
+    tokenAmountIn: BigNumberish,
+    minPoolAmountOut: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "joinswapExternAmountIn(address,address,uint256,uint256)"(
+    pool: string,
+    tokenIn: string,
+    tokenAmountIn: BigNumberish,
+    minPoolAmountOut: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  joinswapPoolAmountOut(
+    pool: string,
+    tokenIn: string,
+    poolAmountOut: BigNumberish,
+    maxAmountIn: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "joinswapPoolAmountOut(address,address,uint256,uint256)"(
+    pool: string,
+    tokenIn: string,
+    poolAmountOut: BigNumberish,
+    maxAmountIn: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   multihopBatchSwapExactIn(
     swapSequences: {
@@ -710,6 +1049,42 @@ export class BPoolProxy extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  onERC1155BatchReceived(
+    arg0: string,
+    arg1: string,
+    arg2: BigNumberish[],
+    arg3: BigNumberish[],
+    arg4: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"(
+    arg0: string,
+    arg1: string,
+    arg2: BigNumberish[],
+    arg3: BigNumberish[],
+    arg4: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  onERC1155Received(
+    arg0: string,
+    arg1: string,
+    arg2: BigNumberish,
+    arg3: BigNumberish,
+    arg4: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "onERC1155Received(address,address,uint256,uint256,bytes)"(
+    arg0: string,
+    arg1: string,
+    arg2: BigNumberish,
+    arg3: BigNumberish,
+    arg4: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   "owner()"(overrides?: CallOverrides): Promise<string>;
@@ -756,6 +1131,16 @@ export class BPoolProxy extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  setXTokenWrapper(
+    _xTokenWrapper: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setXTokenWrapper(address)"(
+    _xTokenWrapper: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   smartSwapExactIn(
     tokenIn: string,
     tokenOut: string,
@@ -791,6 +1176,16 @@ export class BPoolProxy extends Contract {
     nPools: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  supportsInterface(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "supportsInterface(bytes4)"(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   transferOwnership(
     newOwner: string,
@@ -922,6 +1317,10 @@ export class BPoolProxy extends Contract {
     }
   >;
 
+  xTokenWrapper(overrides?: CallOverrides): Promise<string>;
+
+  "xTokenWrapper()"(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     batchSwapExactIn(
       swaps: {
@@ -985,9 +1384,101 @@ export class BPoolProxy extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    exitPool(
+      pool: string,
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "exitPool(address,uint256,uint256[])"(
+      pool: string,
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    exitswapExternAmountOut(
+      pool: string,
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "exitswapExternAmountOut(address,address,uint256,uint256)"(
+      pool: string,
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    exitswapPoolAmountIn(
+      pool: string,
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "exitswapPoolAmountIn(address,address,uint256,uint256)"(
+      pool: string,
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     feeReceiver(overrides?: CallOverrides): Promise<string>;
 
     "feeReceiver()"(overrides?: CallOverrides): Promise<string>;
+
+    joinPool(
+      pool: string,
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "joinPool(address,uint256,uint256[])"(
+      pool: string,
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    joinswapExternAmountIn(
+      pool: string,
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "joinswapExternAmountIn(address,address,uint256,uint256)"(
+      pool: string,
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    joinswapPoolAmountOut(
+      pool: string,
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "joinswapPoolAmountOut(address,address,uint256,uint256)"(
+      pool: string,
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     multihopBatchSwapExactIn(
       swapSequences: {
@@ -1051,6 +1542,42 @@ export class BPoolProxy extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    onERC1155BatchReceived(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    onERC1155Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    "onERC1155Received(address,address,uint256,uint256,bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     "owner()"(overrides?: CallOverrides): Promise<string>;
@@ -1094,6 +1621,16 @@ export class BPoolProxy extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     smartSwapExactIn(
       tokenIn: string,
       tokenOut: string,
@@ -1129,6 +1666,16 @@ export class BPoolProxy extends Contract {
       nPools: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "supportsInterface(bytes4)"(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     transferOwnership(
       newOwner: string,
@@ -1259,6 +1806,10 @@ export class BPoolProxy extends Contract {
         totalOutput: BigNumber;
       }
     >;
+
+    xTokenWrapper(overrides?: CallOverrides): Promise<string>;
+
+    "xTokenWrapper()"(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -1272,6 +1823,8 @@ export class BPoolProxy extends Contract {
     ProtocolFeeSetted(protocolFee: null): EventFilter;
 
     RegistrySetted(registry: null): EventFilter;
+
+    XTokenWrapperSetted(xTokenWrapper: null): EventFilter;
   };
 
   estimateGas: {
@@ -1337,9 +1890,101 @@ export class BPoolProxy extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    exitPool(
+      pool: string,
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "exitPool(address,uint256,uint256[])"(
+      pool: string,
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    exitswapExternAmountOut(
+      pool: string,
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "exitswapExternAmountOut(address,address,uint256,uint256)"(
+      pool: string,
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    exitswapPoolAmountIn(
+      pool: string,
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "exitswapPoolAmountIn(address,address,uint256,uint256)"(
+      pool: string,
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     feeReceiver(overrides?: CallOverrides): Promise<BigNumber>;
 
     "feeReceiver()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    joinPool(
+      pool: string,
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "joinPool(address,uint256,uint256[])"(
+      pool: string,
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    joinswapExternAmountIn(
+      pool: string,
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "joinswapExternAmountIn(address,address,uint256,uint256)"(
+      pool: string,
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    joinswapPoolAmountOut(
+      pool: string,
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "joinswapPoolAmountOut(address,address,uint256,uint256)"(
+      pool: string,
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     multihopBatchSwapExactIn(
       swapSequences: {
@@ -1403,6 +2048,42 @@ export class BPoolProxy extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    onERC1155BatchReceived(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    onERC1155Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "onERC1155Received(address,address,uint256,uint256,bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1446,6 +2127,16 @@ export class BPoolProxy extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     smartSwapExactIn(
       tokenIn: string,
       tokenOut: string,
@@ -1480,6 +2171,16 @@ export class BPoolProxy extends Contract {
       maxTotalAmountIn: BigNumberish,
       nPools: BigNumberish,
       overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "supportsInterface(bytes4)"(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     transferOwnership(
@@ -1523,6 +2224,10 @@ export class BPoolProxy extends Contract {
       nPools: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    xTokenWrapper(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "xTokenWrapper()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1588,9 +2293,101 @@ export class BPoolProxy extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    exitPool(
+      pool: string,
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "exitPool(address,uint256,uint256[])"(
+      pool: string,
+      poolAmountIn: BigNumberish,
+      minAmountsOut: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    exitswapExternAmountOut(
+      pool: string,
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "exitswapExternAmountOut(address,address,uint256,uint256)"(
+      pool: string,
+      tokenOut: string,
+      tokenAmountOut: BigNumberish,
+      maxPoolAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    exitswapPoolAmountIn(
+      pool: string,
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "exitswapPoolAmountIn(address,address,uint256,uint256)"(
+      pool: string,
+      tokenOut: string,
+      poolAmountIn: BigNumberish,
+      minAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     feeReceiver(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "feeReceiver()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    joinPool(
+      pool: string,
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "joinPool(address,uint256,uint256[])"(
+      pool: string,
+      poolAmountOut: BigNumberish,
+      maxAmountsIn: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    joinswapExternAmountIn(
+      pool: string,
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "joinswapExternAmountIn(address,address,uint256,uint256)"(
+      pool: string,
+      tokenIn: string,
+      tokenAmountIn: BigNumberish,
+      minPoolAmountOut: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    joinswapPoolAmountOut(
+      pool: string,
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "joinswapPoolAmountOut(address,address,uint256,uint256)"(
+      pool: string,
+      tokenIn: string,
+      poolAmountOut: BigNumberish,
+      maxAmountIn: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     multihopBatchSwapExactIn(
       swapSequences: {
@@ -1654,6 +2451,42 @@ export class BPoolProxy extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    onERC1155BatchReceived(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    onERC1155Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "onERC1155Received(address,address,uint256,uint256,bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "owner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1700,6 +2533,16 @@ export class BPoolProxy extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     smartSwapExactIn(
       tokenIn: string,
       tokenOut: string,
@@ -1734,6 +2577,16 @@ export class BPoolProxy extends Contract {
       maxTotalAmountIn: BigNumberish,
       nPools: BigNumberish,
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "supportsInterface(bytes4)"(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(
@@ -1777,5 +2630,9 @@ export class BPoolProxy extends Contract {
       nPools: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    xTokenWrapper(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "xTokenWrapper()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

@@ -21,6 +21,7 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface PermissionManagerStorageInterface extends ethers.utils.Interface {
   functions: {
+    "PROTOCOL_CONTRACT()": FunctionFragment;
     "REJECTED_ID()": FunctionFragment;
     "SUSPENDED_ID()": FunctionFragment;
     "TIER_1_ID()": FunctionFragment;
@@ -28,6 +29,10 @@ interface PermissionManagerStorageInterface extends ethers.utils.Interface {
     "permissionItems()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "PROTOCOL_CONTRACT",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "REJECTED_ID",
     values?: undefined
@@ -43,6 +48,10 @@ interface PermissionManagerStorageInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "PROTOCOL_CONTRACT",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "REJECTED_ID",
     data: BytesLike
@@ -75,6 +84,10 @@ export class PermissionManagerStorage extends Contract {
   interface: PermissionManagerStorageInterface;
 
   functions: {
+    PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "PROTOCOL_CONTRACT()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     REJECTED_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "REJECTED_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -95,6 +108,10 @@ export class PermissionManagerStorage extends Contract {
 
     "permissionItems()"(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "PROTOCOL_CONTRACT()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   REJECTED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -117,6 +134,10 @@ export class PermissionManagerStorage extends Contract {
   "permissionItems()"(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "PROTOCOL_CONTRACT()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     REJECTED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
     "REJECTED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -141,6 +162,10 @@ export class PermissionManagerStorage extends Contract {
   filters: {};
 
   estimateGas: {
+    PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "PROTOCOL_CONTRACT()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     REJECTED_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
     "REJECTED_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -163,6 +188,12 @@ export class PermissionManagerStorage extends Contract {
   };
 
   populateTransaction: {
+    PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "PROTOCOL_CONTRACT()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     REJECTED_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "REJECTED_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;

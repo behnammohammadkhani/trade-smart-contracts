@@ -31,6 +31,7 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
+    "setAsProtocolContract(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "suspendUser(address)": FunctionFragment;
     "uri(uint256)": FunctionFragment;
@@ -62,6 +63,10 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
     values: [string, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAsProtocolContract",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -98,6 +103,10 @@ interface PermissionsMockInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setApprovalForAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setAsProtocolContract",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -251,6 +260,16 @@ export class PermissionsMock extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    setAsProtocolContract(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setAsProtocolContract(address)"(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
@@ -393,6 +412,16 @@ export class PermissionsMock extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  setAsProtocolContract(
+    _user: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setAsProtocolContract(address)"(
+    _user: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   supportsInterface(
     interfaceId: BytesLike,
     overrides?: CallOverrides
@@ -523,6 +552,16 @@ export class PermissionsMock extends Contract {
     "setApprovalForAll(address,bool)"(
       operator: string,
       approved: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setAsProtocolContract(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setAsProtocolContract(address)"(
+      _user: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -683,6 +722,16 @@ export class PermissionsMock extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    setAsProtocolContract(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setAsProtocolContract(address)"(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
@@ -820,6 +869,16 @@ export class PermissionsMock extends Contract {
     "setApprovalForAll(address,bool)"(
       operator: string,
       approved: boolean,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setAsProtocolContract(
+      _user: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setAsProtocolContract(address)"(
+      _user: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 

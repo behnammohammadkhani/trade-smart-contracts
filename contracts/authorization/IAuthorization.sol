@@ -37,6 +37,20 @@ interface IAuthorization {
     function setTradingLimint(uint256 _tradingLimit) external returns (bool);
 
     /**
+     * @dev Sets `_poolFactory` as the new BFactory module.
+     *
+     * @param _poolFactory The address of the new Balance BFactory module.
+     */
+    function setPoolFactory(address _poolFactory) external returns (bool);
+
+    /**
+     * @dev Sets `_xTokenWrapper` as the new XTokenWrapper module.
+     *
+     * @param _xTokenWrapper The address of the new XTokenWrapper module.
+     */
+    function setXTokenWrapper(address _xTokenWrapper) external returns (bool);
+
+    /**
      * @dev Determins if a user is allowed to perform an operation.
      *
      * @param _user msg.sender from function using Authorizable `onlyAuthorized` modifier.

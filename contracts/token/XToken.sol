@@ -221,10 +221,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      */
     function mint(address account, uint256 amount) public onlyWrapper onlyAuthorized {
         _mint(account, amount);
-
-        // It uses tx.origin because user may use a CPK for interacting with the protocol
-        // solhint-disable-next-line avoid-tx-origin
-        operationsRegistry.addTrade(tx.origin, msg.sig, amount);
+        operationsRegistry.addTrade(account, msg.sig, amount);
     }
 
     /**
@@ -244,9 +241,6 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      */
     function burnFrom(address account, uint256 amount) public onlyWrapper onlyAuthorized {
         _burn(account, amount);
-
-        // It uses tx.origin because user may use a CPK for interacting with the protocol
-        // solhint-disable-next-line avoid-tx-origin
-        operationsRegistry.addTrade(tx.origin, msg.sig, amount);
+        operationsRegistry.addTrade(account, msg.sig, amount);
     }
 }

@@ -28,7 +28,9 @@ interface AuthorizationMockInterface extends ethers.utils.Interface {
     "setEurPriceFeed(address)": FunctionFragment;
     "setOperationsRegistry(address)": FunctionFragment;
     "setPermissions(address)": FunctionFragment;
+    "setPoolFactory(address)": FunctionFragment;
     "setTradingLimint(uint256)": FunctionFragment;
+    "setXTokenWrapper(address)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -56,8 +58,16 @@ interface AuthorizationMockInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "setPoolFactory",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setTradingLimint",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setXTokenWrapper",
+    values: [string]
   ): string;
 
   decodeFunctionResult(functionFragment: "authorized", data: BytesLike): Result;
@@ -82,7 +92,15 @@ interface AuthorizationMockInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setPoolFactory",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setTradingLimint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setXTokenWrapper",
     data: BytesLike
   ): Result;
 
@@ -160,6 +178,13 @@ export class AuthorizationMock extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    setPoolFactory(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
+
+    "setPoolFactory(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     setTradingLimint(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -167,6 +192,16 @@ export class AuthorizationMock extends Contract {
 
     "setTradingLimint(uint256)"(
       arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    setXTokenWrapper(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "setXTokenWrapper(address)"(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
@@ -225,6 +260,13 @@ export class AuthorizationMock extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  setPoolFactory(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
+  "setPoolFactory(address)"(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   setTradingLimint(
     arg0: BigNumberish,
     overrides?: CallOverrides
@@ -232,6 +274,13 @@ export class AuthorizationMock extends Contract {
 
   "setTradingLimint(uint256)"(
     arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  setXTokenWrapper(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
+  "setXTokenWrapper(address)"(
+    arg0: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -290,6 +339,13 @@ export class AuthorizationMock extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    setPoolFactory(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
+    "setPoolFactory(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     setTradingLimint(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -297,6 +353,13 @@ export class AuthorizationMock extends Contract {
 
     "setTradingLimint(uint256)"(
       arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    setXTokenWrapper(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
+    "setXTokenWrapper(address)"(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
@@ -361,6 +424,13 @@ export class AuthorizationMock extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    setPoolFactory(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "setPoolFactory(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     setTradingLimint(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -368,6 +438,16 @@ export class AuthorizationMock extends Contract {
 
     "setTradingLimint(uint256)"(
       arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    setXTokenWrapper(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "setXTokenWrapper(address)"(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -433,6 +513,16 @@ export class AuthorizationMock extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    setPoolFactory(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "setPoolFactory(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     setTradingLimint(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -440,6 +530,16 @@ export class AuthorizationMock extends Contract {
 
     "setTradingLimint(uint256)"(
       arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    setXTokenWrapper(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "setXTokenWrapper(address)"(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

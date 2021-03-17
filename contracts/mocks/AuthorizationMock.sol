@@ -40,4 +40,12 @@ contract AuthorizationMock is IAuthorization {
     function setOperationsRegistry(address) public pure override returns (bool) {
         return true;
     }
+
+    function setPoolFactory(address) public pure override returns (bool) {
+        return true;
+    }
+
+    function setXTokenWrapper(address) public pure override returns (bool) {
+        return true;
+    }
 }

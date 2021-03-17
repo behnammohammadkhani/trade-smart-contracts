@@ -30,6 +30,8 @@
     "ethers": "^5.0.25",
     "fs-extra": "^9.0.1",
     "hardhat": "^2.0.7",
+    "hardhat-contract-sizer": "^2.0.3",
+    "hardhat-gas-reporter": "^1.0.4",
     "hardhat-typechain": "^0.3.4",
     "husky": "^4.3.7",
     "lint-staged": "^10.5.3",
@@ -64,11 +66,13 @@
     "prettier": "yarn prettier:sol && yarn prettier:ts",
     "prettier:list-different": "prettier --config .prettierrc --list-different \"**/*.{js,sol,ts}\"",
     "test": "hardhat test",
+    "test:gas": "REPORT_GAS=true hardhat test",
     "typechain": "hardhat typechain",
     "doc:uml": "sol2uml ./contracts -i mocks,test -f png -o ./docs/uml/swarm-markets.png",
     "docify": "node docify.js",
     "deploy:rinkeby": "hardhat run --network rinkeby scripts/deploy.ts",
-    "deploy:kovan": "hardhat run --network kovan scripts/deploy.ts"
+    "deploy:kovan": "hardhat run --network kovan scripts/deploy.ts",
+    "size": "hardhat size-contracts"
   },
   "husky": {
     "hooks": {

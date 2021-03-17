@@ -12,6 +12,8 @@ import '@nomiclabs/hardhat-waffle';
 import 'hardhat-typechain';
 import 'solidity-coverage';
 import '@openzeppelin/hardhat-upgrades';
+import 'hardhat-gas-reporter';
+import 'hardhat-contract-sizer';
 
 const chainIds = {
   ganache: 1337,
@@ -102,6 +104,18 @@ const config: HardhatUserConfig = {
   typechain: {
     outDir: 'typechain',
     target: 'ethers-v5',
+  },
+  gasReporter: {
+    coinmarketcap: process.env.COIN_MARKET_CAP_KEY,
+    currency: 'USD',
+    gasPrice: 21,
+    enabled: process.env.REPORT_GAS ? true : false,
+    excludeContracts: ['mocks/', 'test/'],
+  },
+  contractSizer: {
+    alphaSort: true,
+    runOnCompile: false,
+    disambiguatePaths: false,
   },
 };
 

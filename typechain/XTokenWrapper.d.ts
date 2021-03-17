@@ -31,10 +31,13 @@ interface XTokenWrapperInterface extends ethers.utils.Interface {
     "getRoleMemberCount(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
+    "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
+    "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "registerToken(address,address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "setRegistryManager(address)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
     "tokenToXToken(address)": FunctionFragment;
     "unwrap(address,uint256)": FunctionFragment;
     "wrap(address,uint256)": FunctionFragment;
@@ -74,6 +77,14 @@ interface XTokenWrapperInterface extends ethers.utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "onERC1155BatchReceived",
+    values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onERC1155Received",
+    values: [string, string, BigNumberish, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "registerToken",
     values: [string, string]
   ): string;
@@ -88,6 +99,10 @@ interface XTokenWrapperInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "setRegistryManager",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "tokenToXToken",
@@ -133,6 +148,14 @@ interface XTokenWrapperInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "onERC1155BatchReceived",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "onERC1155Received",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "registerToken",
     data: BytesLike
   ): Result;
@@ -143,6 +166,10 @@ interface XTokenWrapperInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setRegistryManager",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -248,6 +275,42 @@ export class XTokenWrapper extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    onERC1155BatchReceived(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    onERC1155Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "onERC1155Received(address,address,uint256,uint256,bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     registerToken(
       _token: string,
       _xToken: string,
@@ -293,6 +356,16 @@ export class XTokenWrapper extends Contract {
       _registryManager: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "supportsInterface(bytes4)"(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     tokenToXToken(arg0: string, overrides?: CallOverrides): Promise<[string]>;
 
@@ -398,6 +471,42 @@ export class XTokenWrapper extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  onERC1155BatchReceived(
+    arg0: string,
+    arg1: string,
+    arg2: BigNumberish[],
+    arg3: BigNumberish[],
+    arg4: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"(
+    arg0: string,
+    arg1: string,
+    arg2: BigNumberish[],
+    arg3: BigNumberish[],
+    arg4: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  onERC1155Received(
+    arg0: string,
+    arg1: string,
+    arg2: BigNumberish,
+    arg3: BigNumberish,
+    arg4: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "onERC1155Received(address,address,uint256,uint256,bytes)"(
+    arg0: string,
+    arg1: string,
+    arg2: BigNumberish,
+    arg3: BigNumberish,
+    arg4: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   registerToken(
     _token: string,
     _xToken: string,
@@ -443,6 +552,16 @@ export class XTokenWrapper extends Contract {
     _registryManager: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  supportsInterface(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "supportsInterface(bytes4)"(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   tokenToXToken(arg0: string, overrides?: CallOverrides): Promise<string>;
 
@@ -548,6 +667,42 @@ export class XTokenWrapper extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    onERC1155BatchReceived(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    onERC1155Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    "onERC1155Received(address,address,uint256,uint256,bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     registerToken(
       _token: string,
       _xToken: string,
@@ -593,6 +748,16 @@ export class XTokenWrapper extends Contract {
       _registryManager: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "supportsInterface(bytes4)"(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     tokenToXToken(arg0: string, overrides?: CallOverrides): Promise<string>;
 
@@ -724,6 +889,42 @@ export class XTokenWrapper extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    onERC1155BatchReceived(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    onERC1155Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "onERC1155Received(address,address,uint256,uint256,bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     registerToken(
       _token: string,
       _xToken: string,
@@ -768,6 +969,16 @@ export class XTokenWrapper extends Contract {
     "setRegistryManager(address)"(
       _registryManager: string,
       overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "supportsInterface(bytes4)"(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     tokenToXToken(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -888,6 +1099,42 @@ export class XTokenWrapper extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    onERC1155BatchReceived(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish[],
+      arg3: BigNumberish[],
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    onERC1155Received(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "onERC1155Received(address,address,uint256,uint256,bytes)"(
+      arg0: string,
+      arg1: string,
+      arg2: BigNumberish,
+      arg3: BigNumberish,
+      arg4: BytesLike,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     registerToken(
       _token: string,
       _xToken: string,
@@ -932,6 +1179,16 @@ export class XTokenWrapper extends Contract {
     "setRegistryManager(address)"(
       _registryManager: string,
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "supportsInterface(bytes4)"(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     tokenToXToken(
