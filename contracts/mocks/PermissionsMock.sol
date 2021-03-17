@@ -26,4 +26,8 @@ contract PermissionsMock is ERC1155 {
     function setAsProtocolContract(address _user) public {
         _mint(_user, 4, 1, "");
     }
+
+    function setAsPoolCreator(address _user) public {
+        _mint(_user, 5, 1, "");
+    }
 }

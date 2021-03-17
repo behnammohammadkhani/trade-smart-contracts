@@ -22,24 +22,45 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface BFactoryMockInterface extends ethers.utils.Interface {
   functions: {
+    "authorization()": FunctionFragment;
     "isBPool(address)": FunctionFragment;
     "isBPoolAnswer()": FunctionFragment;
+    "newBPool()": FunctionFragment;
+    "setAuthorization(address)": FunctionFragment;
     "setIsBPoolAnswer(bool)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "authorization",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "isBPool", values: [string]): string;
   encodeFunctionData(
     functionFragment: "isBPoolAnswer",
     values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "newBPool", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "setAuthorization",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setIsBPoolAnswer",
     values: [boolean]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "authorization",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "isBPool", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isBPoolAnswer",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "newBPool", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setAuthorization",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -47,7 +68,13 @@ interface BFactoryMockInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "AuthorizationSetted(address)": EventFragment;
+    "LOG_NEW_POOL(address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "AuthorizationSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LOG_NEW_POOL"): EventFragment;
 }
 
 export class BFactoryMock extends Contract {
@@ -64,6 +91,10 @@ export class BFactoryMock extends Contract {
   interface: BFactoryMockInterface;
 
   functions: {
+    authorization(overrides?: CallOverrides): Promise<[string]>;
+
+    "authorization()"(overrides?: CallOverrides): Promise<[string]>;
+
     isBPool(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     "isBPool(address)"(
@@ -74,6 +105,20 @@ export class BFactoryMock extends Contract {
     isBPoolAnswer(overrides?: CallOverrides): Promise<[boolean]>;
 
     "isBPoolAnswer()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    newBPool(overrides?: Overrides): Promise<ContractTransaction>;
+
+    "newBPool()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    setAuthorization(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setAuthorization(address)"(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     setIsBPoolAnswer(
       answer: boolean,
@@ -86,6 +131,10 @@ export class BFactoryMock extends Contract {
     ): Promise<ContractTransaction>;
   };
 
+  authorization(overrides?: CallOverrides): Promise<string>;
+
+  "authorization()"(overrides?: CallOverrides): Promise<string>;
+
   isBPool(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
   "isBPool(address)"(arg0: string, overrides?: CallOverrides): Promise<boolean>;
@@ -93,6 +142,20 @@ export class BFactoryMock extends Contract {
   isBPoolAnswer(overrides?: CallOverrides): Promise<boolean>;
 
   "isBPoolAnswer()"(overrides?: CallOverrides): Promise<boolean>;
+
+  newBPool(overrides?: Overrides): Promise<ContractTransaction>;
+
+  "newBPool()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+  setAuthorization(
+    authorization_: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setAuthorization(address)"(
+    authorization_: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   setIsBPoolAnswer(
     answer: boolean,
@@ -105,6 +168,10 @@ export class BFactoryMock extends Contract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    authorization(overrides?: CallOverrides): Promise<string>;
+
+    "authorization()"(overrides?: CallOverrides): Promise<string>;
+
     isBPool(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
     "isBPool(address)"(
@@ -116,6 +183,20 @@ export class BFactoryMock extends Contract {
 
     "isBPoolAnswer()"(overrides?: CallOverrides): Promise<boolean>;
 
+    newBPool(overrides?: CallOverrides): Promise<boolean>;
+
+    "newBPool()"(overrides?: CallOverrides): Promise<boolean>;
+
+    setAuthorization(
+      authorization_: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setAuthorization(address)"(
+      authorization_: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setIsBPoolAnswer(answer: boolean, overrides?: CallOverrides): Promise<void>;
 
     "setIsBPoolAnswer(bool)"(
@@ -124,9 +205,17 @@ export class BFactoryMock extends Contract {
     ): Promise<void>;
   };
 
-  filters: {};
+  filters: {
+    AuthorizationSetted(newAuthorization: string | null): EventFilter;
+
+    LOG_NEW_POOL(caller: string | null): EventFilter;
+  };
 
   estimateGas: {
+    authorization(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "authorization()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     isBPool(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "isBPool(address)"(
@@ -137,6 +226,20 @@ export class BFactoryMock extends Contract {
     isBPoolAnswer(overrides?: CallOverrides): Promise<BigNumber>;
 
     "isBPoolAnswer()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    newBPool(overrides?: Overrides): Promise<BigNumber>;
+
+    "newBPool()"(overrides?: Overrides): Promise<BigNumber>;
+
+    setAuthorization(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setAuthorization(address)"(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     setIsBPoolAnswer(
       answer: boolean,
@@ -150,6 +253,10 @@ export class BFactoryMock extends Contract {
   };
 
   populateTransaction: {
+    authorization(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "authorization()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     isBPool(
       arg0: string,
       overrides?: CallOverrides
@@ -163,6 +270,20 @@ export class BFactoryMock extends Contract {
     isBPoolAnswer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "isBPoolAnswer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    newBPool(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "newBPool()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    setAuthorization(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setAuthorization(address)"(
+      authorization_: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     setIsBPoolAnswer(
       answer: boolean,

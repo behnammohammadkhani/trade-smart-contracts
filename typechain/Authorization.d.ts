@@ -22,11 +22,13 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface AuthorizationInterface extends ethers.utils.Interface {
   functions: {
+    "BFACTORY_NEW_POOL()": FunctionFragment;
     "ERC20_APPROVE()": FunctionFragment;
     "ERC20_BURN_FROM()": FunctionFragment;
     "ERC20_MINT()": FunctionFragment;
     "ERC20_TRANSFER()": FunctionFragment;
     "ERC20_TRANSFER_FROM()": FunctionFragment;
+    "POOL_CREATOR()": FunctionFragment;
     "PROTOCOL_CONTRACT()": FunctionFragment;
     "REJECTED_ID()": FunctionFragment;
     "SUSPENDED_ID()": FunctionFragment;
@@ -55,6 +57,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
   };
 
   encodeFunctionData(
+    functionFragment: "BFACTORY_NEW_POOL",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "ERC20_APPROVE",
     values?: undefined
   ): string;
@@ -72,6 +78,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "ERC20_TRANSFER_FROM",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "POOL_CREATOR",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -158,6 +168,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "BFACTORY_NEW_POOL",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "ERC20_APPROVE",
     data: BytesLike
   ): Result;
@@ -172,6 +186,10 @@ interface AuthorizationInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "ERC20_TRANSFER_FROM",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "POOL_CREATOR",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -291,6 +309,10 @@ export class Authorization extends Contract {
   interface: AuthorizationInterface;
 
   functions: {
+    BFACTORY_NEW_POOL(overrides?: CallOverrides): Promise<[string]>;
+
+    "BFACTORY_NEW_POOL()"(overrides?: CallOverrides): Promise<[string]>;
+
     ERC20_APPROVE(overrides?: CallOverrides): Promise<[string]>;
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<[string]>;
@@ -310,6 +332,10 @@ export class Authorization extends Contract {
     ERC20_TRANSFER_FROM(overrides?: CallOverrides): Promise<[string]>;
 
     "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<[string]>;
+
+    POOL_CREATOR(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "POOL_CREATOR()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -484,6 +510,10 @@ export class Authorization extends Contract {
     "xTokenWrapper()"(overrides?: CallOverrides): Promise<[string]>;
   };
 
+  BFACTORY_NEW_POOL(overrides?: CallOverrides): Promise<string>;
+
+  "BFACTORY_NEW_POOL()"(overrides?: CallOverrides): Promise<string>;
+
   ERC20_APPROVE(overrides?: CallOverrides): Promise<string>;
 
   "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<string>;
@@ -503,6 +533,10 @@ export class Authorization extends Contract {
   ERC20_TRANSFER_FROM(overrides?: CallOverrides): Promise<string>;
 
   "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<string>;
+
+  POOL_CREATOR(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "POOL_CREATOR()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -677,6 +711,10 @@ export class Authorization extends Contract {
   "xTokenWrapper()"(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    BFACTORY_NEW_POOL(overrides?: CallOverrides): Promise<string>;
+
+    "BFACTORY_NEW_POOL()"(overrides?: CallOverrides): Promise<string>;
+
     ERC20_APPROVE(overrides?: CallOverrides): Promise<string>;
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<string>;
@@ -696,6 +734,10 @@ export class Authorization extends Contract {
     ERC20_TRANSFER_FROM(overrides?: CallOverrides): Promise<string>;
 
     "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<string>;
+
+    POOL_CREATOR(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "POOL_CREATOR()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -894,6 +936,10 @@ export class Authorization extends Contract {
   };
 
   estimateGas: {
+    BFACTORY_NEW_POOL(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "BFACTORY_NEW_POOL()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     ERC20_APPROVE(overrides?: CallOverrides): Promise<BigNumber>;
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -913,6 +959,10 @@ export class Authorization extends Contract {
     ERC20_TRANSFER_FROM(overrides?: CallOverrides): Promise<BigNumber>;
 
     "ERC20_TRANSFER_FROM()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    POOL_CREATOR(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "POOL_CREATOR()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1088,6 +1138,12 @@ export class Authorization extends Contract {
   };
 
   populateTransaction: {
+    BFACTORY_NEW_POOL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "BFACTORY_NEW_POOL()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     ERC20_APPROVE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "ERC20_APPROVE()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1115,6 +1171,10 @@ export class Authorization extends Contract {
     "ERC20_TRANSFER_FROM()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    POOL_CREATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "POOL_CREATOR()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

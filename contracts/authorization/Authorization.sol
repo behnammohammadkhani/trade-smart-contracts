@@ -340,12 +340,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         }
 
         // Only allowed operations
-        if (
-            _operation == ERC20_TRANSFER ||
-            _operation == ERC20_TRANSFER_FROM ||
-            _operation == ERC20_MINT ||
-            _operation == ERC20_BURN_FROM
-        ) {
+        if (isERC20Operation(_operation)) {
             // Get user and amount based on the operation
             address operationSender = _user;
             address user = _user;
@@ -377,14 +372,18 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
                 return true;
             }
 
-            return checkPermissions(operationSender, user, _asset, operation, operationAmount);
+            return checkERC20Permissions(operationSender, user, _asset, operation, operationAmount);
+        }
+
+        if (isBFactoryOperation(_operation)) {
+            return checkBFactoryPermissions(_user);
         }
 
         return false;
     }
 
     /**
-     * @dev Checks user permissions logic.
+     * @dev Checks user permissions logic for ERC20 operations.
      *
      * @param _sender address executing the operation.
      * @param _user user's address.
@@ -392,7 +391,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      * @param _operation operation to authorized.
      * @param _amount operation amount.
      */
-    function checkPermissions(
+    function checkERC20Permissions(
         address _sender,
         address _user,
         address _asset,
@@ -438,6 +437,26 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         return checkByTier(_user, _asset, _operation, _amount, permissionsBlance);
     }
 
+    /**
+     * @dev Checks user permissions logic for BFactory operations.
+     *
+     * @param _user user's address.
+     */
+    function checkBFactoryPermissions(address _user) internal view returns (bool) {
+        uint256 permissionBlance = IERC1155(permissions).balanceOf(_user, POOL_CREATOR);
+
+        return permissionBlance > 0;
+    }
+
+    /**
+     * @dev Checks user permissions by Tier logic.
+     *
+     * @param _user user's address.
+     * @param _asset address of the contract where `_operation` comes from.
+     * @param _operation operation to authorized.
+     * @param _amount operation amount.
+     * @param _permissionsBlance user's permissions.
+     */
     function checkByTier(
         address _user,
         address _asset,
@@ -468,6 +487,11 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         return false;
     }
 
+    /**
+     * @dev Checks user permissions when rejected.
+     *
+     * @param _operation operation to authorized.
+     */
     function checkRejected(bytes4 _operation) internal pure returns (bool) {
         // Only allowed to unwind position (burn)
         if (_operation == ERC20_BURN_FROM) {
@@ -477,6 +501,13 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         }
     }
 
+    /**
+     * @dev Checks protocol contract type permissions .
+     *
+     * @param _operation operation to authorized.
+     * @param _permissionUser user's protocol contract permission.
+     * @param _permissionSender sender's protocol contract permission.
+     */
     function checkProtocolContract(
         bytes4 _operation,
         uint256 _permissionUser,
@@ -493,7 +524,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
 
         if (_operation == ERC20_MINT || _operation == ERC20_BURN_FROM) {
             if (_permissionUser > 0) {
-                // minti to or berning from should be PROTOCOL_CONTRACT
+                // minting to or berning from should be PROTOCOL_CONTRACT
                 return true;
             } else {
                 return false;
@@ -501,5 +532,17 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         }
 
         return false;
+    }
+
+    function isERC20Operation(bytes4 _operation) internal pure returns (bool) {
+        return
+            _operation == ERC20_TRANSFER ||
+            _operation == ERC20_TRANSFER_FROM ||
+            _operation == ERC20_MINT ||
+            _operation == ERC20_BURN_FROM;
+    }
+
+    function isBFactoryOperation(bytes4 _operation) internal pure returns (bool) {
+        return _operation == BFACTORY_NEW_POOL;
     }
 }

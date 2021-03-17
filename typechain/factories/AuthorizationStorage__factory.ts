@@ -23,6 +23,19 @@ export class AuthorizationStorage__factory {
 const _abi = [
   {
     inputs: [],
+    name: "BFACTORY_NEW_POOL",
+    outputs: [
+      {
+        internalType: "bytes4",
+        name: "",
+        type: "bytes4",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "ERC20_APPROVE",
     outputs: [
       {
@@ -81,6 +94,19 @@ const _abi = [
         internalType: "bytes4",
         name: "",
         type: "bytes4",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "POOL_CREATOR",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
