@@ -2,8 +2,8 @@
   "manifestVersion": "3.1",
   "impls": {
     "c0566821a0a60a8c7e5104812ecec594ddeb04828add53126c9111b739f72732": {
-      "address": "0xA58C872BFF29b80bbD15869b21Bb1e400FcB8365",
-      "txHash": "0x54c216ef3feda385b3d1a6a3efa89c5cc1dd7f8db0a14e5c067bc5953c453ca6",
+      "address": "0x4B0A60F302F590d30fFAC5456872A8F874A82446",
+      "txHash": "0xc2078fe9207721151293f4d7b32f0c8e19f39ae669760a15ee5e0a82920e9eb5",
       "layout": {
         "storage": [
           {
@@ -63,8 +63,8 @@
       }
     },
     "313e86620c73f169f4c07db3f75fec58d658c6b73cd9396dd0e579e12d5ae2e4": {
-      "address": "0xB4eBaA29234cd18c3112b045629411b871549F6a",
-      "txHash": "0xe72f01c5ce7b3190874506df5eb592fe1603d0399ba8d401e9d335908882ef94",
+      "address": "0xF59373b5177Bc8aA1d7e94fbe9B207438eA7F0A5",
+      "txHash": "0xe0e7c0b30b896fbe8fd0b970417ac31e25b00c782172e4249e27321b1bba831b",
       "layout": {
         "storage": [
           {
@@ -101,43 +101,43 @@
             "contract": "AuthorizationStorage",
             "label": "permissions",
             "type": "t_address",
-            "src": "contracts/authorization/AuthorizationStorage.sol:14"
+            "src": "contracts/authorization/AuthorizationStorage.sol:15"
           },
           {
             "contract": "AuthorizationStorage",
             "label": "eurPriceFeed",
             "type": "t_address",
-            "src": "contracts/authorization/AuthorizationStorage.sol:15"
+            "src": "contracts/authorization/AuthorizationStorage.sol:17"
           },
           {
             "contract": "AuthorizationStorage",
             "label": "operationsRegistry",
             "type": "t_address",
-            "src": "contracts/authorization/AuthorizationStorage.sol:16"
+            "src": "contracts/authorization/AuthorizationStorage.sol:19"
           },
           {
             "contract": "AuthorizationStorage",
             "label": "poolFactory",
             "type": "t_address",
-            "src": "contracts/authorization/AuthorizationStorage.sol:17"
+            "src": "contracts/authorization/AuthorizationStorage.sol:21"
           },
           {
             "contract": "AuthorizationStorage",
             "label": "xTokenWrapper",
             "type": "t_address",
-            "src": "contracts/authorization/AuthorizationStorage.sol:18"
+            "src": "contracts/authorization/AuthorizationStorage.sol:23"
           },
           {
             "contract": "AuthorizationStorage",
             "label": "tradingLimit",
             "type": "t_uint256",
-            "src": "contracts/authorization/AuthorizationStorage.sol:19"
+            "src": "contracts/authorization/AuthorizationStorage.sol:25"
           },
           {
             "contract": "AuthorizationStorage",
             "label": "paused",
             "type": "t_bool",
-            "src": "contracts/authorization/AuthorizationStorage.sol:21"
+            "src": "contracts/authorization/AuthorizationStorage.sol:28"
           }
         ],
         "types": {
@@ -161,7 +161,7 @@
     }
   },
   "admin": {
-    "address": "0xf900aDFe6830278223ae40cbf8F223EE40D27C9A",
-    "txHash": "0xd6e9b30823fbe2c4e2965fca817a39a541a36ab5f3086ec728979b49643693e3"
+    "address": "0x1aA868366D380683a42A5Bb559b6323697F25fF0",
+    "txHash": "0x24459828e964642e886c8deb9a4bc2426e6b112366694150453b571c6f68154a"
   }
 }

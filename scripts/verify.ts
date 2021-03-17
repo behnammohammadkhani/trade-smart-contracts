@@ -22,11 +22,11 @@ async function main(): Promise<void> {
   const deploymentData = await read(await getDeploymentFile());
   const ozData = await read(await getOZFile());
 
-  // // PermissionItems
-  // await hre.run("verify:verify", {
-  //   address: deploymentData.PermissionItems.address,
-  //   constructorArguments: [],
-  // })
+  // PermissionItems
+  await hre.run('verify:verify', {
+    address: deploymentData.PermissionItems.address,
+    constructorArguments: [],
+  });
 
   // PermissionManagerImpl
   const proxyAdmin: any = (await ethers.getContractAt(
@@ -95,6 +95,8 @@ async function main(): Promise<void> {
       deploymentData.ProtocolFee.address,
       process.env.FEE_RECEIVER,
       deploymentData.XTokenWrapper.address,
+      ethers.constants.AddressZero,
+      ethers.constants.AddressZero,
     ],
   });
 }
