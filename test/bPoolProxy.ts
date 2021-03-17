@@ -1,7 +1,15 @@
 import { ethers } from 'hardhat';
 import { Signer } from 'ethers';
 import { expect } from 'chai';
-import { ProtocolFeeMock, BPoolMock, BPoolProxy, BRegistry, ERC20Detailed, XTokenWrapper } from '../typechain';
+import {
+  ProtocolFeeMock,
+  BPoolMock,
+  BPoolProxy,
+  BRegistry,
+  ERC20Detailed,
+  XTokenWrapper,
+  UTokenPriceFeedMock,
+} from '../typechain';
 import Reverter from './utils/reverter';
 
 let deployer: Signer;
@@ -31,6 +39,11 @@ let daiVegeta: ERC20Detailed;
 let wEthVegeta: ERC20Detailed;
 let xLPTVegeta: ERC20Detailed;
 
+let utilityToken: ERC20Detailed;
+let utilityTokenVegeta: ERC20Detailed;
+
+let uTokenPriceFeed: UTokenPriceFeedMock;
+
 const MOCKED_PROTOCOL_FEE_AMOUNT = 10;
 
 describe('BPoolProxy', function () {
@@ -51,6 +64,7 @@ describe('BPoolProxy', function () {
     const BPoolMockFactory = await ethers.getContractFactory('BPoolMock');
     const ERC20Factory = await ethers.getContractFactory('ERC20Detailed');
     const XTokenWrapperFactory = await ethers.getContractFactory('XTokenWrapper');
+    const UTokenPriceFeedFactory = await ethers.getContractFactory('UTokenPriceFeedMock');
 
     bRegistryContract = (await BRegistryFactory.deploy(ethers.constants.AddressZero)) as BRegistry;
     await bRegistryContract.deployed();
@@ -86,8 +100,8 @@ describe('BPoolProxy', function () {
     bPool3 = (await BPoolMockFactory.deploy([])) as BPoolMock;
     await bPool3.deployed();
 
-    await dai.mint(vegetaAddress, ethers.constants.WeiPerEther.mul(3000));
-    await wEth.mint(poolProxyContract.address, `${10e18}`);
+    await dai.mint(vegetaAddress, ethers.constants.WeiPerEther.mul(30000));
+    await wEth.mint(poolProxyContract.address, `${100e18}`);
 
     daiVegeta = dai.connect(vegeta);
     wEthVegeta = wEth.connect(vegeta);
@@ -104,6 +118,16 @@ describe('BPoolProxy', function () {
 
     await xTokenWrapperContract.setRegistryManager(deployerAddress);
     await xTokenWrapperContract.registerToken(bPoolJoinExit.address, xLPT.address);
+
+    utilityToken = (await ERC20Factory.deploy('SwarmMarkets Utility Token', 'SMT', 18)) as ERC20Detailed;
+    await utilityToken.deployed();
+
+    uTokenPriceFeed = (await UTokenPriceFeedFactory.deploy()) as UTokenPriceFeedMock;
+    await uTokenPriceFeed.deployed();
+
+    await utilityToken.mint(vegetaAddress, ethers.constants.WeiPerEther.mul(30000));
+
+    utilityTokenVegeta = utilityToken.connect(vegeta);
 
     await reverter.snapshot();
   });
@@ -199,7 +223,42 @@ describe('BPoolProxy', function () {
       expect(await poolProxyContract.xTokenWrapper()).to.eq(kakarotoAddress);
     });
   });
-  describe('swap', () => {
+
+  describe('#setUtilityToken', () => {
+    beforeEach(async () => {
+      await reverter.revert();
+    });
+
+    it('non owner should not be able to execute setUtilityToken', async () => {
+      await expect(poolProxyContractKakaroto.setUtilityToken(kakarotoAddress)).to.be.revertedWith(
+        'Ownable: caller is not the owner',
+      );
+    });
+
+    it('owner shouldbe able to execute setUtilityToken', async () => {
+      await poolProxyContract.setUtilityToken(kakarotoAddress);
+      expect(await poolProxyContract.utilityToken()).to.eq(kakarotoAddress);
+    });
+  });
+
+  describe('#setUtilityTokenFeed', () => {
+    beforeEach(async () => {
+      await reverter.revert();
+    });
+
+    it('non owner should not be able to execute setUtilityTokenFeed', async () => {
+      await expect(poolProxyContractKakaroto.setUtilityTokenFeed(kakarotoAddress)).to.be.revertedWith(
+        'Ownable: caller is not the owner',
+      );
+    });
+
+    it('owner shouldbe able to execute setUtilityTokenFeed', async () => {
+      await poolProxyContract.setUtilityTokenFeed(kakarotoAddress);
+      expect(await poolProxyContract.utilityTokenFeed()).to.eq(kakarotoAddress);
+    });
+  });
+
+  describe('protocol swap fee - standard', () => {
     describe('#batchSwapExactIn', () => {
       beforeEach(async () => {
         await reverter.revert();
@@ -449,6 +508,1352 @@ describe('BPoolProxy', function () {
         // It only takes the fee from the user because pool.swapExactAmountIn is mocked
         expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
         expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+      });
+    });
+  });
+  describe('protocol swap fee - discount', () => {
+    describe('disabled - no utilityToken and utilityTokenFeed configured', () => {
+      describe('#batchSwapExactIn', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.batchSwapExactIn(
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              `${1e18}`,
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.batchSwapExactIn(
+            [
+              {
+                pool: bPool1.address,
+                tokenIn: dai.address,
+                tokenOut: wEth.address,
+                swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                limitReturnAmount: `${1e18}`,
+                maxPrice: '666666666666666',
+              },
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            `${1e18}`,
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+
+      describe('#batchSwapExactOut', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.batchSwapExactOut(
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.batchSwapExactOut(
+            [
+              {
+                pool: bPool1.address,
+                tokenIn: dai.address,
+                tokenOut: wEth.address,
+                swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                limitReturnAmount: `${1e18}`,
+                maxPrice: '666666666666666',
+              },
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+
+      describe('#multihopBatchSwapExactIn', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.multihopBatchSwapExactIn(
+              [
+                [
+                  {
+                    pool: bPool1.address,
+                    tokenIn: dai.address,
+                    tokenOut: wEth.address,
+                    swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                    limitReturnAmount: `${1e18}`,
+                    maxPrice: '666666666666666',
+                  },
+                ],
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              `${1e18}`,
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.multihopBatchSwapExactIn(
+            [
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            `${1e18}`,
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+
+      describe('#multihopBatchSwapExactOut', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.multihopBatchSwapExactOut(
+              [
+                [
+                  {
+                    pool: bPool1.address,
+                    tokenIn: dai.address,
+                    tokenOut: wEth.address,
+                    swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                    limitReturnAmount: `${1e18}`,
+                    maxPrice: '666666666666666',
+                  },
+                ],
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.multihopBatchSwapExactOut(
+            [
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+    });
+
+    describe('disabled - no utilityTokenFeed configured', () => {
+      before(async () => {
+        await reverter.revert();
+
+        await poolProxyContract.setUtilityToken(utilityToken.address);
+
+        await reverter.snapshot();
+      });
+
+      describe('#batchSwapExactIn', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.batchSwapExactIn(
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              `${1e18}`,
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.batchSwapExactIn(
+            [
+              {
+                pool: bPool1.address,
+                tokenIn: dai.address,
+                tokenOut: wEth.address,
+                swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                limitReturnAmount: `${1e18}`,
+                maxPrice: '666666666666666',
+              },
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            `${1e18}`,
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+
+      describe('#batchSwapExactOut', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.batchSwapExactOut(
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.batchSwapExactOut(
+            [
+              {
+                pool: bPool1.address,
+                tokenIn: dai.address,
+                tokenOut: wEth.address,
+                swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                limitReturnAmount: `${1e18}`,
+                maxPrice: '666666666666666',
+              },
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+
+      describe('#multihopBatchSwapExactIn', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.multihopBatchSwapExactIn(
+              [
+                [
+                  {
+                    pool: bPool1.address,
+                    tokenIn: dai.address,
+                    tokenOut: wEth.address,
+                    swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                    limitReturnAmount: `${1e18}`,
+                    maxPrice: '666666666666666',
+                  },
+                ],
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              `${1e18}`,
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.multihopBatchSwapExactIn(
+            [
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            `${1e18}`,
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+
+      describe('#multihopBatchSwapExactOut', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.multihopBatchSwapExactOut(
+              [
+                [
+                  {
+                    pool: bPool1.address,
+                    tokenIn: dai.address,
+                    tokenOut: wEth.address,
+                    swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                    limitReturnAmount: `${1e18}`,
+                    maxPrice: '666666666666666',
+                  },
+                ],
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.multihopBatchSwapExactOut(
+            [
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+    });
+
+    describe('disabled - no utilityToken configured', () => {
+      before(async () => {
+        await reverter.revert();
+
+        await poolProxyContract.setUtilityToken(ethers.constants.AddressZero);
+        await poolProxyContract.setUtilityTokenFeed(uTokenPriceFeed.address);
+
+        await reverter.snapshot();
+      });
+
+      describe('#batchSwapExactIn', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.batchSwapExactIn(
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              `${1e18}`,
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.batchSwapExactIn(
+            [
+              {
+                pool: bPool1.address,
+                tokenIn: dai.address,
+                tokenOut: wEth.address,
+                swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                limitReturnAmount: `${1e18}`,
+                maxPrice: '666666666666666',
+              },
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            `${1e18}`,
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+
+      describe('#batchSwapExactOut', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.batchSwapExactOut(
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.batchSwapExactOut(
+            [
+              {
+                pool: bPool1.address,
+                tokenIn: dai.address,
+                tokenOut: wEth.address,
+                swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                limitReturnAmount: `${1e18}`,
+                maxPrice: '666666666666666',
+              },
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+
+      describe('#multihopBatchSwapExactIn', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.multihopBatchSwapExactIn(
+              [
+                [
+                  {
+                    pool: bPool1.address,
+                    tokenIn: dai.address,
+                    tokenOut: wEth.address,
+                    swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                    limitReturnAmount: `${1e18}`,
+                    maxPrice: '666666666666666',
+                  },
+                ],
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              `${1e18}`,
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.multihopBatchSwapExactIn(
+            [
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            `${1e18}`,
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+
+      describe('#multihopBatchSwapExactOut', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.multihopBatchSwapExactOut(
+              [
+                [
+                  {
+                    pool: bPool1.address,
+                    tokenIn: dai.address,
+                    tokenOut: wEth.address,
+                    swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                    limitReturnAmount: `${1e18}`,
+                    maxPrice: '666666666666666',
+                  },
+                ],
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.multihopBatchSwapExactOut(
+            [
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+    });
+
+    describe('enabled - calculateAmount returns 0', () => {
+      before(async () => {
+        await reverter.revert();
+
+        await poolProxyContract.setUtilityToken(utilityToken.address);
+        await poolProxyContract.setUtilityTokenFeed(uTokenPriceFeed.address);
+        await uTokenPriceFeed.setNoPrice(true);
+
+        await reverter.snapshot();
+      });
+
+      describe('#batchSwapExactIn', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.batchSwapExactIn(
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              `${1e18}`,
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.batchSwapExactIn(
+            [
+              {
+                pool: bPool1.address,
+                tokenIn: dai.address,
+                tokenOut: wEth.address,
+                swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                limitReturnAmount: `${1e18}`,
+                maxPrice: '666666666666666',
+              },
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            `${1e18}`,
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+
+      describe('#batchSwapExactOut', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.batchSwapExactOut(
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.batchSwapExactOut(
+            [
+              {
+                pool: bPool1.address,
+                tokenIn: dai.address,
+                tokenOut: wEth.address,
+                swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                limitReturnAmount: `${1e18}`,
+                maxPrice: '666666666666666',
+              },
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+
+      describe('#multihopBatchSwapExactIn', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.multihopBatchSwapExactIn(
+              [
+                [
+                  {
+                    pool: bPool1.address,
+                    tokenIn: dai.address,
+                    tokenOut: wEth.address,
+                    swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                    limitReturnAmount: `${1e18}`,
+                    maxPrice: '666666666666666',
+                  },
+                ],
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              `${1e18}`,
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.multihopBatchSwapExactIn(
+            [
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            `${1e18}`,
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+
+      describe('#multihopBatchSwapExactOut', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.WeiPerEther.mul(1500));
+
+          await expect(
+            poolProxyContractVegeta.multihopBatchSwapExactOut(
+              [
+                [
+                  {
+                    pool: bPool1.address,
+                    tokenIn: dai.address,
+                    tokenOut: wEth.address,
+                    swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                    limitReturnAmount: `${1e18}`,
+                    maxPrice: '666666666666666',
+                  },
+                ],
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the asset being swapped from the user to fee receiver', async () => {
+          await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.multihopBatchSwapExactOut(
+            [
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            true,
+          );
+
+          const vegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT));
+        });
+      });
+    });
+
+    describe('enabled', () => {
+      before(async () => {
+        await reverter.revert();
+
+        await poolProxyContract.setUtilityToken(utilityToken.address);
+        await poolProxyContract.setUtilityTokenFeed(uTokenPriceFeed.address);
+        await uTokenPriceFeed.setNoPrice(false);
+
+        await daiVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+        await reverter.snapshot();
+      });
+
+      describe('#batchSwapExactIn', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee in in the utility token from the user to fee receiver', async () => {
+          await utilityTokenVegeta.approve(poolProxyContract.address, ethers.constants.Zero);
+
+          await expect(
+            poolProxyContractVegeta.batchSwapExactIn(
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              `${1e18}`,
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee in the utility token from the user to fee receiver', async () => {
+          await utilityTokenVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await utilityTokenVegeta.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await utilityTokenVegeta.balanceOf(kakarotoAddress);
+
+          const daiVegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const daiFeeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.batchSwapExactIn(
+            [
+              {
+                pool: bPool1.address,
+                tokenIn: dai.address,
+                tokenOut: wEth.address,
+                swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                limitReturnAmount: `${1e18}`,
+                maxPrice: '666666666666666',
+              },
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            `${1e18}`,
+            true,
+          );
+
+          const vegetaBalanceAfter = await utilityTokenVegeta.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await utilityTokenVegeta.balanceOf(kakarotoAddress);
+
+          const daiVegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const daiFeeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT / 2));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT / 2));
+
+          expect(daiVegetaBalanceAfter).to.eq(daiVegetaBalanceBefore);
+          expect(daiFeeReceiverBalanceAfter).to.eq(daiFeeReceiverBalanceBefore);
+        });
+      });
+
+      describe('#batchSwapExactOut', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee utility token from the user to fee receiver', async () => {
+          await utilityTokenVegeta.approve(poolProxyContract.address, ethers.constants.Zero);
+
+          await expect(
+            poolProxyContractVegeta.batchSwapExactOut(
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee utility token from the user to fee receiver', async () => {
+          await utilityTokenVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await utilityTokenVegeta.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await utilityTokenVegeta.balanceOf(kakarotoAddress);
+
+          const daiVegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const daiFeeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.batchSwapExactOut(
+            [
+              {
+                pool: bPool1.address,
+                tokenIn: dai.address,
+                tokenOut: wEth.address,
+                swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                limitReturnAmount: `${1e18}`,
+                maxPrice: '666666666666666',
+              },
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            true,
+          );
+
+          const vegetaBalanceAfter = await utilityTokenVegeta.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await utilityTokenVegeta.balanceOf(kakarotoAddress);
+
+          const daiVegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const daiFeeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT / 2));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT / 2));
+
+          expect(daiVegetaBalanceAfter).to.eq(daiVegetaBalanceBefore);
+          expect(daiFeeReceiverBalanceAfter).to.eq(daiFeeReceiverBalanceBefore);
+        });
+      });
+
+      describe('#multihopBatchSwapExactIn', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee utility token from the user to fee receiver', async () => {
+          await utilityTokenVegeta.approve(poolProxyContract.address, ethers.constants.Zero);
+
+          await expect(
+            poolProxyContractVegeta.multihopBatchSwapExactIn(
+              [
+                [
+                  {
+                    pool: bPool1.address,
+                    tokenIn: dai.address,
+                    tokenOut: wEth.address,
+                    swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                    limitReturnAmount: `${1e18}`,
+                    maxPrice: '666666666666666',
+                  },
+                ],
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              `${1e18}`,
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee utility token from the user to fee receiver', async () => {
+          await utilityTokenVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await utilityTokenVegeta.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await utilityTokenVegeta.balanceOf(kakarotoAddress);
+
+          const daiVegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const daiFeeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.multihopBatchSwapExactIn(
+            [
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            `${1e18}`,
+            true,
+          );
+
+          const vegetaBalanceAfter = await utilityTokenVegeta.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await utilityTokenVegeta.balanceOf(kakarotoAddress);
+
+          const daiVegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const daiFeeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT / 2));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT / 2));
+
+          expect(daiVegetaBalanceAfter).to.eq(daiVegetaBalanceBefore);
+          expect(daiFeeReceiverBalanceAfter).to.eq(daiFeeReceiverBalanceBefore);
+        });
+      });
+
+      describe('#multihopBatchSwapExactOut', () => {
+        beforeEach(async () => {
+          await reverter.revert();
+        });
+
+        it('should revert when not able to transfer the protocol fee utility token from the user to fee receiver', async () => {
+          await utilityTokenVegeta.approve(poolProxyContract.address, ethers.constants.Zero);
+
+          await expect(
+            poolProxyContractVegeta.multihopBatchSwapExactOut(
+              [
+                [
+                  {
+                    pool: bPool1.address,
+                    tokenIn: dai.address,
+                    tokenOut: wEth.address,
+                    swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                    limitReturnAmount: `${1e18}`,
+                    maxPrice: '666666666666666',
+                  },
+                ],
+              ],
+              dai.address,
+              wEth.address,
+              ethers.constants.WeiPerEther.mul(1500),
+              true,
+            ),
+          ).to.be.reverted;
+        });
+
+        it('should transfer the protocol fee utility token from the user to fee receiver', async () => {
+          await utilityTokenVegeta.approve(poolProxyContract.address, ethers.constants.MaxUint256);
+
+          const vegetaBalanceBefore = await utilityTokenVegeta.balanceOf(vegetaAddress);
+          const feeReceiverBalanceBefore = await utilityTokenVegeta.balanceOf(kakarotoAddress);
+
+          const daiVegetaBalanceBefore = await dai.balanceOf(vegetaAddress);
+          const daiFeeReceiverBalanceBefore = await dai.balanceOf(kakarotoAddress);
+
+          await poolProxyContractVegeta.multihopBatchSwapExactOut(
+            [
+              [
+                {
+                  pool: bPool1.address,
+                  tokenIn: dai.address,
+                  tokenOut: wEth.address,
+                  swapAmount: ethers.constants.WeiPerEther.mul(1500),
+                  limitReturnAmount: `${1e18}`,
+                  maxPrice: '666666666666666',
+                },
+              ],
+            ],
+            dai.address,
+            wEth.address,
+            ethers.constants.WeiPerEther.mul(1500),
+            true,
+          );
+
+          const vegetaBalanceAfter = await utilityTokenVegeta.balanceOf(vegetaAddress);
+          const feeReceiverBalanceAfter = await utilityTokenVegeta.balanceOf(kakarotoAddress);
+
+          const daiVegetaBalanceAfter = await dai.balanceOf(vegetaAddress);
+          const daiFeeReceiverBalanceAfter = await dai.balanceOf(kakarotoAddress);
+
+          // It only takes the fee from the user because pool.swapExactAmountIn is mocked
+          expect(vegetaBalanceAfter).to.eq(vegetaBalanceBefore.sub(MOCKED_PROTOCOL_FEE_AMOUNT / 2));
+          expect(feeReceiverBalanceAfter).to.eq(feeReceiverBalanceBefore.add(MOCKED_PROTOCOL_FEE_AMOUNT / 2));
+
+          expect(daiVegetaBalanceAfter).to.eq(daiVegetaBalanceBefore);
+          expect(daiFeeReceiverBalanceAfter).to.eq(daiFeeReceiverBalanceBefore);
+        });
       });
     });
   });

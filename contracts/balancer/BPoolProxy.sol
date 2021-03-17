@@ -6,12 +6,13 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155Holder.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../token/IXToken.sol";
-import "../token/IXTokenWrapper.sol";
 import "./ISwap.sol";
-import "./IBPool.sol";
-import "./IBRegistry.sol";
-import "./IProtocolFee.sol";
+import "../interfaces/IXToken.sol";
+import "../interfaces/IXTokenWrapper.sol";
+import "../interfaces/IBPool.sol";
+import "../interfaces/IBRegistry.sol";
+import "../interfaces/IProtocolFee.sol";
+import "../interfaces/IUTokenPriceFeed.sol";
 
 import "hardhat/console.sol";
 
@@ -42,9 +43,9 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
     IBRegistry public registry;
     IProtocolFee public protocolFee;
     IXTokenWrapper public xTokenWrapper;
+    IUTokenPriceFeed public utilityTokenFeed;
     address public feeReceiver;
     address public utilityToken;
-    address public utilityTokenFeed;
 
     event RegistrySetted(address registry);
 
@@ -129,7 +130,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
 
     function _setUtilityTokenFeed(address _utilityTokenFeed) internal {
         emit UtilityTokenFeedSetted(_utilityTokenFeed);
-        utilityTokenFeed = _utilityTokenFeed;
+        utilityTokenFeed = IUTokenPriceFeed(_utilityTokenFeed);
     }
 
     function batchSwapExactIn(
@@ -695,25 +696,22 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         uint256 amount,
         bool useUtitlityToken
     ) internal returns (bool) {
-        if (useUtitlityToken && utilityToken != address(0) && utilityTokenFeed != address(0)) {
-            IBPool utitlityTokenPool = IBPool(utilityTokenFeed);
-            uint256 feeAmount =
-                utitlityTokenPool.calcOutGivenIn(
-                    utitlityTokenPool.getBalance(address(token)),
-                    utitlityTokenPool.getDenormalizedWeight(address(token)),
-                    utitlityTokenPool.getBalance(utilityToken),
-                    utitlityTokenPool.getDenormalizedWeight(utilityToken),
-                    amount.div(2),
-                    0
-                );
+        if (useUtitlityToken && utilityToken != address(0) && address(utilityTokenFeed) != address(0)) {
+            uint256 discountedFee = utilityTokenFeed.calculateAmount(address(token), amount.div(2));
 
-            require(
-                IERC20(utilityToken).transferFrom(msg.sender, address(this), feeAmount),
-                "ERR_FEE_UTILITY_TRANSFER_FAILED"
-            );
+            if (discountedFee > 0) {
+                require(
+                    IERC20(utilityToken).transferFrom(msg.sender, feeReceiver, discountedFee),
+                    "ERR_FEE_UTILITY_TRANSFER_FAILED"
+                );
+            } else {
+                require(token.transferFrom(msg.sender, feeReceiver, amount), "ERR_FEE_TRANSFER_FAILED");
+            }
         } else {
             require(token.transferFrom(msg.sender, feeReceiver, amount), "ERR_FEE_TRANSFER_FAILED");
         }
+
+        return true;
     }
 
     function getBalance(IXToken token) internal view returns (uint256) {
@@ -726,5 +724,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         }
 
         require(token.transfer(msg.sender, amount), "ERR_TRANSFER_FAILED");
+
+        return true;
     }
 }

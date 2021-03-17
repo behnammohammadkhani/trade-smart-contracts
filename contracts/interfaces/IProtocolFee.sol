@@ -2,7 +2,7 @@
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
-import "./ISwap.sol";
+import "../balancer/ISwap.sol";
 
 /**
  * @title IProtocolFee

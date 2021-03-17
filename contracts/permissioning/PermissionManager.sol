@@ -8,8 +8,6 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./PermissionItems.sol";
 import "./PermissionManagerStorage.sol";
 
-import "hardhat/console.sol";
-
 /**
  * @title PermissionManager
  * @author Protofire

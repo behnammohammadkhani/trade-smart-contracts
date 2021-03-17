@@ -4,10 +4,8 @@ pragma solidity ^0.7.0;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-import "./IOperationsRegistry.sol";
-import "./IEurPriceFeed.sol";
-
-import "hardhat/console.sol";
+import "../interfaces/IOperationsRegistry.sol";
+import "../interfaces/IEurPriceFeed.sol";
 
 /**
  * @title Authorization

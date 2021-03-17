@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.7.0;
 
-import "../authorization/IAuthorization.sol";
+import "../interfaces/IAuthorization.sol";
 
-import "hardhat/console.sol";
+
 
 contract AuthorizationMock is IAuthorization {
     bool public authorized;

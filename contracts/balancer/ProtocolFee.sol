@@ -5,10 +5,8 @@ pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/math/Math.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./IBPool.sol";
-import "./IProtocolFee.sol";
-
-import "hardhat/console.sol";
+import "../interfaces/IBPool.sol";
+import "../interfaces/IProtocolFee.sol";
 
 /**
  * @title ProtocolFee

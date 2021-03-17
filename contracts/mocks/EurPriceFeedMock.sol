@@ -2,7 +2,7 @@
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "../authorization/IEurPriceFeed.sol";
+import "../interfaces/IEurPriceFeed.sol";
 
 contract EurPriceFeedMock is IEurPriceFeed {
     function getPrice(address) external override returns (uint256) {

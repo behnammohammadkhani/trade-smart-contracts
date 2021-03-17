@@ -4,8 +4,8 @@ pragma solidity ^0.7.0;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/math/Math.sol";
 import "./EnumerableSet.sol";
-import "./IBPool.sol";
-import "./IBFactory.sol";
+import "../interfaces/IBPool.sol";
+import "../interfaces/IBFactory.sol";
 
 /**
  * @title BRegistry

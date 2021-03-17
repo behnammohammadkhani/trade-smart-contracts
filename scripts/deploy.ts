@@ -280,6 +280,8 @@ async function main(): Promise<void> {
   // ProtocolFee
   // FEE_RECEIVER
   // XTokenWrapper
+  // UtilityToken
+  // UtilityTokenPriceFeed
   startLog('Deploying BPoolProxy contract');
   const BPoolProxyFactory: ContractFactory = await ethers.getContractFactory('BPoolProxy');
   const bPoolProxyContract: BPoolProxy = (await BPoolProxyFactory.deploy(
@@ -287,6 +289,8 @@ async function main(): Promise<void> {
     protocolFeeContract.address,
     process.env.FEE_RECEIVER,
     xTokenWrapperContract.address,
+    ethers.constants.AddressZero,
+    ethers.constants.AddressZero,
   )) as BPoolProxy;
   updatetLog(`Deploying BPoolProxy contract - txHash: ${bPoolProxyContract.deployTransaction.hash}`);
   await bPoolProxyContract.deployed();
