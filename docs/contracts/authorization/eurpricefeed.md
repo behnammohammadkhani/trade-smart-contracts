@@ -62,7 +62,7 @@ Sets `_eurUsdFeed` as the new ERU/USD feed.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have FEEDS_MANAGER_ROLE.
 
 - `_eurUsdFeed` should not be the zero address.
 
@@ -76,7 +76,7 @@ Sets `_ethUsdFeed` as the new ERU/USD feed.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have FEEDS_MANAGER_ROLE.
 
 - `_ethUsdFeed` should not be the zero address.
 
@@ -90,7 +90,7 @@ Sets feed addresses for a given group of assets.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have FEEDS_MANAGER_ROLE.
 
 - `_assets` and `_feeds` lengths must match.
 
@@ -110,7 +110,7 @@ Sets feed addresses for a given assets.
 
 Requirements:
 
-- the caller must be the owner.
+- the caller must have FEEDS_MANAGER_ROLE.
 
 - `_asset` should not be the zero address .
 
@@ -148,7 +148,37 @@ Gets how many EUR represents the `_amount` of `_asset`.
 
 ### Function `_setAssetsFeeds(address[] _assets, address[] _feeds) internal`
 
+Sets feed addresses for a given group of assets.
+
+Requirements:
+
+- `_assets` and `_feeds` lengths must match.
+
+- every address in `_assets` should not be the zero address .
+
+- every address in `_feeds` should not be the zero address .
+
+#### Parameters:
+
+- `_assets`: Array of assets addresses.
+
+- `_feeds`: Array of asset/ETH price feeds.
+
 ### Function `_setAssetFeed(address _asset, address _feed) internal`
+
+Sets feed addresses for a given assets.
+
+Requirements:
+
+- `_asset` should not be the zero address .
+
+- `_feed` should not be the zero address .
+
+#### Parameters:
+
+- `_asset`: Asset address.
+
+- `_feed`: Asset/ETH price feed.
 
 ### Function `_getPrice(address _asset) → uint256 internal`
 

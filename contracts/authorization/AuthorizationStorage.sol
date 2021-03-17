@@ -11,13 +11,20 @@ pragma solidity ^0.7.0;
  * Never remove items from this list
  */
 abstract contract AuthorizationStorage {
+    /// @dev Permissions module address
     address public permissions;
+    /// @dev EurPriceFeed module address
     address public eurPriceFeed;
+    /// @dev OperationsRegistry address
     address public operationsRegistry;
+    /// @dev Balancer BFactory address
     address public poolFactory;
+    /// @dev XTokenWrapper address
     address public xTokenWrapper;
+    /// @dev Traiding limit value (in WEI) for some type of users
     uint256 public tradingLimit;
 
+    /// @dev Indicates if protocol is paused
     bool public paused;
 
     bytes4 public constant ERC20_TRANSFER = bytes4(keccak256("transfer(address,uint256)"));

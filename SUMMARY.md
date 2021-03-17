@@ -6,17 +6,19 @@
     * [Authorization](docs/contracts/authorization/authorization.md)
     * [AuthorizationStorage](docs/contracts/authorization/authorizationstorage.md)
     * [EurPriceFeed](docs/contracts/authorization/eurpricefeed.md)
-    * [IAuthorization](docs/contracts/authorization/iauthorization.md)
-    * [IEurPriceFeed](docs/contracts/authorization/ieurpricefeed.md)
-    * [IOperationsRegistry](docs/contracts/authorization/ioperationsregistry.md)
     * [OperationsRegistry](docs/contracts/authorization/operationsregistry.md)
+  * balancer
+    * [BPoolProxy](docs/contracts/balancer/bpoolproxy.md)
+    * [BRegistry](docs/contracts/balancer/bregistry.md)
+    * [EnumerableSet](docs/contracts/balancer/enumerableset.md)
+    * [ISwap](docs/contracts/balancer/iswap.md)
+    * [ProtocolFee](docs/contracts/balancer/protocolfee.md)
   * common
   * permissioning
     * [PermissionItems](docs/contracts/permissioning/permissionitems.md)
     * [PermissionManager](docs/contracts/permissioning/permissionmanager.md)
     * [PermissionManagerStorage](docs/contracts/permissioning/permissionmanagerstorage.md)
   * token
-    * [IXToken](docs/contracts/token/ixtoken.md)
     * [XToken](docs/contracts/token/xtoken.md)
     * [XTokenFactory](docs/contracts/token/xtokenfactory.md)
     * [XTokenWrapper](docs/contracts/token/xtokenwrapper.md)

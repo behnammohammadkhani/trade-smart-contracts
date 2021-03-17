@@ -40,25 +40,56 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
 
     uint256 private constant BONE = 10**18;
 
+    /// @dev Address of BRegistry
     IBRegistry public registry;
+    /// @dev Address of ProtocolFee module
     IProtocolFee public protocolFee;
+    /// @dev Address of XTokenWrapper
     IXTokenWrapper public xTokenWrapper;
+    /// @dev Address of Utitlity Token Price Feed - Used as feature flag for discounted fee
     IUTokenPriceFeed public utilityTokenFeed;
+    /// @dev Address who receives fees
     address public feeReceiver;
+    /// @dev Address Utitlity Token - Used as feature flag for discounted fee
     address public utilityToken;
 
+    /**
+     * @dev Emitted when `registry` address is setted.
+     */
     event RegistrySetted(address registry);
 
+    /**
+     * @dev Emitted when `protocolFee` address is setted.
+     */
     event ProtocolFeeSetted(address protocolFee);
 
+    /**
+     * @dev Emitted when `feeReceiver` address is setted.
+     */
     event FeeReceiverSetted(address feeReceiver);
 
+    /**
+     * @dev Emitted when `xTokenWrapper` address is setted.
+     */
     event XTokenWrapperSetted(address xTokenWrapper);
 
+    /**
+     * @dev Emitted when `utilityToken` address is setted.
+     */
     event UtilityTokenSetted(address utilityToken);
 
+    /**
+     * @dev Emitted when `utilityTokenFeed` address is setted.
+     */
     event UtilityTokenFeedSetted(address utilityTokenFeed);
 
+    /**
+     * @dev Sets the values for {registry}, {protocolFee}, {feeReceiver},
+     * {xTokenWrapper}, {utilityToken} and {utilityTokenFeed}.
+     *
+     * Sets ownership to the account that deploys the contract.
+     *
+     */
     constructor(
         address _registry,
         address _protocolFee,
@@ -75,64 +106,183 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         _setUtilityTokenFeed(_utilityTokenFeed);
     }
 
+    /**
+     * @dev Sets `_registry` as the new registry.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - `_registry` should not be the zero address.
+     *
+     * @param _registry The address of the registry.
+     */
     function setRegistry(address _registry) external onlyOwner {
         _setRegistry(_registry);
     }
 
+    /**
+     * @dev Sets `_protocolFee` as the new protocolFee.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - `_protocolFee` should not be the zero address.
+     *
+     * @param _protocolFee The address of the protocolFee.
+     */
     function setProtocolFee(address _protocolFee) external onlyOwner {
         _setProtocolFee(_protocolFee);
     }
 
+    /**
+     * @dev Sets `_feeReceiver` as the new feeReceiver.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - `_feeReceiver` should not be the zero address.
+     *
+     * @param _feeReceiver The address of the feeReceiver.
+     */
     function setFeeReceiver(address _feeReceiver) external onlyOwner {
         _setFeeReceiver(_feeReceiver);
     }
 
+    /**
+     * @dev Sets `_xTokenWrapper` as the new xTokenWrapper.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     * - `_xTokenWrapper` should not be the zero address.
+     *
+     * @param _xTokenWrapper The address of the xTokenWrapper.
+     */
     function setXTokenWrapper(address _xTokenWrapper) external onlyOwner {
         _setXTokenWrapper(_xTokenWrapper);
     }
 
+    /**
+     * @dev Sets `_utilityToken` as the new utilityToken.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     *
+     * @param _utilityToken The address of the utilityToken.
+     */
     function setUtilityToken(address _utilityToken) external onlyOwner {
         _setUtilityToken(_utilityToken);
     }
 
+    /**
+     * @dev Sets `_utilityTokenFeed` as the new utilityTokenFeed.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     *
+     * @param _utilityTokenFeed The address of the utilityTokenFeed.
+     */
     function setUtilityTokenFeed(address _utilityTokenFeed) external onlyOwner {
         _setUtilityTokenFeed(_utilityTokenFeed);
     }
 
+    /**
+     * @dev Sets `_registry` as the new registry.
+     *
+     * Requirements:
+     *
+     * - `_registry` should not be the zero address.
+     *
+     * @param _registry The address of the registry.
+     */
     function _setRegistry(address _registry) internal {
         require(_registry != address(0), "registry is the zero address");
         emit RegistrySetted(_registry);
         registry = IBRegistry(_registry);
     }
 
+    /**
+     * @dev Sets `_protocolFee` as the new protocolFee.
+     *
+     * Requirements:
+     *
+     * - `_protocolFee` should not be the zero address.
+     *
+     * @param _protocolFee The address of the protocolFee.
+     */
     function _setProtocolFee(address _protocolFee) internal {
         require(_protocolFee != address(0), "protocolFee is the zero address");
         emit ProtocolFeeSetted(_protocolFee);
         protocolFee = IProtocolFee(_protocolFee);
     }
 
+    /**
+     * @dev Sets `_feeReceiver` as the new feeReceiver.
+     *
+     * Requirements:
+     *
+     * - `_feeReceiver` should not be the zero address.
+     *
+     * @param _feeReceiver The address of the feeReceiver.
+     */
     function _setFeeReceiver(address _feeReceiver) internal {
         require(_feeReceiver != address(0), "feeReceiver is the zero address");
         emit FeeReceiverSetted(_feeReceiver);
         feeReceiver = _feeReceiver;
     }
 
+    /**
+     * @dev Sets `_xTokenWrapper` as the new xTokenWrapper.
+     *
+     * Requirements:
+     *
+     * - `_xTokenWrapper` should not be the zero address.
+     *
+     * @param _xTokenWrapper The address of the xTokenWrapper.
+     */
     function _setXTokenWrapper(address _xTokenWrapper) internal {
         require(_xTokenWrapper != address(0), "xTokenWrapper is the zero address");
         emit FeeReceiverSetted(_xTokenWrapper);
         xTokenWrapper = IXTokenWrapper(_xTokenWrapper);
     }
 
+    /**
+     * @dev Sets `_utilityToken` as the new utilityToken.
+     *
+     * @param _utilityToken The address of the utilityToken.
+     */
     function _setUtilityToken(address _utilityToken) internal {
         emit UtilityTokenSetted(_utilityToken);
         utilityToken = _utilityToken;
     }
 
+    /**
+     * @dev Sets `_utilityTokenFeed` as the new utilityTokenFeed.
+     *
+     * Requirements:
+     *
+     * - the caller must be the owner.
+     *
+     * @param _utilityTokenFeed The address of the utilityTokenFeed.
+     */
     function _setUtilityTokenFeed(address _utilityTokenFeed) internal {
         emit UtilityTokenFeedSetted(_utilityTokenFeed);
         utilityTokenFeed = IUTokenPriceFeed(_utilityTokenFeed);
     }
 
+    /**
+     * @dev Execute single-hop swaps for swapExactIn trade type. Used for swaps
+     * returned from viewSplit function and legacy off-chain SOR.
+     *
+     * @param swaps Array of single-hop swaps.
+     * @param tokenIn Input token.
+     * @param tokenOut Output token.
+     * @param totalAmountIn Total amount of tokenIn.
+     * @param minTotalAmountOut Minumum amount of tokenOut.
+     * @param useUtilityToken Flag to determine if the protocol swap fee is paid using UtilityToken or TokenIn.
+     */
     function batchSwapExactIn(
         Swap[] memory swaps,
         IXToken tokenIn,
@@ -172,6 +322,16 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         transfer(tokenIn, getBalance(tokenIn));
     }
 
+    /**
+     * @dev Execute single-hop swaps for swapExactOut trade type. Used for swaps
+     * returned from viewSplit function and legacy off-chain SOR.
+     *
+     * @param swaps Array of single-hop swaps.
+     * @param tokenIn Input token.
+     * @param tokenOut Output token.
+     * @param maxTotalAmountIn Maximum total amount of tokenIn.
+     * @param useUtilityToken Flag to determine if the protocol swap fee is paid using UtilityToken or TokenIn.
+     */
     function batchSwapExactOut(
         Swap[] memory swaps,
         IXToken tokenIn,
@@ -209,6 +369,16 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         transfer(tokenIn, getBalance(tokenIn));
     }
 
+    /**
+     * @dev Execute multi-hop swaps returned from off-chain SOR for swapExactIn trade type.
+     *
+     * @param swapSequences multi-hop swaps sequence.
+     * @param tokenIn Input token.
+     * @param tokenOut Output token.
+     * @param totalAmountIn Total amount of tokenIn.
+     * @param minTotalAmountOut Minumum amount of tokenOut.
+     * @param useUtilityToken Flag to determine if the protocol swap fee is paid using UtilityToken or TokenIn.
+     */
     function multihopBatchSwapExactIn(
         Swap[][] memory swapSequences,
         IXToken tokenIn,
@@ -255,6 +425,15 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         transfer(tokenIn, getBalance(tokenIn));
     }
 
+    /**
+     * @dev Execute multi-hop swaps returned from off-chain SOR for swapExactOut trade type.
+     *
+     * @param swapSequences multi-hop swaps sequence.
+     * @param tokenIn Input token.
+     * @param tokenOut Output token.
+     * @param maxTotalAmountIn Maximum total amount of tokenIn.
+     * @param useUtilityToken Flag to determine if the protocol swap fee is paid using UtilityToken or TokenIn.
+     */
     function multihopBatchSwapExactOut(
         Swap[][] memory swapSequences,
         IXToken tokenIn,
@@ -341,6 +520,16 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         transfer(tokenIn, getBalance(tokenIn));
     }
 
+    /**
+     * @dev Used for swaps returned from viewSplit function.
+     *
+     * @param tokenIn Input token.
+     * @param tokenOut Output token.
+     * @param totalAmountIn Total amount of tokenIn.
+     * @param minTotalAmountOut Minumum amount of tokenOut.
+     * @param nPools Maximum mumber of pools.
+     * @param useUtilityToken Flag to determine if the protocol swap fee is paid using UtilityToken or TokenIn.
+     */
     function smartSwapExactIn(
         IXToken tokenIn,
         IXToken tokenOut,
@@ -355,6 +544,15 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         totalAmountOut = batchSwapExactIn(swaps, tokenIn, tokenOut, totalAmountIn, minTotalAmountOut, useUtilityToken);
     }
 
+    /**
+     * @dev Used for swaps returned from viewSplit function.
+     *
+     * @param tokenIn Input token.
+     * @param tokenOut Output token.
+     * @param maxTotalAmountIn Maximum total amount of tokenIn.
+     * @param nPools Maximum mumber of pools.
+     * @param useUtilityToken Flag to determine if the protocol swap fee is paid using UtilityToken or TokenIn.
+     */
     function smartSwapExactOut(
         IXToken tokenIn,
         IXToken tokenOut,
@@ -369,6 +567,15 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         totalAmountIn = batchSwapExactOut(swaps, tokenIn, tokenOut, maxTotalAmountIn, useUtilityToken);
     }
 
+    /**
+     * @dev Join the `pool`, getting `poolAmountOut` pool tokens. This will pull some of each of the currently
+     * trading tokens in the pool, meaning you must have called approve for each token for this pool. These
+     * values are limited by the array of `maxAmountsIn` in the order of the pool tokens.
+     *
+     * @param pool Pool address.
+     * @param poolAmountOut Exact pool amount out.
+     * @param maxAmountsIn Maximum amounts in.
+     */
     function joinPool(
         address pool,
         uint256 poolAmountOut,
@@ -396,6 +603,14 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         transfer(IXToken(xTokenWrapper.tokenToXToken(pool)), poolAmountOut);
     }
 
+    /**
+     * @dev Exit the pool, paying poolAmountIn pool tokens and getting some of each of the currently trading
+     * tokens in return. These values are limited by the array of minAmountsOut in the order of the pool tokens.
+     *
+     * @param pool Pool address.
+     * @param poolAmountIn Exact pool amount int.
+     * @param minAmountsOut Minumum amounts out.
+     */
     function exitPool(
         address pool,
         uint256 poolAmountIn,
@@ -419,6 +634,14 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         }
     }
 
+    /**
+     * @dev Pay `tokenAmountIn` of token `tokenIn` to join the pool, getting `poolAmountOut` of the pool shares.
+     *
+     * @param pool Pool address.
+     * @param tokenIn Input token.
+     * @param tokenAmountIn Exact amount of tokenIn to pay.
+     * @param minPoolAmountOut Minumum amount of pool shares to get.
+     */
     function joinswapExternAmountIn(
         address pool,
         address tokenIn,
@@ -438,6 +661,15 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         transfer(IXToken(xTokenWrapper.tokenToXToken(pool)), poolAmountOut);
     }
 
+    /**
+     * @dev Specify `poolAmountOut` pool shares that you want to get, and a token `tokenIn` to pay with.
+     * This costs `tokenAmountIn` tokens (these went into the pool).
+     *
+     * @param pool Pool address.
+     * @param tokenIn Input token.
+     * @param poolAmountOut Exact amount of pool shares to get.
+     * @param maxAmountIn Minumum amount of tokenIn to pay.
+     */
     function joinswapPoolAmountOut(
         address pool,
         address tokenIn,
@@ -460,6 +692,15 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         transfer(IXToken(xTokenWrapper.tokenToXToken(pool)), poolAmountOut);
     }
 
+    /**
+     * @dev Pay `poolAmountIn` pool shares into the pool, getting `tokenAmountOut` of the given
+     * token `tokenOut` out of the pool.
+     *
+     * @param pool Pool address.
+     * @param tokenOut Input token.
+     * @param poolAmountIn Exact amount of pool shares to pay.
+     * @param minAmountOut Minumum amount of tokenIn to get.
+     */
     function exitswapPoolAmountIn(
         address pool,
         address tokenOut,
@@ -481,6 +722,15 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         transfer(IXToken(tokenOut), tokenAmountOut);
     }
 
+    /**
+     * @dev Specify tokenAmountOut of token tokenOut that you want to get out of the pool.
+     * This costs poolAmountIn pool shares (these went into the pool).
+     *
+     * @param pool Pool address.
+     * @param tokenOut Input token.
+     * @param tokenAmountOut Exact amount of of tokenIn to get.
+     * @param maxPoolAmountIn Maximum amount of pool shares to pay.
+     */
     function exitswapExternAmountOut(
         address pool,
         address tokenOut,
@@ -511,6 +761,15 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         }
     }
 
+    /**
+     * @dev View function that calculates most optimal swaps (exactIn swap type) across a max of nPools.
+     * Returns an array of `Swaps` and the total amount out for swap.
+     *
+     * @param tokenIn Input token.
+     * @param tokenOut Output token.
+     * @param swapAmount Amount of tokenIn.
+     * @param nPools Maximum mumber of pools.
+     */
     function viewSplitExactIn(
         address tokenIn,
         address tokenOut,
@@ -557,12 +816,21 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         return (swaps, totalOutput);
     }
 
+    /**
+     * @dev View function that calculates most optimal swaps (exactOut swap type) across a max of nPools.
+     * Returns an array of Swaps and the total amount in for swap.
+     *
+     * @param tokenIn Input token.
+     * @param tokenOut Output token.
+     * @param swapAmount Amount of tokenIn.
+     * @param nPools Maximum mumber of pools.
+     */
     function viewSplitExactOut(
         address tokenIn,
         address tokenOut,
         uint256 swapAmount,
         uint256 nPools
-    ) public view returns (Swap[] memory swaps, uint256 totalOutput) {
+    ) public view returns (Swap[] memory swaps, uint256 totalInput) {
         address[] memory poolAddresses = registry.getBestPoolsWithLimit(tokenIn, tokenOut, nPools);
 
         Pool[] memory pools = new Pool[](poolAddresses.length);
@@ -598,9 +866,9 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
             });
         }
 
-        totalOutput = calcTotalOutExactOut(bestInputAmounts, pools);
+        totalInput = calcTotalOutExactOut(bestInputAmounts, pools);
 
-        return (swaps, totalOutput);
+        return (swaps, totalInput);
     }
 
     function getPoolData(
@@ -687,10 +955,18 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         return totalOutput;
     }
 
+    /**
+     * @dev Trtansfers `token` from the sender to this conteract.
+     *
+     */
     function transferFrom(IXToken token, uint256 amount) internal returns (bool) {
         require(token.transferFrom(msg.sender, address(this), amount), "ERR_TRANSFER_FAILED");
     }
 
+    /**
+     * @dev Trtansfers protocol swap fee from the sender to this `feeReceiver`.
+     *
+     */
     function transferFeeFrom(
         IXToken token,
         uint256 amount,

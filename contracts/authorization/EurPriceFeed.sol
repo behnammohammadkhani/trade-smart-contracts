@@ -22,7 +22,7 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
 
     bytes32 public constant FEEDS_MANAGER_ROLE = keccak256("FEEDS_MANAGER_ROLE");
 
-    /// @dev mapping between an asset and its feed. It returs how many USD is 1eAssetDecimal asset.
+    /// @dev mapping between an asset and its feed. It returs how many ETH is 1eAssetDecimal asset.
     mapping(address => address) public assetEthFeed;
 
     /// @dev EUR/USD feed. It returs how many USD is 1 EUR.
@@ -96,7 +96,7 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have FEEDS_MANAGER_ROLE.
      * - `_eurUsdFeed` should not be the zero address.
      *
      * @param _eurUsdFeed The address of the new ERU/USD feed.
@@ -112,7 +112,7 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have FEEDS_MANAGER_ROLE.
      * - `_ethUsdFeed` should not be the zero address.
      *
      * @param _ethUsdFeed The address of the new ERU/USD feed.
@@ -128,7 +128,7 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have FEEDS_MANAGER_ROLE.
      * - `_assets` and `_feeds` lengths must match.
      * - every address in `_assets` should not be the zero address .
      * - every address in `_feeds` should not be the zero address .
@@ -145,7 +145,7 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
      *
      * Requirements:
      *
-     * - the caller must be the owner.
+     * - the caller must have FEEDS_MANAGER_ROLE.
      * - `_asset` should not be the zero address .
      * - `_feed` should not be the zero address .
      *
@@ -181,6 +181,18 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
         return _amount.mul(10**uint256(18 - assetDecimals)).mul(assetPrice);
     }
 
+    /**
+     * @dev Sets feed addresses for a given group of assets.
+     *
+     * Requirements:
+     *
+     * - `_assets` and `_feeds` lengths must match.
+     * - every address in `_assets` should not be the zero address .
+     * - every address in `_feeds` should not be the zero address .
+     *
+     * @param _assets Array of assets addresses.
+     * @param _feeds Array of asset/ETH price feeds.
+     */
     function _setAssetsFeeds(address[] memory _assets, address[] memory _feeds) internal {
         require(_assets.length == _feeds.length, "assets and feeds lengths not match");
 
@@ -189,6 +201,17 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
         }
     }
 
+    /**
+     * @dev Sets feed addresses for a given assets.
+     *
+     * Requirements:
+     *
+     * - `_asset` should not be the zero address .
+     * - `_feed` should not be the zero address .
+     *
+     * @param _asset Asset address.
+     * @param _feed Asset/ETH price feed.
+     */
     function _setAssetFeed(address _asset, address _feed) internal {
         require(_asset != address(0), "asset is the zero address");
         require(_feed != address(0), "asset feed is the zero address");

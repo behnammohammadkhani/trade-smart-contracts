@@ -346,23 +346,23 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
 
             // ERC20_TRANSFER uses _user, which is the sender, for authorizing
 
-            if (_operation == ERC20_TRANSFER) {
-                ( , uint256 amount) = abi.decode(_data[4:], (address, uint256));
-                operationAmount = amount;
-            }
+            // if (_operation == ERC20_TRANSFER) {
+            //     ( , uint256 amount) = abi.decode(_data[4:], (address, uint256));
+            //     operationAmount = amount;
+            // }
 
-            if (_operation == ERC20_MINT || _operation == ERC20_BURN_FROM) {
-                (address account, uint256 amount) = abi.decode(_data[4:], (address, uint256));
-                user = account;
-                operationAmount = amount;
-            }
+            // if (_operation == ERC20_MINT || _operation == ERC20_BURN_FROM) {
+            //     (address account, uint256 amount) = abi.decode(_data[4:], (address, uint256));
+            //     user = account;
+            //     operationAmount = amount;
+            // }
 
-            if (_operation == ERC20_TRANSFER_FROM) {
-                (address sender, , uint256 amount) = abi.decode(_data[4:], (address, address, uint256));
-                user = sender;
-                operationAmount = amount;
-                operation = ERC20_TRANSFER;
-            }
+            // if (_operation == ERC20_TRANSFER_FROM) {
+            //     (address sender, , uint256 amount) = abi.decode(_data[4:], (address, address, uint256));
+            //     user = sender;
+            //     operationAmount = amount;
+            //     operation = ERC20_TRANSFER;
+            // }
 
             // No need to check for Zero amount operations, also Balancer requires allowed zero amount transfers
             if (operationAmount == 0) {
@@ -531,6 +531,11 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         return false;
     }
 
+    /**
+     * @dev Returns `true` if `_operation` is an ERC20 method.
+     *
+     * @param _operation Method sig.
+     */
     function isERC20Operation(bytes4 _operation) internal pure returns (bool) {
         return
             _operation == ERC20_TRANSFER ||
@@ -539,6 +544,11 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
             _operation == ERC20_BURN_FROM;
     }
 
+    /**
+     * @dev Returns `true` if `_operation` is a BFatory method.
+     *
+     * @param _operation Method sig.
+     */
     function isBFactoryOperation(bytes4 _operation) internal pure returns (bool) {
         return _operation == BFACTORY_NEW_POOL;
     }
