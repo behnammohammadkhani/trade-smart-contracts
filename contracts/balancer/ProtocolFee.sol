@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: Unlicense
+//SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
@@ -10,6 +10,12 @@ import "./IProtocolFee.sol";
 
 import "hardhat/console.sol";
 
+/**
+ * @title ProtocolFee
+ * @author Protofire
+ * @dev Module for swap fee calculations.
+ *
+ */
 contract ProtocolFee is Ownable, IProtocolFee {
     using SafeMath for uint256;
 

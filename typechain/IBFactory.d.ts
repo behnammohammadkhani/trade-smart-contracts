@@ -24,13 +24,40 @@ interface IBFactoryInterface extends ethers.utils.Interface {
   functions: {
     "isBPool(address)": FunctionFragment;
     "newBPool()": FunctionFragment;
+    "setAuthorization(address)": FunctionFragment;
+    "setExchProxy(address)": FunctionFragment;
+    "setOperationsRegistry(address)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "isBPool", values: [string]): string;
   encodeFunctionData(functionFragment: "newBPool", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "setAuthorization",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setExchProxy",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setOperationsRegistry",
+    values: [string]
+  ): string;
 
   decodeFunctionResult(functionFragment: "isBPool", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "newBPool", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setAuthorization",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setExchProxy",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setOperationsRegistry",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -59,6 +86,36 @@ export class IBFactory extends Contract {
     newBPool(overrides?: Overrides): Promise<ContractTransaction>;
 
     "newBPool()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    setAuthorization(
+      _authorization: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setAuthorization(address)"(
+      _authorization: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setExchProxy(
+      exchProxy: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setExchProxy(address)"(
+      exchProxy: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setOperationsRegistry(
+      operationsRegistry: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setOperationsRegistry(address)"(
+      operationsRegistry: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
   };
 
   isBPool(b: string, overrides?: CallOverrides): Promise<boolean>;
@@ -69,6 +126,36 @@ export class IBFactory extends Contract {
 
   "newBPool()"(overrides?: Overrides): Promise<ContractTransaction>;
 
+  setAuthorization(
+    _authorization: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setAuthorization(address)"(
+    _authorization: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setExchProxy(
+    exchProxy: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setExchProxy(address)"(
+    exchProxy: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setOperationsRegistry(
+    operationsRegistry: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setOperationsRegistry(address)"(
+    operationsRegistry: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     isBPool(b: string, overrides?: CallOverrides): Promise<boolean>;
 
@@ -77,6 +164,33 @@ export class IBFactory extends Contract {
     newBPool(overrides?: CallOverrides): Promise<string>;
 
     "newBPool()"(overrides?: CallOverrides): Promise<string>;
+
+    setAuthorization(
+      _authorization: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setAuthorization(address)"(
+      _authorization: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setExchProxy(exchProxy: string, overrides?: CallOverrides): Promise<void>;
+
+    "setExchProxy(address)"(
+      exchProxy: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setOperationsRegistry(
+      operationsRegistry: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setOperationsRegistry(address)"(
+      operationsRegistry: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
@@ -92,6 +206,33 @@ export class IBFactory extends Contract {
     newBPool(overrides?: Overrides): Promise<BigNumber>;
 
     "newBPool()"(overrides?: Overrides): Promise<BigNumber>;
+
+    setAuthorization(
+      _authorization: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setAuthorization(address)"(
+      _authorization: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setExchProxy(exchProxy: string, overrides?: Overrides): Promise<BigNumber>;
+
+    "setExchProxy(address)"(
+      exchProxy: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setOperationsRegistry(
+      operationsRegistry: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setOperationsRegistry(address)"(
+      operationsRegistry: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -108,5 +249,35 @@ export class IBFactory extends Contract {
     newBPool(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "newBPool()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    setAuthorization(
+      _authorization: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setAuthorization(address)"(
+      _authorization: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setExchProxy(
+      exchProxy: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setExchProxy(address)"(
+      exchProxy: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setOperationsRegistry(
+      operationsRegistry: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setOperationsRegistry(address)"(
+      operationsRegistry: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
   };
 }

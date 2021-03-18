@@ -14,6 +14,7 @@ import 'solidity-coverage';
 import '@openzeppelin/hardhat-upgrades';
 import 'hardhat-gas-reporter';
 import 'hardhat-contract-sizer';
+import '@nomiclabs/hardhat-etherscan';
 
 const chainIds = {
   ganache: 1337,
@@ -116,6 +117,9 @@ const config: HardhatUserConfig = {
     alphaSort: true,
     runOnCompile: false,
     disambiguatePaths: false,
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_ID,
   },
 };
 

@@ -448,4 +448,64 @@ describe('PermissionManager', function () {
       ).to.be.revertedWith('PermissionManager: Proxy is not currently rejected');
     });
   });
+
+  describe('#assignItem', () => {
+    beforeEach(async () => {
+      await reverter.revert();
+    });
+
+    it('non owner should not be able to call assignItem', async () => {
+      await expect(permissionManagerContractKakaroto.assignItem(10, [karpinchoAddress])).to.be.revertedWith(
+        'Ownable: caller is not the owner',
+      );
+    });
+
+    it('owner should be able to call assignItem for account', async () => {
+      await permissionManagerContract.assignItem(10, [karpinchoAddress]);
+
+      expect(await permissionItemsContract.balanceOf(karpinchoAddress, 10)).to.eq(1);
+    });
+
+    it('owner should not be able to call assignItem for the same account and item', async () => {
+      await permissionManagerContract.assignItem(10, [karpinchoAddress]);
+
+      await expect(permissionManagerContract.assignItem(10, [karpinchoAddress])).to.be.revertedWith(
+        'PermissionManager: Account is assigned with item',
+      );
+    });
+  });
+
+  describe('#removeItem', () => {
+    before(async () => {
+      await reverter.revert();
+
+      await permissionManagerContract.assignItem(10, [karpinchoAddress]);
+
+      await reverter.snapshot();
+    });
+
+    beforeEach(async () => {
+      await reverter.revert();
+    });
+
+    it('non owner should not be able to call removeItem', async () => {
+      await expect(permissionManagerContractKakaroto.removeItem(10, [karpinchoAddress])).to.be.revertedWith(
+        'Ownable: caller is not the owner',
+      );
+    });
+
+    it('owner should be able to call removeItem for account', async () => {
+      await permissionManagerContract.removeItem(10, [karpinchoAddress]);
+
+      expect(await permissionItemsContract.balanceOf(karpinchoAddress, 10)).to.eq(0);
+    });
+
+    it('owner should not be able to call removeItem for the same account and item', async () => {
+      await permissionManagerContract.removeItem(10, [karpinchoAddress]);
+
+      await expect(permissionManagerContract.removeItem(10, [karpinchoAddress])).to.be.revertedWith(
+        'PermissionManager: Account is not assigned with item',
+      );
+    });
+  });
 });

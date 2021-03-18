@@ -27,6 +27,7 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     "SUSPENDED_ID()": FunctionFragment;
     "TIER_1_ID()": FunctionFragment;
     "TIER_2_ID()": FunctionFragment;
+    "assignItem(uint256,address[])": FunctionFragment;
     "assingTier1(address[])": FunctionFragment;
     "assingTier2(tuple[])": FunctionFragment;
     "hasTier1(address)": FunctionFragment;
@@ -37,6 +38,7 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     "owner()": FunctionFragment;
     "permissionItems()": FunctionFragment;
     "rejectUser(tuple[])": FunctionFragment;
+    "removeItem(uint256,address[])": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "revokeTier1(address[])": FunctionFragment;
     "revokeTier2(tuple[])": FunctionFragment;
@@ -62,6 +64,10 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "TIER_1_ID", values?: undefined): string;
   encodeFunctionData(functionFragment: "TIER_2_ID", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "assignItem",
+    values: [BigNumberish, string[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "assingTier1",
     values: [string[]]
   ): string;
@@ -82,6 +88,10 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "rejectUser",
     values: [{ user: string; proxy: string }[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeItem",
+    values: [BigNumberish, string[]]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -130,6 +140,7 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "TIER_1_ID", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "TIER_2_ID", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "assignItem", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "assingTier1",
     data: BytesLike
@@ -152,6 +163,7 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "rejectUser", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "removeItem", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -227,6 +239,18 @@ export class PermissionManager extends Contract {
     TIER_2_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "TIER_2_ID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    assignItem(
+      _itemId: BigNumberish,
+      _accounts: string[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "assignItem(uint256,address[])"(
+      _itemId: BigNumberish,
+      _accounts: string[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     assingTier1(
       _accounts: string[],
@@ -304,6 +328,18 @@ export class PermissionManager extends Contract {
 
     "rejectUser(tuple[])"(
       _usersProxies: { user: string; proxy: string }[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    removeItem(
+      _itemId: BigNumberish,
+      _accounts: string[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "removeItem(uint256,address[])"(
+      _itemId: BigNumberish,
+      _accounts: string[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -402,6 +438,18 @@ export class PermissionManager extends Contract {
 
   "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+  assignItem(
+    _itemId: BigNumberish,
+    _accounts: string[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "assignItem(uint256,address[])"(
+    _itemId: BigNumberish,
+    _accounts: string[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   assingTier1(
     _accounts: string[],
     overrides?: Overrides
@@ -475,6 +523,18 @@ export class PermissionManager extends Contract {
 
   "rejectUser(tuple[])"(
     _usersProxies: { user: string; proxy: string }[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  removeItem(
+    _itemId: BigNumberish,
+    _accounts: string[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "removeItem(uint256,address[])"(
+    _itemId: BigNumberish,
+    _accounts: string[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -573,6 +633,18 @@ export class PermissionManager extends Contract {
 
     "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    assignItem(
+      _itemId: BigNumberish,
+      _accounts: string[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "assignItem(uint256,address[])"(
+      _itemId: BigNumberish,
+      _accounts: string[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     assingTier1(_accounts: string[], overrides?: CallOverrides): Promise<void>;
 
     "assingTier1(address[])"(
@@ -643,6 +715,18 @@ export class PermissionManager extends Contract {
 
     "rejectUser(tuple[])"(
       _usersProxies: { user: string; proxy: string }[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeItem(
+      _itemId: BigNumberish,
+      _accounts: string[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "removeItem(uint256,address[])"(
+      _itemId: BigNumberish,
+      _accounts: string[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -748,6 +832,18 @@ export class PermissionManager extends Contract {
 
     "TIER_2_ID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    assignItem(
+      _itemId: BigNumberish,
+      _accounts: string[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "assignItem(uint256,address[])"(
+      _itemId: BigNumberish,
+      _accounts: string[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     assingTier1(_accounts: string[], overrides?: Overrides): Promise<BigNumber>;
 
     "assingTier1(address[])"(
@@ -821,6 +917,18 @@ export class PermissionManager extends Contract {
 
     "rejectUser(tuple[])"(
       _usersProxies: { user: string; proxy: string }[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    removeItem(
+      _itemId: BigNumberish,
+      _accounts: string[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "removeItem(uint256,address[])"(
+      _itemId: BigNumberish,
+      _accounts: string[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -919,6 +1027,18 @@ export class PermissionManager extends Contract {
 
     "TIER_2_ID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    assignItem(
+      _itemId: BigNumberish,
+      _accounts: string[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "assignItem(uint256,address[])"(
+      _itemId: BigNumberish,
+      _accounts: string[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     assingTier1(
       _accounts: string[],
       overrides?: Overrides
@@ -1006,6 +1126,18 @@ export class PermissionManager extends Contract {
 
     "rejectUser(tuple[])"(
       _usersProxies: { user: string; proxy: string }[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    removeItem(
+      _itemId: BigNumberish,
+      _accounts: string[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "removeItem(uint256,address[])"(
+      _itemId: BigNumberish,
+      _accounts: string[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 

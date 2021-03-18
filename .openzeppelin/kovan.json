@@ -1,9 +1,9 @@
 {
   "manifestVersion": "3.1",
   "impls": {
-    "ed24772696329acb38051411d0e9f15e9a14b8bae7be91406287c89564d7a3d1": {
-      "address": "0x6a6303c7DD26D5b6B44929c488037351BBbC9a40",
-      "txHash": "0x6b78a72bc098e9c1f582c52819b01d79f5ae1e45209da933c0a312a800357c26",
+    "c0566821a0a60a8c7e5104812ecec594ddeb04828add53126c9111b739f72732": {
+      "address": "0xA58C872BFF29b80bbD15869b21Bb1e400FcB8365",
+      "txHash": "0x54c216ef3feda385b3d1a6a3efa89c5cc1dd7f8db0a14e5c067bc5953c453ca6",
       "layout": {
         "storage": [
           {
@@ -62,9 +62,9 @@
         }
       }
     },
-    "e9a7493f108d29b200fb427a4f20639e03758994361cad7fd5349f57006e9cbb": {
-      "address": "0xaF3B12700AdC579c508D3905d6b59173d7b89002",
-      "txHash": "0xd59a8765bcda01bc6dd8b07057956ce99192a33c9aa5185005ccd36a924ac8bf",
+    "313e86620c73f169f4c07db3f75fec58d658c6b73cd9396dd0e579e12d5ae2e4": {
+      "address": "0xB4eBaA29234cd18c3112b045629411b871549F6a",
+      "txHash": "0xe72f01c5ce7b3190874506df5eb592fe1603d0399ba8d401e9d335908882ef94",
       "layout": {
         "storage": [
           {
@@ -117,15 +117,27 @@
           },
           {
             "contract": "AuthorizationStorage",
+            "label": "poolFactory",
+            "type": "t_address",
+            "src": "contracts/authorization/AuthorizationStorage.sol:17"
+          },
+          {
+            "contract": "AuthorizationStorage",
+            "label": "xTokenWrapper",
+            "type": "t_address",
+            "src": "contracts/authorization/AuthorizationStorage.sol:18"
+          },
+          {
+            "contract": "AuthorizationStorage",
             "label": "tradingLimit",
             "type": "t_uint256",
-            "src": "contracts/authorization/AuthorizationStorage.sol:17"
+            "src": "contracts/authorization/AuthorizationStorage.sol:19"
           },
           {
             "contract": "AuthorizationStorage",
             "label": "paused",
             "type": "t_bool",
-            "src": "contracts/authorization/AuthorizationStorage.sol:19"
+            "src": "contracts/authorization/AuthorizationStorage.sol:21"
           }
         ],
         "types": {

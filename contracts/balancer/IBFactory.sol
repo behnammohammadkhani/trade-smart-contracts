@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: Unlicense
+//SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.7.0;
 
 import "./IBPool.sol";
@@ -7,4 +7,10 @@ interface IBFactory {
     function isBPool(address b) external view returns (bool);
 
     function newBPool() external returns (IBPool);
+
+    function setExchProxy(address exchProxy) external;
+
+    function setOperationsRegistry(address operationsRegistry) external;
+
+    function setAuthorization(address _authorization) external;
 }
