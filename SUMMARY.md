@@ -5,6 +5,7 @@
     * [AuthorizableUpgradeable](docs/contracts/authorization/authorizableupgradeable.md)
     * [Authorization](docs/contracts/authorization/authorization.md)
     * [AuthorizationStorage](docs/contracts/authorization/authorizationstorage.md)
+    * [EthPriceFeed](docs/contracts/authorization/ethpricefeed.md)
     * [EurPriceFeed](docs/contracts/authorization/eurpricefeed.md)
     * [OperationsRegistry](docs/contracts/authorization/operationsregistry.md)
   * balancer
