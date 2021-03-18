@@ -69,7 +69,7 @@ async function getDeploymentFile() {
 main()
   .then(() => process.exit(0))
   .catch((error: Error) => {
-    spinner.fail();
+    // spinner.fail();
     console.error(error);
     process.exit(1);
   });

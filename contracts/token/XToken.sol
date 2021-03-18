@@ -18,7 +18,9 @@ import "../interfaces/IOperationsRegistry.sol";
 contract XToken is ERC20Pausable, AccessControl, Authorizable {
     using Address for address;
 
+    /// @dev OperationsRegistry address
     IOperationsRegistry public operationsRegistry;
+    /// @dev Know Your Asset
     string public kya;
 
     bytes4 public constant ERC20_TRANSFER = bytes4(keccak256("transfer(address,uint256)"));
