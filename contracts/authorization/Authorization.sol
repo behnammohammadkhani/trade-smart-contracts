@@ -9,14 +9,11 @@ import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 
 import "./AuthorizationStorage.sol";
 
-import "./IAuthorization.sol";
-import "./IEurPriceFeed.sol";
-import "./IOperationsRegistry.sol";
-import "../balancer/IBFactory.sol";
-import "../token/IXTokenWrapper.sol";
-import "../interfaces/IGnosisSafe.sol";
-
-import "hardhat/console.sol";
+import "../interfaces/IAuthorization.sol";
+import "../interfaces/IEurPriceFeed.sol";
+import "../interfaces/IOperationsRegistry.sol";
+import "../interfaces/IBFactory.sol";
+import "../interfaces/IXTokenWrapper.sol";
 
 /**
  * @title Authorization
@@ -367,7 +364,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
                 operation = ERC20_TRANSFER;
             }
 
-            // No need to check for Zero amount operations. Also Balances requires allowed zero amount transfers
+            // No need to check for Zero amount operations, also Balancer requires allowed zero amount transfers
             if (operationAmount == 0) {
                 return true;
             }

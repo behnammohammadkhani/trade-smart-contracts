@@ -6,11 +6,8 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
 import "../authorization/Authorizable.sol";
-import "../authorization/IAuthorization.sol";
-import "../authorization/IOperationsRegistry.sol";
-import "../interfaces/IGnosisSafe.sol";
-
-import "hardhat/console.sol";
+import "../interfaces/IAuthorization.sol";
+import "../interfaces/IOperationsRegistry.sol";
 
 /**
  * @title XToken

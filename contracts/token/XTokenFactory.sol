@@ -5,10 +5,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./XToken.sol";
 import "./XTokenWrapper.sol";
-import "../authorization/IOperationsRegistry.sol";
-import "../authorization/IEurPriceFeed.sol";
-
-import "hardhat/console.sol";
+import "../interfaces/IOperationsRegistry.sol";
+import "../interfaces/IEurPriceFeed.sol";
 
 /**
  * @title XTokenFactory

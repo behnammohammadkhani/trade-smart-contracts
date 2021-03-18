@@ -2,7 +2,7 @@
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/GSN/Context.sol";
-import "./IAuthorization.sol";
+import "../interfaces/IAuthorization.sol";
 
 /**
  * @title Authorizable

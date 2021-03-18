@@ -15,4 +15,4 @@ package.json
 docify.js
 
 # Temporary ignore this due some error with prettier-plugin-solidity
-contracts/authorization/Authorization.sol
+#contracts/authorization/Authorization.sol

@@ -1,10 +1,10 @@
 pragma solidity ^0.7.0;
 
 import "../authorization/Authorizable.sol";
-import "../authorization/IAuthorization.sol";
+import "../interfaces/IAuthorization.sol";
 
 
-import "hardhat/console.sol";
+
 
 contract BFactoryMock is Authorizable {
     bool public isBPoolAnswer = false;

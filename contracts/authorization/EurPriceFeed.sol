@@ -5,9 +5,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol";
 
-import "./IEurPriceFeed.sol";
-
-import "hardhat/console.sol";
+import "../interfaces/IEurPriceFeed.sol";
 
 interface IDecimals {
     function decimals() external view returns (uint8);

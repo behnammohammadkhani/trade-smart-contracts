@@ -3,9 +3,9 @@ pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155Holder.sol";
 
-import "../token/IXToken.sol";
+import "../interfaces/IXToken.sol";
 
-import "hardhat/console.sol";
+
 
 contract XTokenWrapperMock is ERC1155Holder {
     IXToken public xToken;

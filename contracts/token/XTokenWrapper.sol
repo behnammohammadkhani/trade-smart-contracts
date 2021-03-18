@@ -6,9 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155Holder.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-import "./IXToken.sol";
-
-import "hardhat/console.sol";
+import "../interfaces/IXToken.sol";
 
 /**
  * @title XTokenWrapper

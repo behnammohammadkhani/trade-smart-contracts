@@ -4,7 +4,7 @@ pragma solidity ^0.7.0;
 /**
  * @title IEurPriceFeed
  * @author Protofire
- * @dev Interface to be implemented by any EurPriceFeed logic contract use in the protocol.
+ * @dev Interface to be implemented by any EurPriceFeed logic contract used in the protocol.
  *
  */
 interface IEurPriceFeed {
