@@ -13,6 +13,7 @@ import "../interfaces/IAuthorization.sol";
  * `onlyAuthorized`, which can be applied to your functions to restrict their use.
  */
 abstract contract Authorizable is Context {
+    /// @dev Address of Authorization contract.
     IAuthorization public authorization;
 
     /**

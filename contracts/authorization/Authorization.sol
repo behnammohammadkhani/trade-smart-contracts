@@ -531,6 +531,11 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         return false;
     }
 
+    /**
+     * @dev Returns `true` if `_operation` is an ERC20 method.
+     *
+     * @param _operation Method sig.
+     */
     function isERC20Operation(bytes4 _operation) internal pure returns (bool) {
         return
             _operation == ERC20_TRANSFER ||
@@ -539,6 +544,11 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
             _operation == ERC20_BURN_FROM;
     }
 
+    /**
+     * @dev Returns `true` if `_operation` is a BFatory method.
+     *
+     * @param _operation Method sig.
+     */
     function isBFactoryOperation(bytes4 _operation) internal pure returns (bool) {
         return _operation == BFACTORY_NEW_POOL;
     }

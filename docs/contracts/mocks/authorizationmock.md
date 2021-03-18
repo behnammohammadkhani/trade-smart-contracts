@@ -16,6 +16,10 @@
 
 - `setOperationsRegistry(address) (public)`
 
+- `setPoolFactory(address) (public)`
+
+- `setXTokenWrapper(address) (public)`
+
 ### Function `constructor(bool _authorized) public`
 
 ### Function `setAuthorized(bool _authorized) public`
@@ -29,3 +33,7 @@
 ### Function `setTradingLimint(uint256) → bool public`
 
 ### Function `setOperationsRegistry(address) → bool public`
+
+### Function `setPoolFactory(address) → bool public`
+
+### Function `setXTokenWrapper(address) → bool public`

@@ -24,6 +24,10 @@ Provide tier based permissions assignments and revoking functions
 
 - `unrejectUser(struct PermissionManager.UserProxy[] _usersProxies) (public)`
 
+- `assignItem(uint256 _itemId, address[] _accounts) (public)`
+
+- `removeItem(uint256 _itemId, address[] _accounts) (public)`
+
 - `_hasItem(address _user, uint256 itemId) (internal)`
 
 - `hasTier1(address _account) (public)`
@@ -209,6 +213,38 @@ Requirements:
                      An array of the struct UserProxy where is required
 
                      but proxy can be optional if it is set to zero address.
+
+### Function `assignItem(uint256 _itemId, address[] _accounts) public`
+
+assigns specific item `_itemId` to the list `_accounts`.
+
+Requirements:
+
+- the caller must be the owner.
+
+- each address in `_accounts` should not have `_itemId` already assigned.
+
+#### Parameters:
+
+- `_itemId`: Item to be assigned.
+
+- `_accounts`: The addresses to assign Tier1.
+
+### Function `removeItem(uint256 _itemId, address[] _accounts) public`
+
+removes specific item `_itemId` to the list `_accounts`.
+
+Requirements:
+
+- the caller must be the owner.
+
+- each address in `_accounts` should have `_itemId` already assigned.
+
+#### Parameters:
+
+- `_itemId`: Item to be removeded
+
+- `_accounts`: The addresses to assign Tier1.
 
 ### Function `_hasItem(address _user, uint256 itemId) → bool internal`
 

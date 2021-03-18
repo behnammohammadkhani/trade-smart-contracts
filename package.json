@@ -74,6 +74,7 @@
     "deploy:rinkeby": "hardhat run --network rinkeby scripts/deploy.ts",
     "deploy:kovan": "hardhat run --network kovan scripts/deploy.ts",
     "verify:kovan": "hardhat run --network kovan scripts/verify.ts",
+    "verify:rinkeby": "hardhat run --network rinkeby scripts/verify.ts",
     "size": "hardhat size-contracts"
   },
   "husky": {

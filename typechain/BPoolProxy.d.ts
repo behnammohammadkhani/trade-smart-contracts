@@ -874,7 +874,7 @@ export class BPoolProxy extends Contract {
           limitReturnAmount: BigNumber;
           maxPrice: BigNumber;
         })[];
-        totalOutput: BigNumber;
+        totalInput: BigNumber;
       }
     >;
 
@@ -904,7 +904,7 @@ export class BPoolProxy extends Contract {
           limitReturnAmount: BigNumber;
           maxPrice: BigNumber;
         })[];
-        totalOutput: BigNumber;
+        totalInput: BigNumber;
       }
     >;
 
@@ -1407,7 +1407,7 @@ export class BPoolProxy extends Contract {
         limitReturnAmount: BigNumber;
         maxPrice: BigNumber;
       })[];
-      totalOutput: BigNumber;
+      totalInput: BigNumber;
     }
   >;
 
@@ -1437,7 +1437,7 @@ export class BPoolProxy extends Contract {
         limitReturnAmount: BigNumber;
         maxPrice: BigNumber;
       })[];
-      totalOutput: BigNumber;
+      totalInput: BigNumber;
     }
   >;
 
@@ -1937,7 +1937,7 @@ export class BPoolProxy extends Contract {
           limitReturnAmount: BigNumber;
           maxPrice: BigNumber;
         })[];
-        totalOutput: BigNumber;
+        totalInput: BigNumber;
       }
     >;
 
@@ -1967,7 +1967,7 @@ export class BPoolProxy extends Contract {
           limitReturnAmount: BigNumber;
           maxPrice: BigNumber;
         })[];
-        totalOutput: BigNumber;
+        totalInput: BigNumber;
       }
     >;
 
