@@ -6,6 +6,7 @@ import {
   PermissionItems,
   PermissionManager,
   EurPriceFeed,
+  EthPriceFeed,
   OperationsRegistry,
   Authorization,
   XTokenWrapper,
@@ -25,6 +26,7 @@ import { getChainId, networkNames } from '@openzeppelin/upgrades-core';
 import PermissionItemsArtifact from '../artifacts/contracts/permissioning/PermissionItems.sol/PermissionItems.json';
 import PermissionManagerArtifact from '../artifacts/contracts/permissioning/PermissionManager.sol/PermissionManager.json';
 import EurPriceFeedArtifact from '../artifacts/contracts/authorization/EurPriceFeed.sol/EurPriceFeed.json';
+import EthPriceFeedArtifact from '../artifacts/contracts/authorization/EthPriceFeed.sol/EthPriceFeed.json';
 import OperationsRegistryArtifact from '../artifacts/contracts/authorization/OperationsRegistry.sol/OperationsRegistry.json';
 import AuthorizationArtifact from '../artifacts/contracts/authorization/Authorization.sol/Authorization.json';
 import XTokenWrapperArtifact from '../artifacts/contracts/token/XTokenWrapper.sol/XTokenWrapper.json';
@@ -119,6 +121,27 @@ async function main(): Promise<void> {
   await write(deploymentData);
   stopLog(
     `EurPriceFeed deployed - txHash: ${eurPriceFeedContract.deployTransaction.hash} - address: ${eurPriceFeedContract.address}`,
+  );
+
+  // Deploy EthPriceFeed
+  startLog('Deploying EthPriceFeed contract');
+  const EthPriceFeedFactory: ContractFactory = await ethers.getContractFactory('EthPriceFeed');
+  const ethPriceFeedContract: EthPriceFeed = (await EthPriceFeedFactory.deploy()) as EthPriceFeed;
+  updatetLog(`Deploying EthPriceFeed contract - txHash: ${ethPriceFeedContract.deployTransaction.hash}`);
+  await ethPriceFeedContract.deployed();
+
+  deploymentData = {
+    ...deploymentData,
+    EthPriceFeed: {
+      address: ethPriceFeedContract.address,
+      abi: EthPriceFeedArtifact.abi,
+      deployTransaction: await getRecipt(ethPriceFeedContract.deployTransaction),
+    },
+  };
+
+  await write(deploymentData);
+  stopLog(
+    `EthPriceFeed deployed - txHash: ${ethPriceFeedContract.deployTransaction.hash} - address: ${ethPriceFeedContract.address}`,
   );
 
   // Deploy OperationsRegistry
