@@ -2,9 +2,17 @@
 
 Provide tier based permissions assignments and revoking functions
 
+## Modifiers:
+
+- `onlyAdmin()`
+
+- `onlyPermissionsAdmin()`
+
 ## Functions:
 
-- `initialize(address _permissionItems) (public)`
+- `initialize(address _permissionItems, address _admin) (public)`
+
+- `setPermissionsAdmin(address _permissionsAdmin) (external)`
 
 - `setPermissionItems(address _permissionItems) (public)`
 
@@ -42,7 +50,15 @@ Provide tier based permissions assignments and revoking functions
 
 - `PermissionItemsSetted(address newPermissions)`
 
-### Function `initialize(address _permissionItems) public`
+### Modifier `onlyAdmin()`
+
+Throws if called by some address without DEFAULT_ADMIN_ROLE.
+
+### Modifier `onlyPermissionsAdmin()`
+
+Throws if called by some address without PERMISSIONS_ADMIN_ROLE.
+
+### Function `initialize(address _permissionItems, address _admin) public`
 
 Initalize the contract.
 
@@ -55,6 +71,16 @@ Requirements:
 #### Parameters:
 
 - `_permissionItems`: The address of the new Pemissions module.
+
+### Function `setPermissionsAdmin(address _permissionsAdmin) external`
+
+Grants PERMISSIONS_ADMIN_ROLE to `_permissionsAdmin`.
+
+Requirements:
+
+- the caller must have ``role``'s admin role.
+
+- `_permissionsAdmin` should not be the zero address.
 
 ### Function `setPermissionItems(address _permissionItems) → bool public`
 

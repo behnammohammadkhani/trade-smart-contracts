@@ -10,7 +10,13 @@
 
 - `setOperationsRegistry(address operationsRegistry) (external)`
 
+- `setPermissionManager(address permissionManager) (external)`
+
 - `setAuthorization(address _authorization) (external)`
+
+## Events:
+
+- `LOG_NEW_POOL(address caller, address pool)`
 
 ### Function `isBPool(address b) → bool external`
 
@@ -20,4 +26,8 @@
 
 ### Function `setOperationsRegistry(address operationsRegistry) external`
 
+### Function `setPermissionManager(address permissionManager) external`
+
 ### Function `setAuthorization(address _authorization) external`
+
+### Event `LOG_NEW_POOL(address caller, address pool)`
