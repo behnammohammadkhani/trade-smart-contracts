@@ -21,6 +21,7 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface PermissionManagerStorageInterface extends ethers.utils.Interface {
   functions: {
+    "PERMISSIONS_ADMIN_ROLE()": FunctionFragment;
     "PROTOCOL_CONTRACT()": FunctionFragment;
     "REJECTED_ID()": FunctionFragment;
     "SUSPENDED_ID()": FunctionFragment;
@@ -29,6 +30,10 @@ interface PermissionManagerStorageInterface extends ethers.utils.Interface {
     "permissionItems()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "PERMISSIONS_ADMIN_ROLE",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "PROTOCOL_CONTRACT",
     values?: undefined
@@ -48,6 +53,10 @@ interface PermissionManagerStorageInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "PERMISSIONS_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "PROTOCOL_CONTRACT",
     data: BytesLike
@@ -84,6 +93,10 @@ export class PermissionManagerStorage extends Contract {
   interface: PermissionManagerStorageInterface;
 
   functions: {
+    PERMISSIONS_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    "PERMISSIONS_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<[string]>;
+
     PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "PROTOCOL_CONTRACT()"(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -108,6 +121,10 @@ export class PermissionManagerStorage extends Contract {
 
     "permissionItems()"(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  PERMISSIONS_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  "PERMISSIONS_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
 
   PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -134,6 +151,10 @@ export class PermissionManagerStorage extends Contract {
   "permissionItems()"(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    PERMISSIONS_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    "PERMISSIONS_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
     PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<BigNumber>;
 
     "PROTOCOL_CONTRACT()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -162,6 +183,10 @@ export class PermissionManagerStorage extends Contract {
   filters: {};
 
   estimateGas: {
+    PERMISSIONS_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "PERMISSIONS_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<BigNumber>;
 
     "PROTOCOL_CONTRACT()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -188,6 +213,14 @@ export class PermissionManagerStorage extends Contract {
   };
 
   populateTransaction: {
+    PERMISSIONS_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "PERMISSIONS_ADMIN_ROLE()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "PROTOCOL_CONTRACT()"(

@@ -98,7 +98,7 @@ async function main(): Promise<void> {
   stopLog(`Mock UNI deployed - address: ${UNIContract.address}`);
 
   startLog('Deploying Mock USDC');
-  const USDCContract: ERC20Mintable = (await ERC20MintableFactory.deploy('USD Coin', 'USDC', 18)) as ERC20Mintable;
+  const USDCContract: ERC20Mintable = (await ERC20MintableFactory.deploy('USD Coin', 'USDC', 6)) as ERC20Mintable;
   await USDCContract.deployed();
 
   testData = {
@@ -111,7 +111,7 @@ async function main(): Promise<void> {
   await write(testData);
   stopLog(`Mock USDC deployed - address: ${USDCContract.address}`);
 
-  // xTokens
+  // // xTokens
   const xTokenFactoryContract: XTokenFactory = (await ethers.getContractAt(
     'XTokenFactory',
     deploymentData.XTokenFactory.address,
@@ -289,7 +289,7 @@ async function main(): Promise<void> {
   const xUSDCContract: XToken = (await ethers.getContractAt('XToken', testData.xUSDC.address)) as XToken;
   const xETHContract: XToken = (await ethers.getContractAt('XToken', testData.xETH.address)) as XToken;
 
-  // // TODO - REMOVE THIS
+  // // // TODO - REMOVE THIS
   // const AAVEContract: ERC20Mintable = (await ethers.getContractAt('ERC20Mintable', testData.AAVE.address)) as ERC20Mintable;
   // const SNXContract: ERC20Mintable = (await ethers.getContractAt('ERC20Mintable', testData.SNX.address)) as ERC20Mintable;
   // const UNIContract: ERC20Mintable = (await ethers.getContractAt('ERC20Mintable', testData.UNI.address)) as ERC20Mintable;
@@ -493,6 +493,7 @@ async function main(): Promise<void> {
     await (
       await pool3Contract.bind(testData.xETH.address, ethers.constants.WeiPerEther.mul(10), '25000000000000000000')
     ).wait();
+
     await (
       await pool3Contract.bind(testData.xUSDC.address, ethers.constants.WeiPerEther.mul(17856), '25000000000000000000')
     ).wait();
@@ -514,8 +515,6 @@ async function main(): Promise<void> {
 }
 
 async function read(filename: string): Promise<any> {
-  // const deploymentsFile = await getDeploymentFile();
-
   try {
     return JSON.parse(await fs.readFile(filename, 'utf8'));
   } catch (e) {

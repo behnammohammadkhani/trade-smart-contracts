@@ -52,7 +52,7 @@ async function main(): Promise<void> {
     constructorArguments: [deploymentData.EurPriceFeed.address],
   });
 
-  // OperationsRegistry
+  // XTokenWrapper
   await hre.run('verify:verify', {
     address: deploymentData.XTokenWrapper.address,
     constructorArguments: [],
@@ -98,6 +98,12 @@ async function main(): Promise<void> {
       ethers.constants.AddressZero,
       ethers.constants.AddressZero,
     ],
+  });
+
+  // EthPriceFeed
+  await hre.run('verify:verify', {
+    address: deploymentData.EthPriceFeed.address,
+    constructorArguments: [],
   });
 }
 

@@ -54,7 +54,8 @@ requiredConfigs.forEach(conf => assert(process.env[conf], `Missing configuration
 
 async function main(): Promise<void> {
   const { ethers, upgrades } = hre;
-  // const [deployer] = await ethers.getSigners();
+  const [deployer] = await ethers.getSigners();
+  const deployerAddress = await deployer.getAddress();
   let deploymentData = await read();
 
   startLog('Deploying PermissionItems contract');
@@ -81,6 +82,7 @@ async function main(): Promise<void> {
   const PermissionManagerFactory: ContractFactory = await ethers.getContractFactory('PermissionManager');
   const permissionManagerContract: PermissionManager = (await upgrades.deployProxy(PermissionManagerFactory, [
     permissionItemsContract.address,
+    deployerAddress,
   ])) as PermissionManager;
 
   deploymentData = {
@@ -360,6 +362,13 @@ async function main(): Promise<void> {
   await fmTx.wait();
   stopLog(`Granted EurPriceFeed FEEDS_MANAGER_ROL to XTokenFactory contract - txHash: ${fmTx.hash}`);
 
+  // Configure PermissionManager setPermissionsAdmin(deployer)
+  startLog('Granting PermissionManager PERMISSIONS_ADMIN_ROLE to deployer');
+  const pmSpTx = await permissionManagerContract.setPermissionsAdmin(deployerAddress);
+  updatetLog(`Granting PermissionManager PERMISSIONS_ADMIN_ROLE to deployer - txHash: ${pmSpTx.hash}`);
+  await pmSpTx.wait();
+  stopLog(`Granted PermissionManager PERMISSIONS_ADMIN_ROLE to deployer - txHash: ${pmSpTx.hash}`);
+
   //Grant PROTOCOL_CONTRACT permission to BPoolProxy
   startLog('Granting PROTOCOL_CONTRACT permission to BPoolProxy contract');
   const proConTx = await permissionManagerContract.assignItem(PROTOCOL_CONTRACT, [bPoolProxyContract.address]);
@@ -381,19 +390,26 @@ async function main(): Promise<void> {
   if (process.env.BFACTORY) {
     const bFactoryContract: IBFactory = (await ethers.getContractAt('IBFactory', process.env.BFACTORY)) as IBFactory;
 
-    //Set BFactory - ExchaProxy, OperationsRegistry and Authorization
+    //Set BFactory - ExchaProxy
     startLog('Setting PoolProxy contract as ExchangeProxy in BFactory');
     const excPTx = await bFactoryContract.setExchProxy(bPoolProxyContract.address);
     updatetLog(`Setting PoolProxy contract as ExchangeProxy in BFactory - txHash: ${excPTx.hash}`);
     await excPTx.wait();
     stopLog(`Setting PoolProxy contract as ExchangeProxy in BFactory - txHash: ${excPTx.hash}`);
 
-    //Set BFactory - ExchaProxy, OperationsRegistry and Authorization
+    //Set BFactory - OperationsRegistry
     startLog('Setting OperationsRegistry in BFactory');
     const opRTx = await bFactoryContract.setOperationsRegistry(operationsRegistryContract.address);
     updatetLog(`Setting OperationsRegistry in BFactory - txHash: ${opRTx.hash}`);
     await opRTx.wait();
     stopLog(`Setting OperationsRegistry in BFactory - txHash: ${opRTx.hash}`);
+
+    //Set BFactory - PermissionManager
+    startLog('Setting PermissionManager in BFactory');
+    const pmCTx = await bFactoryContract.setPermissionManager(permissionManagerContract.address);
+    updatetLog(`Setting PermissionManager in BFactory - txHash: ${pmCTx.hash}`);
+    await pmCTx.wait();
+    stopLog(`Setting PermissionManager in BFactory - txHash: ${pmCTx.hash}`);
 
     //Set BFactory - ExchaProxy, OperationsRegistry and Authorization
     startLog('Setting Authorization in BFactory');
@@ -401,6 +417,13 @@ async function main(): Promise<void> {
     updatetLog(`Setting Authorization in BFactory - txHash: ${authTx.hash}`);
     await authTx.wait();
     stopLog(`Setting Authorization in BFactory - txHash: ${authTx.hash}`);
+
+    // Configure PermissionManager setPermissionsAdmin(BFactory)
+    startLog('Granting PermissionManager PERMISSIONS_ADMIN_ROLE to BFactory contract');
+    const pmSpBTx = await permissionManagerContract.setPermissionsAdmin(process.env.BFACTORY);
+    updatetLog(`Granting PermissionManager PERMISSIONS_ADMIN_ROLE to BFactory contract - txHash: ${pmSpBTx.hash}`);
+    await pmSpBTx.wait();
+    stopLog(`Granted PermissionManager PERMISSIONS_ADMIN_ROLE to BFactory contract - txHash: ${pmSpBTx.hash}`);
   }
 }
 

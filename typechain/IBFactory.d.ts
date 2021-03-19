@@ -27,6 +27,7 @@ interface IBFactoryInterface extends ethers.utils.Interface {
     "setAuthorization(address)": FunctionFragment;
     "setExchProxy(address)": FunctionFragment;
     "setOperationsRegistry(address)": FunctionFragment;
+    "setPermissionManager(address)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "isBPool", values: [string]): string;
@@ -43,6 +44,10 @@ interface IBFactoryInterface extends ethers.utils.Interface {
     functionFragment: "setOperationsRegistry",
     values: [string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "setPermissionManager",
+    values: [string]
+  ): string;
 
   decodeFunctionResult(functionFragment: "isBPool", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "newBPool", data: BytesLike): Result;
@@ -56,6 +61,10 @@ interface IBFactoryInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setOperationsRegistry",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setPermissionManager",
     data: BytesLike
   ): Result;
 
@@ -120,6 +129,16 @@ export class IBFactory extends Contract {
       operationsRegistry: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    setPermissionManager(
+      permissionManager: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setPermissionManager(address)"(
+      permissionManager: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
   };
 
   isBPool(b: string, overrides?: CallOverrides): Promise<boolean>;
@@ -160,6 +179,16 @@ export class IBFactory extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  setPermissionManager(
+    permissionManager: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setPermissionManager(address)"(
+    permissionManager: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     isBPool(b: string, overrides?: CallOverrides): Promise<boolean>;
 
@@ -193,6 +222,16 @@ export class IBFactory extends Contract {
 
     "setOperationsRegistry(address)"(
       operationsRegistry: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setPermissionManager(
+      permissionManager: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setPermissionManager(address)"(
+      permissionManager: string,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -239,6 +278,16 @@ export class IBFactory extends Contract {
       operationsRegistry: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    setPermissionManager(
+      permissionManager: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setPermissionManager(address)"(
+      permissionManager: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -283,6 +332,16 @@ export class IBFactory extends Contract {
 
     "setOperationsRegistry(address)"(
       operationsRegistry: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setPermissionManager(
+      permissionManager: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setPermissionManager(address)"(
+      permissionManager: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };
