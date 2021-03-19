@@ -1,0 +1,44 @@
+{
+  "DAI": {
+    "address": "0xE9b2266E0349184A98F931873b0fb8B1d3969DCF"
+  },
+  "AAVE": {
+    "address": "0xb8393b582Eb74b639cB6A10287391e5605D2B4A5"
+  },
+  "SNX": {
+    "address": "0xec2552b7f22F6D357cf85f560197b807522cd22C"
+  },
+  "UNI": {
+    "address": "0xF9F60441Bfb7637108F9ECf53A0A166ca28eB9C2"
+  },
+  "USDC": {
+    "address": "0xF3D7882F43076C1f265953C4BB034289628E0d6b"
+  },
+  "xDAI": {
+    "address": "0xD905f4A74C9D1e09D507d8f39A39021314F4f800"
+  },
+  "xAAVE": {
+    "address": "0x93246650b4240F98DFC000B7BaCfA8b375Bd862F"
+  },
+  "xSNX": {
+    "address": "0xfd75D5dabc356b456AF0eF77CC6a52c99DEA1269"
+  },
+  "xUNI": {
+    "address": "0xb2AD298DebB465A96Eca506F352e036928A38b6f"
+  },
+  "xUSDC": {
+    "address": "0x593387BD67ed9bAA35d13A5965155580dC341851"
+  },
+  "xETH": {
+    "address": "0x09b76A389e0c63125c9685772Be84C120f7d6f25"
+  },
+  "xSNX/xAAVE/xUNI": {
+    "address": "0xd4c0Aca1F9AAdE7B26cd99493C320c91784D4B80"
+  },
+  "xWETH/xDAI": {
+    "address": "0x6Bd7821b8611Aac8dD7929c4EE114Bc37C6972a8"
+  },
+  "xWETH/xUSDC": {
+    "address": "0x4DD996e6E348658B659F6d939D39a64358A396e9"
+  }
+}

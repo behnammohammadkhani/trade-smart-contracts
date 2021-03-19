@@ -59,7 +59,11 @@ interface IBFactoryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "LOG_NEW_POOL(address,address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "LOG_NEW_POOL"): EventFragment;
 }
 
 export class IBFactory extends Contract {
@@ -193,7 +197,9 @@ export class IBFactory extends Contract {
     ): Promise<void>;
   };
 
-  filters: {};
+  filters: {
+    LOG_NEW_POOL(caller: string | null, pool: string | null): EventFilter;
+  };
 
   estimateGas: {
     isBPool(b: string, overrides?: CallOverrides): Promise<BigNumber>;

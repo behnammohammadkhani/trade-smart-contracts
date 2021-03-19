@@ -71,9 +71,10 @@
     "typechain": "hardhat typechain",
     "doc:uml": "sol2uml ./contracts -i mocks,test -f png -o ./docs/uml/swarm-markets.png",
     "docify": "node docify.js",
-    "deploy:rinkeby": "hardhat run --network rinkeby scripts/deploy.ts",
     "deploy:kovan": "hardhat run --network kovan scripts/deploy.ts",
     "verify:kovan": "hardhat run --network kovan scripts/verify.ts",
+    "data:kovan": "hardhat run --network kovan scripts/testnet-data.ts",
+    "deploy:rinkeby": "hardhat run --network rinkeby scripts/deploy.ts",
     "verify:rinkeby": "hardhat run --network rinkeby scripts/verify.ts",
     "size": "hardhat size-contracts"
   },

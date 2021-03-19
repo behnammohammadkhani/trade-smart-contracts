@@ -18,6 +18,25 @@ export class IBFactory__factory {
 
 const _abi = [
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "pool",
+        type: "address",
+      },
+    ],
+    name: "LOG_NEW_POOL",
+    type: "event",
+  },
+  {
     inputs: [
       {
         internalType: "address",
