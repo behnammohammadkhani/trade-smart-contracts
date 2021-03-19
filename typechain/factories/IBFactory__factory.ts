@@ -107,4 +107,17 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "permissionManager",
+        type: "address",
+      },
+    ],
+    name: "setPermissionManager",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];

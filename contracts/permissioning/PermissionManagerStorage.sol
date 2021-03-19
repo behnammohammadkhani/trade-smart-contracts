@@ -11,6 +11,8 @@ pragma solidity ^0.7.0;
  * Never remove items from this list
  */
 abstract contract PermissionManagerStorage {
+    bytes32 public constant PERMISSIONS_ADMIN_ROLE = keccak256("PERMISSIONS_ADMIN_ROLE");
+
     address public permissionItems;
 
     // Constants for Permissions ID

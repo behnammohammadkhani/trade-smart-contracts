@@ -23,6 +23,19 @@ export class PermissionManagerStorage__factory {
 const _abi = [
   {
     inputs: [],
+    name: "PERMISSIONS_ADMIN_ROLE",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "PROTOCOL_CONTRACT",
     outputs: [
       {

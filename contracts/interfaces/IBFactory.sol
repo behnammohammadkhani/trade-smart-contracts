@@ -14,5 +14,7 @@ interface IBFactory {
 
     function setOperationsRegistry(address operationsRegistry) external;
 
+    function setPermissionManager(address permissionManager) external;
+
     function setAuthorization(address _authorization) external;
 }

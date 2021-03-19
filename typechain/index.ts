@@ -4,6 +4,7 @@
 export type { AggregatorInterface } from "./AggregatorInterface";
 export type { AggregatorV2V3Interface } from "./AggregatorV2V3Interface";
 export type { AggregatorV3Interface } from "./AggregatorV3Interface";
+export type { AccessControlUpgradeable } from "./AccessControlUpgradeable";
 export type { OwnableUpgradeable } from "./OwnableUpgradeable";
 export type { AccessControl } from "./AccessControl";
 export type { Ownable } from "./Ownable";
@@ -66,6 +67,7 @@ export type { XTokenWrapper } from "./XTokenWrapper";
 export { AggregatorInterface__factory } from "./factories/AggregatorInterface__factory";
 export { AggregatorV2V3Interface__factory } from "./factories/AggregatorV2V3Interface__factory";
 export { AggregatorV3Interface__factory } from "./factories/AggregatorV3Interface__factory";
+export { AccessControlUpgradeable__factory } from "./factories/AccessControlUpgradeable__factory";
 export { OwnableUpgradeable__factory } from "./factories/OwnableUpgradeable__factory";
 export { AccessControl__factory } from "./factories/AccessControl__factory";
 export { Ownable__factory } from "./factories/Ownable__factory";

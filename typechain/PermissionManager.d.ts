@@ -22,6 +22,8 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface PermissionManagerInterface extends ethers.utils.Interface {
   functions: {
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "PERMISSIONS_ADMIN_ROLE()": FunctionFragment;
     "PROTOCOL_CONTRACT()": FunctionFragment;
     "REJECTED_ID()": FunctionFragment;
     "SUSPENDED_ID()": FunctionFragment;
@@ -30,25 +32,38 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     "assignItem(uint256,address[])": FunctionFragment;
     "assingTier1(address[])": FunctionFragment;
     "assingTier2(tuple[])": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
+    "getRoleMember(bytes32,uint256)": FunctionFragment;
+    "getRoleMemberCount(bytes32)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
     "hasTier1(address)": FunctionFragment;
     "hasTier2(address)": FunctionFragment;
-    "initialize(address)": FunctionFragment;
+    "initialize(address,address)": FunctionFragment;
     "isRejected(address)": FunctionFragment;
     "isSuspended(address)": FunctionFragment;
-    "owner()": FunctionFragment;
     "permissionItems()": FunctionFragment;
     "rejectUser(tuple[])": FunctionFragment;
     "removeItem(uint256,address[])": FunctionFragment;
-    "renounceOwnership()": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
     "revokeTier1(address[])": FunctionFragment;
     "revokeTier2(tuple[])": FunctionFragment;
     "setPermissionItems(address)": FunctionFragment;
+    "setPermissionsAdmin(address)": FunctionFragment;
     "suspendUser(tuple[])": FunctionFragment;
-    "transferOwnership(address)": FunctionFragment;
     "unrejectUser(tuple[])": FunctionFragment;
     "unsuspendUser(tuple[])": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "PERMISSIONS_ADMIN_ROLE",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "PROTOCOL_CONTRACT",
     values?: undefined
@@ -75,12 +90,34 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     functionFragment: "assingTier2",
     values: [{ user: string; proxy: string }[]]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMember",
+    values: [BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRoleMemberCount",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, string]
+  ): string;
   encodeFunctionData(functionFragment: "hasTier1", values: [string]): string;
   encodeFunctionData(functionFragment: "hasTier2", values: [string]): string;
-  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, string]
+  ): string;
   encodeFunctionData(functionFragment: "isRejected", values: [string]): string;
   encodeFunctionData(functionFragment: "isSuspended", values: [string]): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "permissionItems",
     values?: undefined
@@ -94,8 +131,12 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     values: [BigNumberish, string[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
+    functionFragment: "renounceRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeTier1",
@@ -110,12 +151,12 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "suspendUser",
-    values: [{ user: string; proxy: string }[]]
+    functionFragment: "setPermissionsAdmin",
+    values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [string]
+    functionFragment: "suspendUser",
+    values: [{ user: string; proxy: string }[]]
   ): string;
   encodeFunctionData(
     functionFragment: "unrejectUser",
@@ -126,6 +167,14 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     values: [{ user: string; proxy: string }[]]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "PERMISSIONS_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "PROTOCOL_CONTRACT",
     data: BytesLike
@@ -149,6 +198,20 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     functionFragment: "assingTier2",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMember",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleMemberCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasTier1", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasTier2", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
@@ -157,7 +220,6 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     functionFragment: "isSuspended",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "permissionItems",
     data: BytesLike
@@ -165,9 +227,10 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "rejectUser", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "removeItem", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "renounceOwnership",
+    functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "revokeTier1",
     data: BytesLike
@@ -181,11 +244,11 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "suspendUser",
+    functionFragment: "setPermissionsAdmin",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "transferOwnership",
+    functionFragment: "suspendUser",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -198,12 +261,16 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "OwnershipTransferred(address,address)": EventFragment;
     "PermissionItemsSetted(address)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PermissionItemsSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
 }
 
 export class PermissionManager extends Contract {
@@ -220,6 +287,14 @@ export class PermissionManager extends Contract {
   interface: PermissionManagerInterface;
 
   functions: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<[string]>;
+
+    PERMISSIONS_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    "PERMISSIONS_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<[string]>;
+
     PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "PROTOCOL_CONTRACT()"(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -272,6 +347,59 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
+
+    "getRoleAdmin(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    "getRoleMember(bytes32,uint256)"(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "getRoleMemberCount(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "grantRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "hasRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     hasTier1(_account: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     "hasTier1(address)"(
@@ -288,11 +416,13 @@ export class PermissionManager extends Contract {
 
     initialize(
       _permissionItems: string,
+      _admin: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "initialize(address)"(
+    "initialize(address,address)"(
       _permissionItems: string,
+      _admin: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -312,10 +442,6 @@ export class PermissionManager extends Contract {
       _account: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
-    "owner()"(overrides?: CallOverrides): Promise<[string]>;
 
     permissionItems(overrides?: CallOverrides): Promise<[string]>;
 
@@ -343,9 +469,29 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
+    "renounceRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "revokeRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     revokeTier1(
       _accounts: string[],
@@ -377,6 +523,16 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    setPermissionsAdmin(
+      _permissionsAdmin: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setPermissionsAdmin(address)"(
+      _permissionsAdmin: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     suspendUser(
       _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
@@ -384,16 +540,6 @@ export class PermissionManager extends Contract {
 
     "suspendUser(tuple[])"(
       _usersProxies: { user: string; proxy: string }[],
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "transferOwnership(address)"(
-      newOwner: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -417,6 +563,14 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
+
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
+  PERMISSIONS_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  "PERMISSIONS_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
 
   PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -470,6 +624,59 @@ export class PermissionManager extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
+  "getRoleAdmin(bytes32)"(
+    role: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getRoleMember(
+    role: BytesLike,
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  "getRoleMember(bytes32,uint256)"(
+    role: BytesLike,
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getRoleMemberCount(
+    role: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "getRoleMemberCount(bytes32)"(
+    role: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  grantRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "grantRole(bytes32,address)"(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "hasRole(bytes32,address)"(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   hasTier1(_account: string, overrides?: CallOverrides): Promise<boolean>;
 
   "hasTier1(address)"(
@@ -486,11 +693,13 @@ export class PermissionManager extends Contract {
 
   initialize(
     _permissionItems: string,
+    _admin: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "initialize(address)"(
+  "initialize(address,address)"(
     _permissionItems: string,
+    _admin: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -507,10 +716,6 @@ export class PermissionManager extends Contract {
     _account: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  "owner()"(overrides?: CallOverrides): Promise<string>;
 
   permissionItems(overrides?: CallOverrides): Promise<string>;
 
@@ -538,9 +743,29 @@ export class PermissionManager extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
+  renounceRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
+  "renounceRole(bytes32,address)"(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "revokeRole(bytes32,address)"(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   revokeTier1(
     _accounts: string[],
@@ -572,6 +797,16 @@ export class PermissionManager extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  setPermissionsAdmin(
+    _permissionsAdmin: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setPermissionsAdmin(address)"(
+    _permissionsAdmin: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   suspendUser(
     _usersProxies: { user: string; proxy: string }[],
     overrides?: Overrides
@@ -579,16 +814,6 @@ export class PermissionManager extends Contract {
 
   "suspendUser(tuple[])"(
     _usersProxies: { user: string; proxy: string }[],
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  transferOwnership(
-    newOwner: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "transferOwnership(address)"(
-    newOwner: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -613,6 +838,14 @@ export class PermissionManager extends Contract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
+    PERMISSIONS_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    "PERMISSIONS_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
     PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<BigNumber>;
 
     "PROTOCOL_CONTRACT()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -662,6 +895,59 @@ export class PermissionManager extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+
+    "getRoleAdmin(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    "getRoleMember(bytes32,uint256)"(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getRoleMemberCount(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "grantRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "hasRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     hasTier1(_account: string, overrides?: CallOverrides): Promise<boolean>;
 
     "hasTier1(address)"(
@@ -678,11 +964,13 @@ export class PermissionManager extends Contract {
 
     initialize(
       _permissionItems: string,
+      _admin: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "initialize(address)"(
+    "initialize(address,address)"(
       _permissionItems: string,
+      _admin: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -699,10 +987,6 @@ export class PermissionManager extends Contract {
       _account: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    "owner()"(overrides?: CallOverrides): Promise<string>;
 
     permissionItems(overrides?: CallOverrides): Promise<string>;
 
@@ -730,9 +1014,29 @@ export class PermissionManager extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    "renounceOwnership()"(overrides?: CallOverrides): Promise<void>;
+    "renounceRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "revokeRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     revokeTier1(_accounts: string[], overrides?: CallOverrides): Promise<void>;
 
@@ -761,6 +1065,16 @@ export class PermissionManager extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    setPermissionsAdmin(
+      _permissionsAdmin: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setPermissionsAdmin(address)"(
+      _permissionsAdmin: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     suspendUser(
       _usersProxies: { user: string; proxy: string }[],
       overrides?: CallOverrides
@@ -768,16 +1082,6 @@ export class PermissionManager extends Contract {
 
     "suspendUser(tuple[])"(
       _usersProxies: { user: string; proxy: string }[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "transferOwnership(address)"(
-      newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -803,15 +1107,36 @@ export class PermissionManager extends Contract {
   };
 
   filters: {
-    OwnershipTransferred(
-      previousOwner: string | null,
-      newOwner: string | null
+    PermissionItemsSetted(newPermissions: string | null): EventFilter;
+
+    RoleAdminChanged(
+      role: BytesLike | null,
+      previousAdminRole: BytesLike | null,
+      newAdminRole: BytesLike | null
     ): EventFilter;
 
-    PermissionItemsSetted(newPermissions: string | null): EventFilter;
+    RoleGranted(
+      role: BytesLike | null,
+      account: string | null,
+      sender: string | null
+    ): EventFilter;
+
+    RoleRevoked(
+      role: BytesLike | null,
+      account: string | null,
+      sender: string | null
+    ): EventFilter;
   };
 
   estimateGas: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    PERMISSIONS_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "PERMISSIONS_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<BigNumber>;
 
     "PROTOCOL_CONTRACT()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -861,6 +1186,62 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getRoleAdmin(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getRoleMember(bytes32,uint256)"(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getRoleMemberCount(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "grantRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "hasRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     hasTier1(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "hasTier1(address)"(
@@ -877,11 +1258,13 @@ export class PermissionManager extends Contract {
 
     initialize(
       _permissionItems: string,
+      _admin: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "initialize(address)"(
+    "initialize(address,address)"(
       _permissionItems: string,
+      _admin: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -901,10 +1284,6 @@ export class PermissionManager extends Contract {
       _account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     permissionItems(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -932,9 +1311,29 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    renounceOwnership(overrides?: Overrides): Promise<BigNumber>;
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    "renounceOwnership()"(overrides?: Overrides): Promise<BigNumber>;
+    "renounceRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "revokeRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     revokeTier1(_accounts: string[], overrides?: Overrides): Promise<BigNumber>;
 
@@ -963,6 +1362,16 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    setPermissionsAdmin(
+      _permissionsAdmin: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setPermissionsAdmin(address)"(
+      _permissionsAdmin: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     suspendUser(
       _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
@@ -970,16 +1379,6 @@ export class PermissionManager extends Contract {
 
     "suspendUser(tuple[])"(
       _usersProxies: { user: string; proxy: string }[],
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "transferOwnership(address)"(
-      newOwner: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -1005,6 +1404,22 @@ export class PermissionManager extends Contract {
   };
 
   populateTransaction: {
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "DEFAULT_ADMIN_ROLE()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    PERMISSIONS_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "PERMISSIONS_ADMIN_ROLE()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     PROTOCOL_CONTRACT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "PROTOCOL_CONTRACT()"(
@@ -1059,6 +1474,62 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getRoleAdmin(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleMember(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getRoleMember(bytes32,uint256)"(
+      role: BytesLike,
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRoleMemberCount(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getRoleMemberCount(bytes32)"(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "grantRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "hasRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     hasTier1(
       _account: string,
       overrides?: CallOverrides
@@ -1081,11 +1552,13 @@ export class PermissionManager extends Contract {
 
     initialize(
       _permissionItems: string,
+      _admin: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "initialize(address)"(
+    "initialize(address,address)"(
       _permissionItems: string,
+      _admin: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -1108,10 +1581,6 @@ export class PermissionManager extends Contract {
       _account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "owner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     permissionItems(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1141,9 +1610,29 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    renounceOwnership(overrides?: Overrides): Promise<PopulatedTransaction>;
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
-    "renounceOwnership()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+    "renounceRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "revokeRole(bytes32,address)"(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     revokeTier1(
       _accounts: string[],
@@ -1175,6 +1664,16 @@ export class PermissionManager extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    setPermissionsAdmin(
+      _permissionsAdmin: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setPermissionsAdmin(address)"(
+      _permissionsAdmin: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     suspendUser(
       _usersProxies: { user: string; proxy: string }[],
       overrides?: Overrides
@@ -1182,16 +1681,6 @@ export class PermissionManager extends Contract {
 
     "suspendUser(tuple[])"(
       _usersProxies: { user: string; proxy: string }[],
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    transferOwnership(
-      newOwner: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "transferOwnership(address)"(
-      newOwner: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
