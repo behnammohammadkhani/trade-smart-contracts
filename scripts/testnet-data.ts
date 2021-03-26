@@ -512,6 +512,93 @@ async function main(): Promise<void> {
     ).wait();
     stopLog('Registering Pairs');
   }
+
+  // Deploy xPool Tokens
+  startLog('Deploying SM Wrapped Pool Token - 33xSNX/33xAAVE/33xUNI');
+  const xPool1Receipt = await (
+    await xTokenFactoryContract.deployXToken(
+      testData['xSNX/xAAVE/xUNI'].address,
+      'SM Wrapped Pool Token - 33% xSNX / 33% xAAVE / 33% xUNI',
+      'xBPT',
+      18,
+      '',
+      deploymentData.AuthorizationProxy.address,
+      deploymentData.EthPriceFeed.address, // assetFeed can't be zero addres so we need to set something  althought xBPT wont use the assetFeed
+    )
+  ).wait();
+
+  const xPool1DeployedEvent = xPool1Receipt.events?.find(log => log.event && log.event === 'XTokenDeployed');
+  const xPool1Address = (xPool1DeployedEvent && xPool1DeployedEvent.args
+    ? xPool1DeployedEvent.args.xToken
+    : '') as string;
+
+  testData = {
+    ...testData,
+    'SM Wrapped Pool Token - 33xSNX/33xAAVE/33xUNI': {
+      address: xPool1Address,
+    },
+  };
+
+  await write(testData);
+  stopLog(`SM Wrapped Pool Token - 33% xSNX / 33% xAAVE / 33% xUNI deployed - address: ${xPool1Address}`);
+
+  // Deploy xPool Tokens
+  startLog('Deploying SM Wrapped Pool Token - 50% xWETH / 50% xDAI');
+  const xPool2Receipt = await (
+    await xTokenFactoryContract.deployXToken(
+      testData['xWETH/xDAI'].address,
+      'SM Wrapped Pool Token - 50% xWETH / 50% xDAI',
+      'xBPT',
+      18,
+      '',
+      deploymentData.AuthorizationProxy.address,
+      deploymentData.EthPriceFeed.address, // assetFeed can't be zero addres so we need to set something  althought xBPT wont use the assetFeed
+    )
+  ).wait();
+
+  const xPool2DeployedEvent = xPool2Receipt.events?.find(log => log.event && log.event === 'XTokenDeployed');
+  const xPool2Address = (xPool2DeployedEvent && xPool2DeployedEvent.args
+    ? xPool2DeployedEvent.args.xToken
+    : '') as string;
+
+  testData = {
+    ...testData,
+    'SM Wrapped Pool Token - 50xWETH/50xDAI': {
+      address: xPool2Address,
+    },
+  };
+
+  await write(testData);
+  stopLog(`SM Wrapped Pool Token - 50% xWETH / 50% xDAI deployed - address: ${xPool2Address}`);
+
+  // Deploy xPool Tokens
+  startLog('Deploying SM Wrapped Pool Token - 50% xWETH / 50% xUSDC');
+  const xPool3Receipt = await (
+    await xTokenFactoryContract.deployXToken(
+      testData['xWETH/xUSDC'].address,
+      'SM Wrapped Pool Token - 50% xWETH / 50% xUSDC',
+      'xBPT',
+      18,
+      '',
+      deploymentData.AuthorizationProxy.address,
+      deploymentData.EthPriceFeed.address, // assetFeed can't be zero addres so we need to set something  althought xBPT wont use the assetFeed
+    )
+  ).wait();
+
+  const xPool3DeployedEvent = xPool3Receipt.events?.find(log => log.event && log.event === 'XTokenDeployed');
+  const xPool3Address = (xPool3DeployedEvent && xPool3DeployedEvent.args
+    ? xPool3DeployedEvent.args.xToken
+    : '') as string;
+
+  testData = {
+    ...testData,
+    'SM Wrapped Pool Token - 50xWETH/50xUSDC': {
+      address: xPool3Address,
+    },
+  };
+
+  await write(testData);
+  stopLog(`SM Wrapped Pool Token - 50% xWETH / 50% xUSDC deployed - address: ${xPool3Address}`);
 }
 
 async function read(filename: string): Promise<any> {
