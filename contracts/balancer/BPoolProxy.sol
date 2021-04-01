@@ -539,7 +539,10 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         bool useUtilityToken
     ) public returns (uint256 totalAmountOut) {
         Swap[] memory swaps;
-        (swaps, ) = viewSplitExactIn(address(tokenIn), address(tokenOut), totalAmountIn, nPools);
+        uint256 totalOutput;
+        (swaps, totalOutput) = viewSplitExactIn(address(tokenIn), address(tokenOut), totalAmountIn, nPools);
+
+        require(totalOutput >= minTotalAmountOut, "ERR_LIMIT_OUT");
 
         totalAmountOut = batchSwapExactIn(swaps, tokenIn, tokenOut, totalAmountIn, minTotalAmountOut, useUtilityToken);
     }
@@ -562,7 +565,10 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         bool useUtilityToken
     ) public returns (uint256 totalAmountIn) {
         Swap[] memory swaps;
-        (swaps, ) = viewSplitExactOut(address(tokenIn), address(tokenOut), totalAmountOut, nPools);
+        uint256 totalInput;
+        (swaps, totalInput) = viewSplitExactOut(address(tokenIn), address(tokenOut), totalAmountOut, nPools);
+
+        require(totalInput <= maxTotalAmountIn, "ERR_LIMIT_IN");
 
         totalAmountIn = batchSwapExactOut(swaps, tokenIn, tokenOut, maxTotalAmountIn, useUtilityToken);
     }
@@ -959,7 +965,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
      * @dev Trtansfers `token` from the sender to this conteract.
      *
      */
-    function transferFrom(IXToken token, uint256 amount) internal returns (bool) {
+    function transferFrom(IXToken token, uint256 amount) internal {
         require(token.transferFrom(msg.sender, address(this), amount), "ERR_TRANSFER_FAILED");
     }
 
@@ -971,7 +977,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         IXToken token,
         uint256 amount,
         bool useUtitlityToken
-    ) internal returns (bool) {
+    ) internal {
         if (useUtitlityToken && utilityToken != address(0) && address(utilityTokenFeed) != address(0)) {
             uint256 discountedFee = utilityTokenFeed.calculateAmount(address(token), amount.div(2));
 
@@ -986,21 +992,13 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         } else {
             require(token.transferFrom(msg.sender, feeReceiver, amount), "ERR_FEE_TRANSFER_FAILED");
         }
-
-        return true;
     }
 
     function getBalance(IXToken token) internal view returns (uint256) {
         return token.balanceOf(address(this));
     }
 
-    function transfer(IXToken token, uint256 amount) internal returns (bool) {
-        if (amount == 0) {
-            return true;
-        }
-
+    function transfer(IXToken token, uint256 amount) internal {
         require(token.transfer(msg.sender, amount), "ERR_TRANSFER_FAILED");
-
-        return true;
     }
 }

@@ -114,11 +114,13 @@ contract ProtocolFee is Ownable, IProtocolFee {
      * @param totalAmountIn Total amount in.
      */
     function batchFee(Swap[] memory swaps, uint256 totalAmountIn) public view override returns (uint256) {
-        uint256 feeAmount = 0;
+        uint256 totalSwapsFee = 0;
 
         for (uint256 i = 0; i < swaps.length; i++) {
-            feeAmount = feeAmount.add(getProtocolFeeAmount(getPoolFeeAmount(swaps[i].pool, swaps[i].swapAmount)));
+            totalSwapsFee = totalSwapsFee.add(getPoolFeeAmount(swaps[i].pool, swaps[i].swapAmount));
         }
+
+        uint256 feeAmount = getProtocolFeeAmount(totalSwapsFee);
 
         return Math.max(feeAmount, minProtocolFee.mul(totalAmountIn).div(ONE));
     }
