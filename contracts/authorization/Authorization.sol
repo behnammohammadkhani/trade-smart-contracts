@@ -18,7 +18,7 @@ import "../interfaces/IXTokenWrapper.sol";
 /**
  * @title Authorization
  * @author Protofire
- * @dev Contract module which provides an authorization mechanism.
+ * @dev Contract module which contains the authorization logic.
  *
  * This contract should be called by an Authorizable contract through its `onlyAuthorized` modifier.
  */

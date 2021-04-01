@@ -26,7 +26,7 @@ Contract module to keep track of the EUR amount being tradded for each user by o
 
 ## Events:
 
-- `EurPriceFeedSetted(address newEurPriceFeed)`
+- `EurPriceFeedSet(address newEurPriceFeed)`
 
 - `AssetAllowed(address asset)`
 
@@ -62,7 +62,7 @@ Requirements:
 
 - the caller must have ``role``'s admin role.
 
-### Function `setEurPriceFeed(address _eurPriceFeed) → bool public`
+### Function `setEurPriceFeed(address _eurPriceFeed) public`
 
 Sets `_eurPriceFeed` as the new EUR Price feed module.
 
@@ -76,7 +76,7 @@ Requirements:
 
 - `_eurPriceFeed`: The address of the new EUR Price feed module.
 
-### Function `allowAsset(address _asset) → bool public`
+### Function `allowAsset(address _asset) public`
 
 Sets `_asset` as allowed for calling `addTrade`.
 
@@ -90,7 +90,7 @@ Requirements:
 
 - `_asset`: asset's address.
 
-### Function `disallowAsset(address _asset) → bool public`
+### Function `disallowAsset(address _asset) public`
 
 Sets `_asset` as disallowed for calling `addTrade`.
 
@@ -120,9 +120,9 @@ Requirements:
 
 - `_amount`: asset amount which is converted to EUR and added to balance traded by `_user` for `_operation`.
 
-### Event `EurPriceFeedSetted(address newEurPriceFeed)`
+### Event `EurPriceFeedSet(address newEurPriceFeed)`
 
-Emitted when `eurPriceFeed` address is setted.
+Emitted when `eurPriceFeed` address is set.
 
 ### Event `AssetAllowed(address asset)`
 

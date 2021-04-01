@@ -12,7 +12,7 @@
 
 - `setEurPriceFeed(address) (public)`
 
-- `setTradingLimint(uint256) (public)`
+- `setTradingLimit(uint256) (public)`
 
 - `setOperationsRegistry(address) (public)`
 
@@ -26,14 +26,14 @@
 
 ### Function `isAuthorized(address, address, bytes4, bytes) → bool public`
 
-### Function `setPermissions(address) → bool public`
+### Function `setPermissions(address) public`
 
-### Function `setEurPriceFeed(address) → bool public`
+### Function `setEurPriceFeed(address) public`
 
-### Function `setTradingLimint(uint256) → bool public`
+### Function `setTradingLimit(uint256) public`
 
-### Function `setOperationsRegistry(address) → bool public`
+### Function `setOperationsRegistry(address) public`
 
-### Function `setPoolFactory(address) → bool public`
+### Function `setPoolFactory(address) public`
 
-### Function `setXTokenWrapper(address) → bool public`
+### Function `setXTokenWrapper(address) public`

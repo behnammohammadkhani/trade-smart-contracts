@@ -32,11 +32,11 @@ Contract module to retrieve EUR price per asset.
 
 ## Events:
 
-- `EurUsdFeedSetted(address newEurUsdFeed)`
+- `EurUsdFeedSet(address newEurUsdFeed)`
 
-- `EthUsdFeedSetted(address newEthUsdFeed)`
+- `EthUsdFeedSet(address newEthUsdFeed)`
 
-- `AssetEthFeedSetted(address asset, address feed)`
+- `AssetEthFeedSet(address asset, address feed)`
 
 ### Modifier `onlyFeedsManager()`
 
@@ -192,14 +192,14 @@ Gets the price 1 `_asset` in EUR.
 
 - price scaled by 1e18, denominated in EUR
 
-### Event `EurUsdFeedSetted(address newEurUsdFeed)`
+### Event `EurUsdFeedSet(address newEurUsdFeed)`
 
-Emitted when `eurUsdFeed` address is setted.
+Emitted when `eurUsdFeed` address is set.
 
-### Event `EthUsdFeedSetted(address newEthUsdFeed)`
+### Event `EthUsdFeedSet(address newEthUsdFeed)`
 
-Emitted when `ethUsdFeed` address is setted.
+Emitted when `ethUsdFeed` address is set.
 
-### Event `AssetEthFeedSetted(address asset, address feed)`
+### Event `AssetEthFeedSet(address asset, address feed)`
 
-Emitted when a feed address is setted for an asset.
+Emitted when a feed address is set for an asset.

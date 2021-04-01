@@ -19,7 +19,9 @@ import "hardhat/console.sol";
 /**
  * @title BPoolProxy
  * @author Protofire
- * @dev Forwarding proxy that allows users to batch execute swaps.
+ * @dev Forwarding proxy that allows users to batch execute swaps and join/exit pools.
+ * User should interact with pools through this contracts as it is the one that charge
+ * the protocol swap fee, and wrap/unwrap pool tokens into/from xPoolToken.
  *
  * This code is based on Balancer ExchangeProxy contract
  * https://docs.balancer.finance/smart-contracts/exchange-proxy

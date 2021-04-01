@@ -11,7 +11,8 @@ import "../interfaces/IXToken.sol";
 /**
  * @title XTokenWrapper
  * @author Protofire
- * @dev Contract module which provides an functionality for wrapping tokens into the corresponding XToken.
+ * @dev Contract module which provides the functionalities for wrapping tokens into the corresponding
+ * XToken and unwrapping XTokens giving back the corresponding Token.
  *
  */
 contract XTokenWrapper is AccessControl, ERC1155Holder {

@@ -36,9 +36,9 @@ ERC20 token used for wrapping tokens with the purpose of applying an authorizati
 
 ## Events:
 
-- `KyaSetted(string newKya)`
+- `KyaSet(string newKya)`
 
-- `OperationsRegistrySetted(address newOperationsRegistry)`
+- `OperationsRegistrySet(address newOperationsRegistry)`
 
 ### Modifier `onlyAdmin()`
 
@@ -192,10 +192,10 @@ Requirements:
 
 - `account` must have at least `amount` tokens.
 
-### Event `KyaSetted(string newKya)`
+### Event `KyaSet(string newKya)`
 
-Emitted when `operationsRegistry` address is setted.
+Emitted when `operationsRegistry` address is set.
 
-### Event `OperationsRegistrySetted(address newOperationsRegistry)`
+### Event `OperationsRegistrySet(address newOperationsRegistry)`
 
-Emitted when `operationsRegistry` address is setted.
+Emitted when `operationsRegistry` address is set.

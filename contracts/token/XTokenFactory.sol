@@ -11,7 +11,7 @@ import "../interfaces/IEurPriceFeed.sol";
 /**
  * @title XTokenFactory
  * @author Protofire
- * @dev Contract module which provides an functionality deploying a registering new xToken contracts.
+ * @dev Contract module which provides the functionalities for deploying a registering new xToken contracts.
  *
  */
 contract XTokenFactory is Ownable {

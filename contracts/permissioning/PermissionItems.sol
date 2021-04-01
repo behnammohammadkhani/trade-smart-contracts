@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 /**
  * @title PermissionItems
  * @author Protofire
- * @dev Contract module which provides a permissioning mechanism.
+ * @dev Contract module which provides a permissioning mechanism through the asisgnation of ERC1155 tokens.
  * It inherits from standard ERC1155 and extends functionality for
  * role based access control and makes tokens non-transferable.
  */

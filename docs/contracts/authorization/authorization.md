@@ -1,6 +1,6 @@
 # `Authorization`
 
-Contract module which provides an authorization mechanism.
+Contract module which contains the authorization logic.
 
 This contract should be called by an Authorizable contract through its `onlyAuthorized` modifier.
 
@@ -12,7 +12,7 @@ This contract should be called by an Authorizable contract through its `onlyAuth
 
 - `setEurPriceFeed(address _eurPriceFeed) (public)`
 
-- `setTradingLimint(uint256 _tradingLimit) (public)`
+- `setTradingLimit(uint256 _tradingLimit) (public)`
 
 - `setOperationsRegistry(address _operationsRegistry) (public)`
 
@@ -24,7 +24,7 @@ This contract should be called by an Authorizable contract through its `onlyAuth
 
 - `_setEurPriceFeed(address _eurPriceFeed) (internal)`
 
-- `_setTradingLimint(uint256 _tradingLimit) (internal)`
+- `_setTradingLimit(uint256 _tradingLimit) (internal)`
 
 - `_setOperationsRegistry(address _operationsRegistry) (internal)`
 
@@ -54,17 +54,17 @@ This contract should be called by an Authorizable contract through its `onlyAuth
 
 ## Events:
 
-- `PermissionsSetted(address newPermissions)`
+- `PermissionsSet(address newPermissions)`
 
-- `OperationsRegistrySetted(address newOperationsRegistry)`
+- `OperationsRegistrySet(address newOperationsRegistry)`
 
-- `TradingLimitSetted(uint256 newLimit)`
+- `TradingLimitSet(uint256 newLimit)`
 
-- `EurPriceFeedSetted(address newEurPriceFeed)`
+- `EurPriceFeedSet(address newEurPriceFeed)`
 
-- `PoolFactorySetted(address poolFactory)`
+- `PoolFactorySet(address poolFactory)`
 
-- `XTokenWrapperSetted(address xTokenWrapper)`
+- `XTokenWrapperSet(address xTokenWrapper)`
 
 - `Paused(address account)`
 
@@ -92,7 +92,7 @@ Sets ownership to the account that deploys the contract.
 
 - `_paused`: Pause protocol
 
-### Function `setPermissions(address _permissions) → bool public`
+### Function `setPermissions(address _permissions) public`
 
 Sets `_permissions` as the new Permissions module.
 
@@ -106,7 +106,7 @@ Requirements:
 
 - `_permissions`: The address of the new Pemissions module.
 
-### Function `setEurPriceFeed(address _eurPriceFeed) → bool public`
+### Function `setEurPriceFeed(address _eurPriceFeed) public`
 
 Sets `_eurPriceFeed` as the new EUR Price feed module.
 
@@ -120,7 +120,7 @@ Requirements:
 
 - `_eurPriceFeed`: The address of the new EUR Price feed module.
 
-### Function `setTradingLimint(uint256 _tradingLimit) → bool public`
+### Function `setTradingLimit(uint256 _tradingLimit) public`
 
 Sets `_tradingLimit` as the new traiding limit for T1 users.
 
@@ -134,7 +134,7 @@ Requirements:
 
 - `_tradingLimit`: The value of the new traiding limit for T1 users.
 
-### Function `setOperationsRegistry(address _operationsRegistry) → bool public`
+### Function `setOperationsRegistry(address _operationsRegistry) public`
 
 Sets `_operationsRegistry` as the new OperationsRegistry module.
 
@@ -148,7 +148,7 @@ Requirements:
 
 - `_operationsRegistry`: The address of the new OperationsRegistry module.
 
-### Function `setPoolFactory(address _poolFactory) → bool public`
+### Function `setPoolFactory(address _poolFactory) public`
 
 Sets `_poolFactory` as the new BFactory module.
 
@@ -162,7 +162,7 @@ Requirements:
 
 - `_poolFactory`: The address of the new Balance BFactory module.
 
-### Function `setXTokenWrapper(address _xTokenWrapper) → bool public`
+### Function `setXTokenWrapper(address _xTokenWrapper) public`
 
 Sets `_xTokenWrapper` as the new XTokenWrapper module.
 
@@ -176,7 +176,7 @@ Requirements:
 
 - `_xTokenWrapper`: The address of the new XTokenWrapper module.
 
-### Function `_setPermissions(address _permissions) → bool internal`
+### Function `_setPermissions(address _permissions) internal`
 
 Sets `_permissions` as the new Permissions module.
 
@@ -188,7 +188,7 @@ Requirements:
 
 - `_permissions`: The address of the new Pemissions module.
 
-### Function `_setEurPriceFeed(address _eurPriceFeed) → bool internal`
+### Function `_setEurPriceFeed(address _eurPriceFeed) internal`
 
 Sets `_eurPriceFeed` as the new EUR Price feed module.
 
@@ -200,7 +200,7 @@ Requirements:
 
 - `_eurPriceFeed`: The address of the new EUR Price feed module.
 
-### Function `_setTradingLimint(uint256 _tradingLimit) → bool internal`
+### Function `_setTradingLimit(uint256 _tradingLimit) internal`
 
 Sets `_tradingLimit` as the new traiding limit for T1 users.
 
@@ -212,7 +212,7 @@ Requirements:
 
 - `_tradingLimit`: The value of the new traiding limit for T1 users.
 
-### Function `_setOperationsRegistry(address _operationsRegistry) → bool internal`
+### Function `_setOperationsRegistry(address _operationsRegistry) internal`
 
 Sets `_operationsRegistry` as the new OperationsRegistry module.
 
@@ -224,7 +224,7 @@ Requirements:
 
 - `_operationsRegistry`: The address of the new OperationsRegistry module.
 
-### Function `_setPoolFactory(address _poolFactory) → bool internal`
+### Function `_setPoolFactory(address _poolFactory) internal`
 
 Sets `_poolFactory` as the new BFactory module.
 
@@ -236,7 +236,7 @@ Requirements:
 
 - `_poolFactory`: The address of the new Balance BFactory module.
 
-### Function `_setXTokenWrapper(address _xTokenWrapper) → bool internal`
+### Function `_setXTokenWrapper(address _xTokenWrapper) internal`
 
 Sets `_xTokenWrapper` as the new XTokenWrapper module.
 
@@ -358,29 +358,29 @@ Returns `true` if `_operation` is a BFatory method.
 
 - `_operation`: Method sig.
 
-### Event `PermissionsSetted(address newPermissions)`
+### Event `PermissionsSet(address newPermissions)`
 
-Emitted when `permissions` address is setted.
+Emitted when `permissions` address is set.
 
-### Event `OperationsRegistrySetted(address newOperationsRegistry)`
+### Event `OperationsRegistrySet(address newOperationsRegistry)`
 
-Emitted when `operationsRegistry` address is setted.
+Emitted when `operationsRegistry` address is set.
 
-### Event `TradingLimitSetted(uint256 newLimit)`
+### Event `TradingLimitSet(uint256 newLimit)`
 
-Emitted when `tradingLimit` value is setted.
+Emitted when `tradingLimit` value is set.
 
-### Event `EurPriceFeedSetted(address newEurPriceFeed)`
+### Event `EurPriceFeedSet(address newEurPriceFeed)`
 
-Emitted when `eurPriceFeed` address is setted.
+Emitted when `eurPriceFeed` address is set.
 
-### Event `PoolFactorySetted(address poolFactory)`
+### Event `PoolFactorySet(address poolFactory)`
 
-Emitted when `eurPriceFeed` address is setted.
+Emitted when `eurPriceFeed` address is set.
 
-### Event `XTokenWrapperSetted(address xTokenWrapper)`
+### Event `XTokenWrapperSet(address xTokenWrapper)`
 
-Emitted when `eurPriceFeed` address is setted.
+Emitted when `eurPriceFeed` address is set.
 
 ### Event `Paused(address account)`
 

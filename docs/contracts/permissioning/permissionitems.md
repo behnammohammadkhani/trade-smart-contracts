@@ -1,6 +1,6 @@
 # `PermissionItems`
 
-Contract module which provides a permissioning mechanism.
+Contract module which provides a permissioning mechanism through the asisgnation of ERC1155 tokens.
 
 It inherits from standard ERC1155 and extends functionality for
 

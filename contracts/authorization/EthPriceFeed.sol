@@ -5,7 +5,7 @@ pragma solidity ^0.7.0;
  * @title EthPriceFeed
  * @author Protofire
  * @dev This contract returns always 10^18 as ETH/ETH price.
- * It is ment to be used on EurPriceFeed contract as the `assetEthFeed` for the xWETH token.
+ * It is ment to be used on EurPriceFeed contract as the `assetEthFeed` for the xETH token.
  *
  */
 contract EthPriceFeed {

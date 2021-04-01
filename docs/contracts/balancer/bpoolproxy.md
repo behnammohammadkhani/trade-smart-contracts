@@ -1,6 +1,10 @@
 # `BPoolProxy`
 
-Forwarding proxy that allows users to batch execute swaps.
+Forwarding proxy that allows users to batch execute swaps and join/exit pools.
+
+User should interact with pools through this contracts as it is the one that charge
+
+the protocol swap fee, and wrap/unwrap pool tokens into/from xPoolToken.
 
 This code is based on Balancer ExchangeProxy contract
 
@@ -82,17 +86,17 @@ https://docs.balancer.finance/smart-contracts/exchange-proxy
 
 ## Events:
 
-- `RegistrySetted(address registry)`
+- `RegistrySet(address registry)`
 
-- `ProtocolFeeSetted(address protocolFee)`
+- `ProtocolFeeSet(address protocolFee)`
 
-- `FeeReceiverSetted(address feeReceiver)`
+- `FeeReceiverSet(address feeReceiver)`
 
-- `XTokenWrapperSetted(address xTokenWrapper)`
+- `XTokenWrapperSet(address xTokenWrapper)`
 
-- `UtilityTokenSetted(address utilityToken)`
+- `UtilityTokenSet(address utilityToken)`
 
-- `UtilityTokenFeedSetted(address utilityTokenFeed)`
+- `UtilityTokenFeedSet(address utilityTokenFeed)`
 
 ### Function `constructor(address _registry, address _protocolFee, address _feeReceiver, address _xTokenWrapper, address _utilityToken, address _utilityTokenFeed) public`
 
@@ -488,38 +492,38 @@ Returns an array of Swaps and the total amount in for swap.
 
 ### Function `calcTotalOutExactOut(uint256[] bestInputAmounts, struct BPoolProxy.Pool[] bestPools) → uint256 totalOutput internal`
 
-### Function `transferFrom(contract IXToken token, uint256 amount) → bool internal`
+### Function `transferFrom(contract IXToken token, uint256 amount) internal`
 
 Trtansfers `token` from the sender to this conteract.
 
-### Function `transferFeeFrom(contract IXToken token, uint256 amount, bool useUtitlityToken) → bool internal`
+### Function `transferFeeFrom(contract IXToken token, uint256 amount, bool useUtitlityToken) internal`
 
 Trtansfers protocol swap fee from the sender to this `feeReceiver`.
 
 ### Function `getBalance(contract IXToken token) → uint256 internal`
 
-### Function `transfer(contract IXToken token, uint256 amount) → bool internal`
+### Function `transfer(contract IXToken token, uint256 amount) internal`
 
-### Event `RegistrySetted(address registry)`
+### Event `RegistrySet(address registry)`
 
-Emitted when `registry` address is setted.
+Emitted when `registry` address is set.
 
-### Event `ProtocolFeeSetted(address protocolFee)`
+### Event `ProtocolFeeSet(address protocolFee)`
 
-Emitted when `protocolFee` address is setted.
+Emitted when `protocolFee` address is set.
 
-### Event `FeeReceiverSetted(address feeReceiver)`
+### Event `FeeReceiverSet(address feeReceiver)`
 
-Emitted when `feeReceiver` address is setted.
+Emitted when `feeReceiver` address is set.
 
-### Event `XTokenWrapperSetted(address xTokenWrapper)`
+### Event `XTokenWrapperSet(address xTokenWrapper)`
 
-Emitted when `xTokenWrapper` address is setted.
+Emitted when `xTokenWrapper` address is set.
 
-### Event `UtilityTokenSetted(address utilityToken)`
+### Event `UtilityTokenSet(address utilityToken)`
 
-Emitted when `utilityToken` address is setted.
+Emitted when `utilityToken` address is set.
 
-### Event `UtilityTokenFeedSetted(address utilityTokenFeed)`
+### Event `UtilityTokenFeedSet(address utilityTokenFeed)`
 
-Emitted when `utilityTokenFeed` address is setted.
+Emitted when `utilityTokenFeed` address is set.
