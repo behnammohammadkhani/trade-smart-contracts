@@ -8,6 +8,8 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 
 import "../interfaces/IXToken.sol";
 
+import "hardhat/console.sol";
+
 /**
  * @title XTokenWrapper
  * @author Protofire
@@ -40,7 +42,7 @@ contract XTokenWrapper is AccessControl, ERC1155Holder {
      * @dev Grants the contract deployer the default admin role.
      *
      */
-    constructor() public {
+    constructor() {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
@@ -129,7 +131,7 @@ contract XTokenWrapper is AccessControl, ERC1155Holder {
             IERC20(tokenAddress).safeTransfer(_msgSender(), _amount);
         } else {
             // solhint-disable-next-line
-            (bool sent, ) = tx.origin.call{ value: _amount }("");
+            (bool sent, ) = msg.sender.call{ value: _amount }("");
             require(sent, "Failed to send Ether");
         }
 

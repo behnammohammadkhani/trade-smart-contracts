@@ -23,7 +23,6 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface XTokenInterface extends ethers.utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "ERC20_TRANSFER()": FunctionFragment;
     "WRAPPER_ROLE()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
@@ -59,10 +58,6 @@ interface XTokenInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ERC20_TRANSFER",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -162,10 +157,6 @@ interface XTokenInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ERC20_TRANSFER",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -281,10 +272,6 @@ export class XToken extends Contract {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<[string]>;
-
-    ERC20_TRANSFER(overrides?: CallOverrides): Promise<[string]>;
-
-    "ERC20_TRANSFER()"(overrides?: CallOverrides): Promise<[string]>;
 
     WRAPPER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
@@ -554,10 +541,6 @@ export class XToken extends Contract {
 
   "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
 
-  ERC20_TRANSFER(overrides?: CallOverrides): Promise<string>;
-
-  "ERC20_TRANSFER()"(overrides?: CallOverrides): Promise<string>;
-
   WRAPPER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   "WRAPPER_ROLE()"(overrides?: CallOverrides): Promise<string>;
@@ -825,10 +808,6 @@ export class XToken extends Contract {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
     "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
-
-    ERC20_TRANSFER(overrides?: CallOverrides): Promise<string>;
-
-    "ERC20_TRANSFER()"(overrides?: CallOverrides): Promise<string>;
 
     WRAPPER_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -1131,10 +1110,6 @@ export class XToken extends Contract {
 
     "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    ERC20_TRANSFER(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "ERC20_TRANSFER()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     WRAPPER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     "WRAPPER_ROLE()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1402,12 +1377,6 @@ export class XToken extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "DEFAULT_ADMIN_ROLE()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    ERC20_TRANSFER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "ERC20_TRANSFER()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
