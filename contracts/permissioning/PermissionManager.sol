@@ -317,10 +317,7 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
     }
 
     function _hasItem(address _user, uint256 itemId) internal view returns (bool) {
-        if (PermissionItems(permissionItems).balanceOf(_user, itemId) == 0) {
-            return false;
-        }
-        return true;
+        return PermissionItems(permissionItems).balanceOf(_user, itemId) > 0;
     }
 
     /**
