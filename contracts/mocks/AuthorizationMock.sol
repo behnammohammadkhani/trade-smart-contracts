@@ -3,8 +3,6 @@ pragma solidity ^0.7.0;
 
 import "../interfaces/IAuthorization.sol";
 
-
-
 contract AuthorizationMock is IAuthorization {
     bool public authorized;
 
@@ -25,27 +23,27 @@ contract AuthorizationMock is IAuthorization {
         return authorized;
     }
 
-    function setPermissions(address) public pure override returns (bool) {
-        return true;
+    function setPermissions(address) public pure override {
+        1 + 1;
     }
 
-    function setEurPriceFeed(address) public pure override returns (bool) {
-        return true;
+    function setEurPriceFeed(address) public pure override {
+        1 + 1;
     }
 
-    function setTradingLimint(uint256) public pure override returns (bool) {
-        return true;
+    function setTradingLimit(uint256) public pure override {
+        1 + 1;
     }
 
-    function setOperationsRegistry(address) public pure override returns (bool) {
-        return true;
+    function setOperationsRegistry(address) public pure override {
+        1 + 1;
     }
 
-    function setPoolFactory(address) public pure override returns (bool) {
-        return true;
+    function setPoolFactory(address) public pure override {
+        1 + 1;
     }
 
-    function setXTokenWrapper(address) public pure override returns (bool) {
-        return true;
+    function setXTokenWrapper(address) public pure override {
+        1 + 1;
     }
 }

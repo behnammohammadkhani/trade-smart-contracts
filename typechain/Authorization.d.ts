@@ -48,7 +48,7 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     "setOperationsRegistry(address)": FunctionFragment;
     "setPermissions(address)": FunctionFragment;
     "setPoolFactory(address)": FunctionFragment;
-    "setTradingLimint(uint256)": FunctionFragment;
+    "setTradingLimit(uint256)": FunctionFragment;
     "setXTokenWrapper(address)": FunctionFragment;
     "tradingLimit()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -146,7 +146,7 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "setTradingLimint",
+    functionFragment: "setTradingLimit",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -251,7 +251,7 @@ interface AuthorizationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setTradingLimint",
+    functionFragment: "setTradingLimit",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -273,26 +273,26 @@ interface AuthorizationInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "EurPriceFeedSetted(address)": EventFragment;
-    "OperationsRegistrySetted(address)": EventFragment;
+    "EurPriceFeedSet(address)": EventFragment;
+    "OperationsRegistrySet(address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
-    "PermissionsSetted(address)": EventFragment;
-    "PoolFactorySetted(address)": EventFragment;
-    "TradingLimitSetted(uint256)": EventFragment;
+    "PermissionsSet(address)": EventFragment;
+    "PoolFactorySet(address)": EventFragment;
+    "TradingLimitSet(uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
-    "XTokenWrapperSetted(address)": EventFragment;
+    "XTokenWrapperSet(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "EurPriceFeedSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OperationsRegistrySetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EurPriceFeedSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OperationsRegistrySet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PermissionsSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PoolFactorySetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TradingLimitSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PermissionsSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PoolFactorySet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TradingLimitSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "XTokenWrapperSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "XTokenWrapperSet"): EventFragment;
 }
 
 export class Authorization extends Contract {
@@ -467,12 +467,12 @@ export class Authorization extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    setTradingLimint(
+    setTradingLimit(
       _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "setTradingLimint(uint256)"(
+    "setTradingLimit(uint256)"(
       _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -668,12 +668,12 @@ export class Authorization extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  setTradingLimint(
+  setTradingLimit(
     _tradingLimit: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "setTradingLimint(uint256)"(
+  "setTradingLimit(uint256)"(
     _tradingLimit: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -832,62 +832,62 @@ export class Authorization extends Contract {
     setEurPriceFeed(
       _eurPriceFeed: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     "setEurPriceFeed(address)"(
       _eurPriceFeed: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     setOperationsRegistry(
       _operationsRegistry: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     "setOperationsRegistry(address)"(
       _operationsRegistry: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     setPermissions(
       _permissions: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     "setPermissions(address)"(
       _permissions: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     setPoolFactory(
       _poolFactory: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     "setPoolFactory(address)"(
       _poolFactory: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
-    setTradingLimint(
+    setTradingLimit(
       _tradingLimit: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
-    "setTradingLimint(uint256)"(
+    "setTradingLimit(uint256)"(
       _tradingLimit: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     setXTokenWrapper(
       _xTokenWrapper: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     "setXTokenWrapper(address)"(
       _xTokenWrapper: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     tradingLimit(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -913,9 +913,9 @@ export class Authorization extends Contract {
   };
 
   filters: {
-    EurPriceFeedSetted(newEurPriceFeed: string | null): EventFilter;
+    EurPriceFeedSet(newEurPriceFeed: string | null): EventFilter;
 
-    OperationsRegistrySetted(newOperationsRegistry: string | null): EventFilter;
+    OperationsRegistrySet(newOperationsRegistry: string | null): EventFilter;
 
     OwnershipTransferred(
       previousOwner: string | null,
@@ -924,15 +924,15 @@ export class Authorization extends Contract {
 
     Paused(account: null): EventFilter;
 
-    PermissionsSetted(newPermissions: string | null): EventFilter;
+    PermissionsSet(newPermissions: string | null): EventFilter;
 
-    PoolFactorySetted(poolFactory: string | null): EventFilter;
+    PoolFactorySet(poolFactory: string | null): EventFilter;
 
-    TradingLimitSetted(newLimit: null): EventFilter;
+    TradingLimitSet(newLimit: null): EventFilter;
 
     Unpaused(account: null): EventFilter;
 
-    XTokenWrapperSetted(xTokenWrapper: string | null): EventFilter;
+    XTokenWrapperSet(xTokenWrapper: string | null): EventFilter;
   };
 
   estimateGas: {
@@ -1094,12 +1094,12 @@ export class Authorization extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    setTradingLimint(
+    setTradingLimit(
       _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "setTradingLimint(uint256)"(
+    "setTradingLimit(uint256)"(
       _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -1312,12 +1312,12 @@ export class Authorization extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    setTradingLimint(
+    setTradingLimit(
       _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "setTradingLimint(uint256)"(
+    "setTradingLimit(uint256)"(
       _tradingLimit: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;

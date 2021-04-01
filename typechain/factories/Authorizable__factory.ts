@@ -27,7 +27,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "AuthorizationSetted",
+    name: "AuthorizationSet",
     type: "event",
   },
   {

@@ -232,9 +232,9 @@ interface XTokenInterface extends ethers.utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
-    "AuthorizationSetted(address)": EventFragment;
-    "KyaSetted(string)": EventFragment;
-    "OperationsRegistrySetted(address)": EventFragment;
+    "AuthorizationSet(address)": EventFragment;
+    "KyaSet(string)": EventFragment;
+    "OperationsRegistrySet(address)": EventFragment;
     "Paused(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -244,9 +244,9 @@ interface XTokenInterface extends ethers.utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AuthorizationSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "KyaSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OperationsRegistrySetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AuthorizationSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "KyaSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OperationsRegistrySet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
@@ -1074,11 +1074,11 @@ export class XToken extends Contract {
       value: null
     ): EventFilter;
 
-    AuthorizationSetted(newAuthorization: string | null): EventFilter;
+    AuthorizationSet(newAuthorization: string | null): EventFilter;
 
-    KyaSetted(newKya: null): EventFilter;
+    KyaSet(newKya: null): EventFilter;
 
-    OperationsRegistrySetted(newOperationsRegistry: string | null): EventFilter;
+    OperationsRegistrySet(newOperationsRegistry: string | null): EventFilter;
 
     Paused(account: null): EventFilter;
 

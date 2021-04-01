@@ -177,17 +177,17 @@ interface EurPriceFeedInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "AssetEthFeedSetted(address,address)": EventFragment;
-    "EthUsdFeedSetted(address)": EventFragment;
-    "EurUsdFeedSetted(address)": EventFragment;
+    "AssetEthFeedSet(address,address)": EventFragment;
+    "EthUsdFeedSet(address)": EventFragment;
+    "EurUsdFeedSet(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AssetEthFeedSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EthUsdFeedSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EurUsdFeedSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AssetEthFeedSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EthUsdFeedSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EurUsdFeedSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -727,11 +727,11 @@ export class EurPriceFeed extends Contract {
   };
 
   filters: {
-    AssetEthFeedSetted(asset: string | null, feed: string | null): EventFilter;
+    AssetEthFeedSet(asset: string | null, feed: string | null): EventFilter;
 
-    EthUsdFeedSetted(newEthUsdFeed: string | null): EventFilter;
+    EthUsdFeedSet(newEthUsdFeed: string | null): EventFilter;
 
-    EurUsdFeedSetted(newEurUsdFeed: string | null): EventFilter;
+    EurUsdFeedSet(newEurUsdFeed: string | null): EventFilter;
 
     RoleAdminChanged(
       role: BytesLike | null,

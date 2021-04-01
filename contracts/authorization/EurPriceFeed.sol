@@ -32,19 +32,19 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
     address public ethUsdFeed;
 
     /**
-     * @dev Emitted when `eurUsdFeed` address is setted.
+     * @dev Emitted when `eurUsdFeed` address is set.
      */
-    event EurUsdFeedSetted(address indexed newEurUsdFeed);
+    event EurUsdFeedSet(address indexed newEurUsdFeed);
 
     /**
-     * @dev Emitted when `ethUsdFeed` address is setted.
+     * @dev Emitted when `ethUsdFeed` address is set.
      */
-    event EthUsdFeedSetted(address indexed newEthUsdFeed);
+    event EthUsdFeedSet(address indexed newEthUsdFeed);
 
     /**
-     * @dev Emitted when a feed address is setted for an asset.
+     * @dev Emitted when a feed address is set for an asset.
      */
-    event AssetEthFeedSetted(address indexed asset, address indexed feed);
+    event AssetEthFeedSet(address indexed asset, address indexed feed);
 
     /**
      * @dev Sets the values for {eurUsdFeed}, {ethUsdFeed} and {assetUsdFeed}.
@@ -62,10 +62,10 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
         require(_ethUsdFeed != address(0), "eth/usd price feed is the zero address");
 
         eurUsdFeed = _eurUsdFeed;
-        emit EurUsdFeedSetted(_eurUsdFeed);
+        emit EurUsdFeedSet(_eurUsdFeed);
 
         ethUsdFeed = _ethUsdFeed;
-        emit EthUsdFeedSetted(_ethUsdFeed);
+        emit EthUsdFeedSet(_ethUsdFeed);
 
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
@@ -103,7 +103,7 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
      */
     function setEurUsdFeed(address _eurUsdFeed) public onlyFeedsManager {
         require(_eurUsdFeed != address(0), "eur/usd price feed is the zero address");
-        emit EurUsdFeedSetted(_eurUsdFeed);
+        emit EurUsdFeedSet(_eurUsdFeed);
         eurUsdFeed = _eurUsdFeed;
     }
 
@@ -119,7 +119,7 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
      */
     function setEthUsdFeed(address _ethUsdFeed) public onlyFeedsManager {
         require(_ethUsdFeed != address(0), "eth/usd price feed is the zero address");
-        emit EthUsdFeedSetted(_ethUsdFeed);
+        emit EthUsdFeedSet(_ethUsdFeed);
         ethUsdFeed = _ethUsdFeed;
     }
 
@@ -215,7 +215,7 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
     function _setAssetFeed(address _asset, address _feed) internal {
         require(_asset != address(0), "asset is the zero address");
         require(_feed != address(0), "asset feed is the zero address");
-        emit AssetEthFeedSetted(_asset, _feed);
+        emit AssetEthFeedSet(_asset, _feed);
         assetEthFeed[_asset] = _feed;
     }
 

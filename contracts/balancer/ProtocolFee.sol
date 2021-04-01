@@ -27,14 +27,14 @@ contract ProtocolFee is Ownable, IProtocolFee {
     uint256 public minProtocolFee;
 
     /**
-     * @dev Emitted when `protocolFee` is setted.
+     * @dev Emitted when `protocolFee` is set.
      */
-    event ProtocolFeeSetted(uint256 protocolFee);
+    event ProtocolFeeSet(uint256 protocolFee);
 
     /**
-     * @dev Emitted when `minProtocolFee` is setted.
+     * @dev Emitted when `minProtocolFee` is set.
      */
-    event MinProtocolFeeSetted(uint256 minProtocolFee);
+    event MinProtocolFeeSet(uint256 minProtocolFee);
 
     /**
      * @dev Sets the values for {protocolFee} and {minProtocolFee}.
@@ -42,7 +42,7 @@ contract ProtocolFee is Ownable, IProtocolFee {
      * Sets ownership to the account that deploys the contract.
      *
      */
-    constructor(uint256 _protocolFee, uint256 _minProtocolFee) public {
+    constructor(uint256 _protocolFee, uint256 _minProtocolFee) {
         _setProtocolFee(_protocolFee);
         _setMinProtocolFee(_minProtocolFee);
     }
@@ -87,7 +87,7 @@ contract ProtocolFee is Ownable, IProtocolFee {
     function _setProtocolFee(uint256 _protocolFee) internal {
         require(_protocolFee >= MIN_FEE, "ERR_MIN_FEE");
         require(_protocolFee <= MAX_FEE, "ERR_MAX_FEE");
-        emit ProtocolFeeSetted(_protocolFee);
+        emit ProtocolFeeSet(_protocolFee);
         protocolFee = _protocolFee;
     }
 
@@ -103,7 +103,7 @@ contract ProtocolFee is Ownable, IProtocolFee {
     function _setMinProtocolFee(uint256 _minProtocolFee) internal {
         require(_minProtocolFee >= MIN_FEE, "ERR_MIN_MIN_FEE");
         require(_minProtocolFee <= MAX_FEE, "ERR_MAX_MIN_FEE");
-        emit MinProtocolFeeSetted(_minProtocolFee);
+        emit MinProtocolFeeSet(_minProtocolFee);
         minProtocolFee = _minProtocolFee;
     }
 
@@ -135,7 +135,7 @@ contract ProtocolFee is Ownable, IProtocolFee {
         override
         returns (uint256)
     {
-        uint256 toatlSwapFeeAmount = 0;
+        uint256 totalSwapFeeAmount = 0;
 
         for (uint256 i = 0; i < swapSequences.length; i++) {
             // Considering that the outgoing value is equivalent to the incoming less the pool fee,
@@ -145,12 +145,12 @@ contract ProtocolFee is Ownable, IProtocolFee {
 
             for (uint256 k = 0; k < swapSequences[i].length; k++) {
                 uint256 poolFeeAmount = getPoolFeeAmount(swapSequences[i][k].pool, totalSequenceIn);
-                toatlSwapFeeAmount = toatlSwapFeeAmount.add(poolFeeAmount);
+                totalSwapFeeAmount = totalSwapFeeAmount.add(poolFeeAmount);
                 totalSequenceIn = totalSequenceIn.sub(poolFeeAmount);
             }
         }
 
-        return Math.max(getProtocolFeeAmount(toatlSwapFeeAmount), minProtocolFee.mul(totalAmountIn).div(ONE));
+        return Math.max(getProtocolFeeAmount(totalSwapFeeAmount), minProtocolFee.mul(totalAmountIn).div(ONE));
     }
 
     /**

@@ -69,11 +69,11 @@ interface BFactoryMockInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "AuthorizationSetted(address)": EventFragment;
+    "AuthorizationSet(address)": EventFragment;
     "LOG_NEW_POOL(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AuthorizationSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AuthorizationSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LOG_NEW_POOL"): EventFragment;
 }
 
@@ -206,7 +206,7 @@ export class BFactoryMock extends Contract {
   };
 
   filters: {
-    AuthorizationSetted(newAuthorization: string | null): EventFilter;
+    AuthorizationSet(newAuthorization: string | null): EventFilter;
 
     LOG_NEW_POOL(caller: string | null): EventFilter;
   };

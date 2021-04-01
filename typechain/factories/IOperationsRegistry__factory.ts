@@ -49,13 +49,7 @@ const _abi = [
       },
     ],
     name: "allowAsset",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -68,13 +62,7 @@ const _abi = [
       },
     ],
     name: "disallowAsset",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -87,13 +75,7 @@ const _abi = [
       },
     ],
     name: "setEurPriceFeed",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

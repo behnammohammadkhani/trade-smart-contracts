@@ -21,9 +21,9 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
     }
 
     /**
-     * @dev Emitted when `permissionItems` address is setted.
+     * @dev Emitted when `permissionItems` address is set.
      */
-    event PermissionItemsSetted(address indexed newPermissions);
+    event PermissionItemsSet(address indexed newPermissions);
 
     /**
      * @dev Initalize the contract.
@@ -45,7 +45,7 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
 
         _setupRole(DEFAULT_ADMIN_ROLE, _admin);
 
-        emit PermissionItemsSetted(permissionItems);
+        emit PermissionItemsSet(permissionItems);
     }
 
     /**
@@ -89,7 +89,7 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
      */
     function setPermissionItems(address _permissionItems) public onlyAdmin returns (bool) {
         require(_permissionItems != address(0), "_permissionItems is the zero address");
-        emit PermissionItemsSetted(_permissionItems);
+        emit PermissionItemsSet(_permissionItems);
         permissionItems = _permissionItems;
         return true;
     }

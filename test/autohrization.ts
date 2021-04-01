@@ -194,7 +194,7 @@ describe('Authorization', function () {
     });
 
     it('Should not allow to set trading limit to non owner', async function () {
-      await expect(authorizationContractKakaroto.setTradingLimint(tradingLimit)).to.be.revertedWith(
+      await expect(authorizationContractKakaroto.setTradingLimit(tradingLimit)).to.be.revertedWith(
         'Ownable: caller is not the owner',
       );
     });
@@ -265,7 +265,7 @@ describe('Authorization', function () {
     });
 
     it('Should allow to set trading limit to owner', async function () {
-      await authorizationContract.setTradingLimint(tradingLimit.mul(2));
+      await authorizationContract.setTradingLimit(tradingLimit.mul(2));
 
       const tradingLimitValue = await authorizationContract.tradingLimit();
       expect(tradingLimitValue).to.equal(tradingLimit.mul(2).toString());

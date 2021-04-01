@@ -8,8 +8,6 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 
 import "../interfaces/IXToken.sol";
 
-import "hardhat/console.sol";
-
 /**
  * @title XTokenWrapper
  * @author Protofire

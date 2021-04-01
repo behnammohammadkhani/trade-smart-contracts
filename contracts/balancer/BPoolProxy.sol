@@ -54,34 +54,34 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
     address public utilityToken;
 
     /**
-     * @dev Emitted when `registry` address is setted.
+     * @dev Emitted when `registry` address is set.
      */
-    event RegistrySetted(address registry);
+    event RegistrySet(address registry);
 
     /**
-     * @dev Emitted when `protocolFee` address is setted.
+     * @dev Emitted when `protocolFee` address is set.
      */
-    event ProtocolFeeSetted(address protocolFee);
+    event ProtocolFeeSet(address protocolFee);
 
     /**
-     * @dev Emitted when `feeReceiver` address is setted.
+     * @dev Emitted when `feeReceiver` address is set.
      */
-    event FeeReceiverSetted(address feeReceiver);
+    event FeeReceiverSet(address feeReceiver);
 
     /**
-     * @dev Emitted when `xTokenWrapper` address is setted.
+     * @dev Emitted when `xTokenWrapper` address is set.
      */
-    event XTokenWrapperSetted(address xTokenWrapper);
+    event XTokenWrapperSet(address xTokenWrapper);
 
     /**
-     * @dev Emitted when `utilityToken` address is setted.
+     * @dev Emitted when `utilityToken` address is set.
      */
-    event UtilityTokenSetted(address utilityToken);
+    event UtilityTokenSet(address utilityToken);
 
     /**
-     * @dev Emitted when `utilityTokenFeed` address is setted.
+     * @dev Emitted when `utilityTokenFeed` address is set.
      */
-    event UtilityTokenFeedSetted(address utilityTokenFeed);
+    event UtilityTokenFeedSet(address utilityTokenFeed);
 
     /**
      * @dev Sets the values for {registry}, {protocolFee}, {feeReceiver},
@@ -199,7 +199,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
      */
     function _setRegistry(address _registry) internal {
         require(_registry != address(0), "registry is the zero address");
-        emit RegistrySetted(_registry);
+        emit RegistrySet(_registry);
         registry = IBRegistry(_registry);
     }
 
@@ -214,7 +214,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
      */
     function _setProtocolFee(address _protocolFee) internal {
         require(_protocolFee != address(0), "protocolFee is the zero address");
-        emit ProtocolFeeSetted(_protocolFee);
+        emit ProtocolFeeSet(_protocolFee);
         protocolFee = IProtocolFee(_protocolFee);
     }
 
@@ -229,7 +229,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
      */
     function _setFeeReceiver(address _feeReceiver) internal {
         require(_feeReceiver != address(0), "feeReceiver is the zero address");
-        emit FeeReceiverSetted(_feeReceiver);
+        emit FeeReceiverSet(_feeReceiver);
         feeReceiver = _feeReceiver;
     }
 
@@ -244,7 +244,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
      */
     function _setXTokenWrapper(address _xTokenWrapper) internal {
         require(_xTokenWrapper != address(0), "xTokenWrapper is the zero address");
-        emit FeeReceiverSetted(_xTokenWrapper);
+        emit FeeReceiverSet(_xTokenWrapper);
         xTokenWrapper = IXTokenWrapper(_xTokenWrapper);
     }
 
@@ -254,7 +254,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
      * @param _utilityToken The address of the utilityToken.
      */
     function _setUtilityToken(address _utilityToken) internal {
-        emit UtilityTokenSetted(_utilityToken);
+        emit UtilityTokenSet(_utilityToken);
         utilityToken = _utilityToken;
     }
 
@@ -268,7 +268,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
      * @param _utilityTokenFeed The address of the utilityTokenFeed.
      */
     function _setUtilityTokenFeed(address _utilityTokenFeed) internal {
-        emit UtilityTokenFeedSetted(_utilityTokenFeed);
+        emit UtilityTokenFeedSet(_utilityTokenFeed);
         utilityTokenFeed = IUTokenPriceFeed(_utilityTokenFeed);
     }
 

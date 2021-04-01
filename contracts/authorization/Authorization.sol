@@ -27,34 +27,34 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
     using AddressUpgradeable for address;
 
     /**
-     * @dev Emitted when `permissions` address is setted.
+     * @dev Emitted when `permissions` address is set.
      */
-    event PermissionsSetted(address indexed newPermissions);
+    event PermissionsSet(address indexed newPermissions);
 
     /**
-     * @dev Emitted when `operationsRegistry` address is setted.
+     * @dev Emitted when `operationsRegistry` address is set.
      */
-    event OperationsRegistrySetted(address indexed newOperationsRegistry);
+    event OperationsRegistrySet(address indexed newOperationsRegistry);
 
     /**
-     * @dev Emitted when `tradingLimit` value is setted.
+     * @dev Emitted when `tradingLimit` value is set.
      */
-    event TradingLimitSetted(uint256 newLimit);
+    event TradingLimitSet(uint256 newLimit);
 
     /**
-     * @dev Emitted when `eurPriceFeed` address is setted.
+     * @dev Emitted when `eurPriceFeed` address is set.
      */
-    event EurPriceFeedSetted(address indexed newEurPriceFeed);
+    event EurPriceFeedSet(address indexed newEurPriceFeed);
 
     /**
-     * @dev Emitted when `eurPriceFeed` address is setted.
+     * @dev Emitted when `eurPriceFeed` address is set.
      */
-    event PoolFactorySetted(address indexed poolFactory);
+    event PoolFactorySet(address indexed poolFactory);
 
     /**
-     * @dev Emitted when `eurPriceFeed` address is setted.
+     * @dev Emitted when `eurPriceFeed` address is set.
      */
-    event XTokenWrapperSetted(address indexed xTokenWrapper);
+    event XTokenWrapperSet(address indexed xTokenWrapper);
 
     /**
      * @dev Emitted when the pause is triggered by `account`.
@@ -93,15 +93,15 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         _setOperationsRegistry(_operationsRegistry);
         _setPoolFactory(_poolFactory);
         _setXTokenWrapper(_xTokenWrapper);
-        _setTradingLimint(_tradingLimit);
+        _setTradingLimit(_tradingLimit);
         paused = _paused;
 
         __Ownable_init();
 
-        emit PermissionsSetted(permissions);
-        emit EurPriceFeedSetted(_eurPriceFeed);
-        emit OperationsRegistrySetted(_operationsRegistry);
-        emit TradingLimitSetted(_tradingLimit);
+        emit PermissionsSet(permissions);
+        emit EurPriceFeedSet(_eurPriceFeed);
+        emit OperationsRegistrySet(_operationsRegistry);
+        emit TradingLimitSet(_tradingLimit);
     }
 
     /**
@@ -114,8 +114,8 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _permissions The address of the new Pemissions module.
      */
-    function setPermissions(address _permissions) public override onlyOwner returns (bool) {
-        return _setPermissions(_permissions);
+    function setPermissions(address _permissions) public override onlyOwner {
+        _setPermissions(_permissions);
     }
 
     /**
@@ -128,8 +128,8 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _eurPriceFeed The address of the new EUR Price feed module.
      */
-    function setEurPriceFeed(address _eurPriceFeed) public override onlyOwner returns (bool) {
-        return _setEurPriceFeed(_eurPriceFeed);
+    function setEurPriceFeed(address _eurPriceFeed) public override onlyOwner {
+        _setEurPriceFeed(_eurPriceFeed);
     }
 
     /**
@@ -142,8 +142,8 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _tradingLimit The value of the new traiding limit for T1 users.
      */
-    function setTradingLimint(uint256 _tradingLimit) public override onlyOwner returns (bool) {
-        return _setTradingLimint(_tradingLimit);
+    function setTradingLimit(uint256 _tradingLimit) public override onlyOwner {
+        _setTradingLimit(_tradingLimit);
     }
 
     /**
@@ -156,8 +156,8 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _operationsRegistry The address of the new OperationsRegistry module.
      */
-    function setOperationsRegistry(address _operationsRegistry) public override onlyOwner returns (bool) {
-        return _setOperationsRegistry(_operationsRegistry);
+    function setOperationsRegistry(address _operationsRegistry) public override onlyOwner {
+        _setOperationsRegistry(_operationsRegistry);
     }
 
     /**
@@ -170,8 +170,8 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _poolFactory The address of the new Balance BFactory module.
      */
-    function setPoolFactory(address _poolFactory) public override onlyOwner returns (bool) {
-        return _setPoolFactory(_poolFactory);
+    function setPoolFactory(address _poolFactory) public override onlyOwner {
+        _setPoolFactory(_poolFactory);
     }
 
     /**
@@ -184,8 +184,8 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _xTokenWrapper The address of the new XTokenWrapper module.
      */
-    function setXTokenWrapper(address _xTokenWrapper) public override onlyOwner returns (bool) {
-        return _setXTokenWrapper(_xTokenWrapper);
+    function setXTokenWrapper(address _xTokenWrapper) public override onlyOwner {
+        _setXTokenWrapper(_xTokenWrapper);
     }
 
     /**
@@ -197,12 +197,10 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _permissions The address of the new Pemissions module.
      */
-    function _setPermissions(address _permissions) internal returns (bool) {
+    function _setPermissions(address _permissions) internal {
         require(_permissions != address(0), "permissions is the zero address");
-        emit PermissionsSetted(_permissions);
+        emit PermissionsSet(_permissions);
         permissions = _permissions;
-
-        return true;
     }
 
     /**
@@ -214,12 +212,10 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _eurPriceFeed The address of the new EUR Price feed module.
      */
-    function _setEurPriceFeed(address _eurPriceFeed) internal returns (bool) {
+    function _setEurPriceFeed(address _eurPriceFeed) internal {
         require(_eurPriceFeed != address(0), "eur price feed is the zero address");
-        emit EurPriceFeedSetted(_eurPriceFeed);
+        emit EurPriceFeedSet(_eurPriceFeed);
         eurPriceFeed = _eurPriceFeed;
-
-        return true;
     }
 
     /**
@@ -231,12 +227,10 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _tradingLimit The value of the new traiding limit for T1 users.
      */
-    function _setTradingLimint(uint256 _tradingLimit) internal returns (bool) {
+    function _setTradingLimit(uint256 _tradingLimit) internal {
         require(_tradingLimit != 0, "trading limit is 0");
-        emit TradingLimitSetted(_tradingLimit);
+        emit TradingLimitSet(_tradingLimit);
         tradingLimit = _tradingLimit;
-
-        return true;
     }
 
     /**
@@ -248,12 +242,10 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _operationsRegistry The address of the new OperationsRegistry module.
      */
-    function _setOperationsRegistry(address _operationsRegistry) internal returns (bool) {
+    function _setOperationsRegistry(address _operationsRegistry) internal {
         require(_operationsRegistry != address(0), "operation registry is the zero address");
-        emit OperationsRegistrySetted(_operationsRegistry);
+        emit OperationsRegistrySet(_operationsRegistry);
         operationsRegistry = _operationsRegistry;
-
-        return true;
     }
 
     /**
@@ -265,12 +257,10 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _poolFactory The address of the new Balance BFactory module.
      */
-    function _setPoolFactory(address _poolFactory) internal returns (bool) {
+    function _setPoolFactory(address _poolFactory) internal {
         require(_poolFactory != address(0), "Pool Factory is the zero address");
-        emit PoolFactorySetted(_poolFactory);
+        emit PoolFactorySet(_poolFactory);
         poolFactory = _poolFactory;
-
-        return true;
     }
 
     /**
@@ -282,12 +272,10 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _xTokenWrapper The address of the new XTokenWrapper module.
      */
-    function _setXTokenWrapper(address _xTokenWrapper) internal returns (bool) {
+    function _setXTokenWrapper(address _xTokenWrapper) internal {
         require(_xTokenWrapper != address(0), "XTokenWrapper is the zero address");
-        emit XTokenWrapperSetted(_xTokenWrapper);
+        emit XTokenWrapperSet(_xTokenWrapper);
         xTokenWrapper = _xTokenWrapper;
-
-        return true;
     }
 
     /**
@@ -491,11 +479,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      */
     function checkRejected(bytes4 _operation) internal pure returns (bool) {
         // Only allowed to unwind position (burn)
-        if (_operation == ERC20_BURN_FROM) {
-            return true;
-        } else {
-            return false;
-        }
+        return _operation == ERC20_BURN_FROM;
     }
 
     /**
@@ -511,21 +495,13 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         uint256 _permissionSender
     ) internal pure returns (bool) {
         if (_operation == ERC20_TRANSFER || _operation == ERC20_TRANSFER_FROM) {
-            if (_permissionSender > 0) {
-                // the sender should be PROTOCOL_CONTRACT
-                return true;
-            } else {
-                return false;
-            }
+            // the sender should be PROTOCOL_CONTRACT
+            return _permissionSender > 0;
         }
 
         if (_operation == ERC20_MINT || _operation == ERC20_BURN_FROM) {
-            if (_permissionUser > 0) {
-                // minting to or berning from should be PROTOCOL_CONTRACT
-                return true;
-            } else {
-                return false;
-            }
+            // minting to or berning from should be PROTOCOL_CONTRACT
+            return _permissionUser > 0;
         }
 
         return false;

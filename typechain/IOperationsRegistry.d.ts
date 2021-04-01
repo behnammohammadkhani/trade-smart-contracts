@@ -207,29 +207,29 @@ export class IOperationsRegistry extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    allowAsset(_asset: string, overrides?: CallOverrides): Promise<boolean>;
+    allowAsset(_asset: string, overrides?: CallOverrides): Promise<void>;
 
     "allowAsset(address)"(
       _asset: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
-    disallowAsset(_asset: string, overrides?: CallOverrides): Promise<boolean>;
+    disallowAsset(_asset: string, overrides?: CallOverrides): Promise<void>;
 
     "disallowAsset(address)"(
       _asset: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     setEurPriceFeed(
       _eurPriceFeed: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     "setEurPriceFeed(address)"(
       _eurPriceFeed: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     tradingBalanceByOperation(
       _user: string,

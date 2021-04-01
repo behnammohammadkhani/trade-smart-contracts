@@ -60,13 +60,7 @@ const _abi = [
       },
     ],
     name: "setEurPriceFeed",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -79,13 +73,7 @@ const _abi = [
       },
     ],
     name: "setOperationsRegistry",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -98,13 +86,7 @@ const _abi = [
       },
     ],
     name: "setPermissions",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -117,13 +99,7 @@ const _abi = [
       },
     ],
     name: "setPoolFactory",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -135,14 +111,8 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "setTradingLimint",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    name: "setTradingLimit",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -155,13 +125,7 @@ const _abi = [
       },
     ],
     name: "setXTokenWrapper",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
