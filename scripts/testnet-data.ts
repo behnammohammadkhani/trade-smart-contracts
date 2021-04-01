@@ -519,7 +519,7 @@ async function main(): Promise<void> {
     await xTokenFactoryContract.deployXToken(
       testData['xSNX/xAAVE/xUNI'].address,
       'SM Wrapped Pool Token - 33% xSNX / 33% xAAVE / 33% xUNI',
-      'xBPT',
+      'xSPT',
       18,
       '',
       deploymentData.AuthorizationProxy.address,
@@ -548,7 +548,7 @@ async function main(): Promise<void> {
     await xTokenFactoryContract.deployXToken(
       testData['xWETH/xDAI'].address,
       'SM Wrapped Pool Token - 50% xWETH / 50% xDAI',
-      'xBPT',
+      'xSPT',
       18,
       '',
       deploymentData.AuthorizationProxy.address,
@@ -577,7 +577,7 @@ async function main(): Promise<void> {
     await xTokenFactoryContract.deployXToken(
       testData['xWETH/xUSDC'].address,
       'SM Wrapped Pool Token - 50% xWETH / 50% xUSDC',
-      'xBPT',
+      'xSPT',
       18,
       '',
       deploymentData.AuthorizationProxy.address,
