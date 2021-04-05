@@ -14,8 +14,6 @@ import "../interfaces/IBRegistry.sol";
 import "../interfaces/IProtocolFee.sol";
 import "../interfaces/IUTokenPriceFeed.sol";
 
-import "hardhat/console.sol";
-
 /**
  * @title BPoolProxy
  * @author Protofire
