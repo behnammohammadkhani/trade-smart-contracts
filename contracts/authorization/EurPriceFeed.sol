@@ -178,7 +178,10 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
         uint8 assetDecimals = IDecimals(_asset).decimals();
         uint256 assetPrice = _getPrice(_asset);
 
-        return _amount.mul(10**uint256(18 - assetDecimals)).mul(assetPrice);
+        // 10**assetDecimals (1 ASSET) <-> assetPrice EUR
+        // _amount                     <-> x ERU
+        // x EUR = _amount *  assetPrice / 10**assetDecimals
+        return _amount.mul(assetPrice).div(10**assetDecimals);
     }
 
     /**
