@@ -34,7 +34,7 @@ contract PermissionItems is ERC1155, AccessControl {
      *
      * - the caller must have ``role``'s admin role.
      */
-    function setAdmin(address account) public {
+    function setAdmin(address account) external {
         grantRole(MINTER_ROLE, account);
         grantRole(BURNER_ROLE, account);
     }
@@ -49,7 +49,7 @@ contract PermissionItems is ERC1155, AccessControl {
      *
      * - the caller must have ``role``'s admin role.
      */
-    function revokeAdmin(address account) public {
+    function revokeAdmin(address account) external {
         revokeRole(MINTER_ROLE, account);
         revokeRole(BURNER_ROLE, account);
     }
@@ -71,7 +71,7 @@ contract PermissionItems is ERC1155, AccessControl {
         uint256 id,
         uint256 amount,
         bytes memory data
-    ) public {
+    ) external {
         require(hasRole(MINTER_ROLE, _msgSender()), "PermissionItems: must have minter role to mint");
 
         super._mint(to, id, amount, data);
@@ -89,7 +89,7 @@ contract PermissionItems is ERC1155, AccessControl {
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory data
-    ) public {
+    ) external {
         require(hasRole(MINTER_ROLE, _msgSender()), "PermissionItems: must have minter role to mint");
 
         super._mintBatch(to, ids, amounts, data);
@@ -108,7 +108,7 @@ contract PermissionItems is ERC1155, AccessControl {
         address account,
         uint256 id,
         uint256 value
-    ) public {
+    ) external {
         require(hasRole(BURNER_ROLE, _msgSender()), "PermissionItems: must have burner role to burn");
         super._burn(account, id, value);
     }
@@ -124,7 +124,7 @@ contract PermissionItems is ERC1155, AccessControl {
         address account,
         uint256[] memory ids,
         uint256[] memory values
-    ) public {
+    ) external {
         require(hasRole(BURNER_ROLE, _msgSender()), "PermissionItems: must have burner role to burn");
         super._burnBatch(account, ids, values);
     }
@@ -133,7 +133,7 @@ contract PermissionItems is ERC1155, AccessControl {
      * @dev Disabled setApprovalForAll function.
      *
      */
-    function setApprovalForAll(address, bool) public virtual override {
+    function setApprovalForAll(address, bool) public override {
         revert("disabled");
     }
 
@@ -147,7 +147,7 @@ contract PermissionItems is ERC1155, AccessControl {
         uint256,
         uint256,
         bytes memory
-    ) public virtual override {
+    ) public override {
         revert("disabled");
     }
 

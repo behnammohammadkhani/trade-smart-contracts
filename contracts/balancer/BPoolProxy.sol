@@ -388,7 +388,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         uint256 totalAmountIn,
         uint256 minTotalAmountOut,
         bool useUtilityToken
-    ) public returns (uint256 totalAmountOut) {
+    ) external returns (uint256 totalAmountOut) {
         transferFrom(tokenIn, totalAmountIn);
 
         for (uint256 i = 0; i < swapSequences.length; i++) {
@@ -442,7 +442,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         IXToken tokenOut,
         uint256 maxTotalAmountIn,
         bool useUtilityToken
-    ) public returns (uint256 totalAmountIn) {
+    ) external returns (uint256 totalAmountIn) {
         transferFrom(tokenIn, maxTotalAmountIn);
 
         for (uint256 i = 0; i < swapSequences.length; i++) {
@@ -539,7 +539,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         uint256 minTotalAmountOut,
         uint256 nPools,
         bool useUtilityToken
-    ) public returns (uint256 totalAmountOut) {
+    ) external returns (uint256 totalAmountOut) {
         Swap[] memory swaps;
         uint256 totalOutput;
         (swaps, totalOutput) = viewSplitExactIn(address(tokenIn), address(tokenOut), totalAmountIn, nPools);
@@ -565,7 +565,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         uint256 maxTotalAmountIn,
         uint256 nPools,
         bool useUtilityToken
-    ) public returns (uint256 totalAmountIn) {
+    ) external returns (uint256 totalAmountIn) {
         Swap[] memory swaps;
         uint256 totalInput;
         (swaps, totalInput) = viewSplitExactOut(address(tokenIn), address(tokenOut), totalAmountOut, nPools);
@@ -588,7 +588,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         address pool,
         uint256 poolAmountOut,
         uint256[] calldata maxAmountsIn
-    ) public {
+    ) external {
         address[] memory tokens = IBPool(pool).getCurrentTokens();
 
         // pull xTokens

@@ -113,7 +113,7 @@ contract ProtocolFee is Ownable, IProtocolFee {
      * @param swaps Array of single-hop swaps.
      * @param totalAmountIn Total amount in.
      */
-    function batchFee(Swap[] memory swaps, uint256 totalAmountIn) public view override returns (uint256) {
+    function batchFee(Swap[] memory swaps, uint256 totalAmountIn) external view override returns (uint256) {
         uint256 totalSwapsFee = 0;
 
         for (uint256 i = 0; i < swaps.length; i++) {
@@ -132,7 +132,7 @@ contract ProtocolFee is Ownable, IProtocolFee {
      * @param totalAmountIn Total amount in.
      */
     function multihopBatch(Swap[][] memory swapSequences, uint256 totalAmountIn)
-        public
+        external
         view
         override
         returns (uint256)

@@ -84,7 +84,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      * - the caller must have ``role``'s admin role.
      */
-    function setWrapper(address account) public {
+    function setWrapper(address account) external {
         grantRole(WRAPPER_ROLE, account);
     }
 
@@ -96,7 +96,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      * - the caller must have ``role``'s admin role.
      * - the contract must not be paused.
      */
-    function pause() public onlyAdmin {
+    function pause() external onlyAdmin {
         _pause();
     }
 
@@ -108,7 +108,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      * - the caller must have ``role``'s admin role.
      * - the contract must be paused.
      */
-    function unpause() public onlyAdmin {
+    function unpause() external onlyAdmin {
         _unpause();
     }
 
@@ -119,7 +119,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      * - the caller must have ``role``'s admin role.
      */
-    function setAuthorization(address authorization_) public onlyAdmin {
+    function setAuthorization(address authorization_) external onlyAdmin {
         _setAuthorization(authorization_);
     }
 
@@ -130,7 +130,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      * - the caller must have ``role``'s admin role.
      */
-    function setOperationsRegistry(address operationsRegistry_) public onlyAdmin {
+    function setOperationsRegistry(address operationsRegistry_) external onlyAdmin {
         require(operationsRegistry_ != address(0), "operationsRegistry is the zero address");
         emit OperationsRegistrySet(operationsRegistry_);
         operationsRegistry = IOperationsRegistry(operationsRegistry_);
@@ -143,7 +143,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      * - the caller must have ``role``'s admin role.
      */
-    function setKya(string memory kya_) public onlyAdmin {
+    function setKya(string memory kya_) external onlyAdmin {
         _setKya(kya_);
     }
 
@@ -215,7 +215,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      * - the operation should be authorized.
      * - `to` cannot be the zero address.
      */
-    function mint(address account, uint256 amount) public onlyWrapper onlyAuthorized {
+    function mint(address account, uint256 amount) external onlyWrapper onlyAuthorized {
         _mint(account, amount);
         operationsRegistry.addTrade(account, msg.sig, amount);
     }
@@ -235,7 +235,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      * - `account` cannot be the zero address.
      * - `account` must have at least `amount` tokens.
      */
-    function burnFrom(address account, uint256 amount) public onlyWrapper onlyAuthorized {
+    function burnFrom(address account, uint256 amount) external onlyWrapper onlyAuthorized {
         _burn(account, amount);
         operationsRegistry.addTrade(account, msg.sig, amount);
     }

@@ -114,7 +114,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _permissions The address of the new Pemissions module.
      */
-    function setPermissions(address _permissions) public override onlyOwner {
+    function setPermissions(address _permissions) external override onlyOwner {
         _setPermissions(_permissions);
     }
 
@@ -128,7 +128,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _eurPriceFeed The address of the new EUR Price feed module.
      */
-    function setEurPriceFeed(address _eurPriceFeed) public override onlyOwner {
+    function setEurPriceFeed(address _eurPriceFeed) external override onlyOwner {
         _setEurPriceFeed(_eurPriceFeed);
     }
 
@@ -142,7 +142,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _tradingLimit The value of the new traiding limit for T1 users.
      */
-    function setTradingLimit(uint256 _tradingLimit) public override onlyOwner {
+    function setTradingLimit(uint256 _tradingLimit) external override onlyOwner {
         _setTradingLimit(_tradingLimit);
     }
 
@@ -156,7 +156,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _operationsRegistry The address of the new OperationsRegistry module.
      */
-    function setOperationsRegistry(address _operationsRegistry) public override onlyOwner {
+    function setOperationsRegistry(address _operationsRegistry) external override onlyOwner {
         _setOperationsRegistry(_operationsRegistry);
     }
 
@@ -170,7 +170,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _poolFactory The address of the new Balance BFactory module.
      */
-    function setPoolFactory(address _poolFactory) public override onlyOwner {
+    function setPoolFactory(address _poolFactory) external override onlyOwner {
         _setPoolFactory(_poolFactory);
     }
 
@@ -184,7 +184,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
      *
      * @param _xTokenWrapper The address of the new XTokenWrapper module.
      */
-    function setXTokenWrapper(address _xTokenWrapper) public override onlyOwner {
+    function setXTokenWrapper(address _xTokenWrapper) external override onlyOwner {
         _setXTokenWrapper(_xTokenWrapper);
     }
 
@@ -318,7 +318,7 @@ contract Authorization is IAuthorization, Initializable, OwnableUpgradeable, Aut
         address _asset,
         bytes4 _operation,
         bytes calldata _data
-    ) public view override returns (bool) {
+    ) external view override returns (bool) {
         // The protocol is paused
         if (paused) {
             return false;

@@ -101,7 +101,7 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
      *
      * @param _eurUsdFeed The address of the new ERU/USD feed.
      */
-    function setEurUsdFeed(address _eurUsdFeed) public onlyFeedsManager {
+    function setEurUsdFeed(address _eurUsdFeed) external onlyFeedsManager {
         require(_eurUsdFeed != address(0), "eur/usd price feed is the zero address");
         emit EurUsdFeedSet(_eurUsdFeed);
         eurUsdFeed = _eurUsdFeed;
@@ -117,7 +117,7 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
      *
      * @param _ethUsdFeed The address of the new ERU/USD feed.
      */
-    function setEthUsdFeed(address _ethUsdFeed) public onlyFeedsManager {
+    function setEthUsdFeed(address _ethUsdFeed) external onlyFeedsManager {
         require(_ethUsdFeed != address(0), "eth/usd price feed is the zero address");
         emit EthUsdFeedSet(_ethUsdFeed);
         ethUsdFeed = _ethUsdFeed;
