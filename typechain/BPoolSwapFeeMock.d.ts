@@ -55,9 +55,9 @@ export class BPoolSwapFeeMock extends Contract {
   interface: BPoolSwapFeeMockInterface;
 
   functions: {
-    getSwapFee(overrides?: Overrides): Promise<ContractTransaction>;
+    getSwapFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "getSwapFee()"(overrides?: Overrides): Promise<ContractTransaction>;
+    "getSwapFee()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     setSwapFee(
       swapFee: BigNumberish,
@@ -70,9 +70,9 @@ export class BPoolSwapFeeMock extends Contract {
     ): Promise<ContractTransaction>;
   };
 
-  getSwapFee(overrides?: Overrides): Promise<ContractTransaction>;
+  getSwapFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "getSwapFee()"(overrides?: Overrides): Promise<ContractTransaction>;
+  "getSwapFee()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   setSwapFee(
     swapFee: BigNumberish,
@@ -100,9 +100,9 @@ export class BPoolSwapFeeMock extends Contract {
   filters: {};
 
   estimateGas: {
-    getSwapFee(overrides?: Overrides): Promise<BigNumber>;
+    getSwapFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getSwapFee()"(overrides?: Overrides): Promise<BigNumber>;
+    "getSwapFee()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     setSwapFee(
       swapFee: BigNumberish,
@@ -116,9 +116,9 @@ export class BPoolSwapFeeMock extends Contract {
   };
 
   populateTransaction: {
-    getSwapFee(overrides?: Overrides): Promise<PopulatedTransaction>;
+    getSwapFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getSwapFee()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+    "getSwapFee()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setSwapFee(
       swapFee: BigNumberish,

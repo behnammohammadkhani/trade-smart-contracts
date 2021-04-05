@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: Unlicense
 pragma solidity ^0.7.0;
 
 import "../interfaces/IAuthorization.sol";
@@ -6,7 +6,7 @@ import "../interfaces/IAuthorization.sol";
 contract AuthorizationMock is IAuthorization {
     bool public authorized;
 
-    constructor(bool _authorized) public {
+    constructor(bool _authorized) {
         authorized = _authorized;
     }
 
@@ -23,27 +23,24 @@ contract AuthorizationMock is IAuthorization {
         return authorized;
     }
 
+    // solhint-disable-next-line no-empty-blocks
     function setPermissions(address) public pure override {
-        1 + 1;
     }
 
+    // solhint-disable-next-line no-empty-blocks
     function setEurPriceFeed(address) public pure override {
-        1 + 1;
     }
 
+    // solhint-disable-next-line no-empty-blocks
     function setTradingLimit(uint256) public pure override {
-        1 + 1;
     }
-
+    // solhint-disable-next-line no-empty-blocks
     function setOperationsRegistry(address) public pure override {
-        1 + 1;
     }
-
+    // solhint-disable-next-line no-empty-blocks
     function setPoolFactory(address) public pure override {
-        1 + 1;
     }
-
+    // solhint-disable-next-line no-empty-blocks
     function setXTokenWrapper(address) public pure override {
-        1 + 1;
     }
 }

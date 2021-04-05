@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+//SPDX-License-Identifier: Unlicense
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
@@ -20,7 +20,7 @@ contract PermissionItems is ERC1155, AccessControl {
      * @dev Grants the contract deployer the default admin role.
      *
      */
-    constructor() public ERC1155("") {
+    constructor() ERC1155("") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
@@ -133,7 +133,7 @@ contract PermissionItems is ERC1155, AccessControl {
      * @dev Disabled setApprovalForAll function.
      *
      */
-    function setApprovalForAll(address, bool) public override {
+    function setApprovalForAll(address, bool) public pure override {
         revert("disabled");
     }
 
@@ -147,7 +147,7 @@ contract PermissionItems is ERC1155, AccessControl {
         uint256,
         uint256,
         bytes memory
-    ) public override {
+    ) public pure override {
         revert("disabled");
     }
 
@@ -161,7 +161,7 @@ contract PermissionItems is ERC1155, AccessControl {
         uint256[] memory,
         uint256[] memory,
         bytes memory
-    ) public override {
+    ) public pure override {
         revert("disabled");
     }
 }

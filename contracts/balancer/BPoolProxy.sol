@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: Unlicense
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
@@ -99,7 +99,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         address _xTokenWrapper,
         address _utilityToken,
         address _utilityTokenFeed
-    ) public {
+    ) {
         _setRegistry(_registry);
         _setProtocolFee(_protocolFee);
         _setFeeReceiver(_feeReceiver);

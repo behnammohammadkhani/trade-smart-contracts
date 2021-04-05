@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: Unlicense
 pragma solidity ^0.7.0;
 
 

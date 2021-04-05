@@ -659,15 +659,15 @@
     widest-line "^3.1.0"
     wrap-ansi "^4.0.0"
 
-"@openzeppelin/contracts-upgradeable@^3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-3.3.0.tgz#a536c6ff107d21319490e6cb699e555a3edcf6ea"
-  integrity sha512-kJeNuKauR4xH52Yo3GdXXAOW4CWyWdm7VXcJFe63G8TRb45ISSnkt/gXwUa8zzEYqokQrwNZYoH/iGYfUlp6wA==
+"@openzeppelin/contracts-upgradeable@3.3.0-solc-0.7":
+  version "3.3.0-solc-0.7"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-3.3.0-solc-0.7.tgz#3a51cd53f7049f16a1a5ab2855944ad9cf808b14"
+  integrity sha512-meHKaAnTQMjP7yzW8XGRhWoyERohILeoUI1FW0rXCvPSxTEjXuE5q8LDiVgn4VciN/yUJHjKi+Ju3LqH3Qm3CA==
 
-"@openzeppelin/contracts@^3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-3.3.0.tgz#ffdb693c5c349fc33bba420248dd3ac0a2d7c408"
-  integrity sha512-AemZEsQYtUp1WRkcmZm1div5ORfTpLquLaziCIrSagjxyKdmObxuaY1yjQ5SHFMctR8rLwp706NXTbiIRJg7pw==
+"@openzeppelin/contracts@3.3.0-solc-0.7":
+  version "3.3.0-solc-0.7"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-3.3.0-solc-0.7.tgz#8e9d51445016d1366d8ea585e4beab7ede72644f"
+  integrity sha512-ewfLD9WpXQXQHhhaXKweECNDafWRKV3wmFp8FlXpkqG5cVtAvuwLJ5n/O3ziBsUWt6W64u5Dyy8mGnrffs5Qhw==
 
 "@openzeppelin/hardhat-upgrades@^1.6.0":
   version "1.6.0"

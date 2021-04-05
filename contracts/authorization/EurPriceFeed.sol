@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: Unlicense
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
@@ -57,7 +57,7 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
         address _ethUsdFeed,
         address[] memory _assets,
         address[] memory _feeds
-    ) public {
+    ) {
         require(_eurUsdFeed != address(0), "eur/usd price feed is the zero address");
         require(_ethUsdFeed != address(0), "eth/usd price feed is the zero address");
 

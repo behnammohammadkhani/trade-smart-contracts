@@ -73,12 +73,12 @@ export class UTokenPriceFeedMock extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    getPrice(arg0: string, overrides?: Overrides): Promise<ContractTransaction>;
+    getPrice(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "getPrice(address)"(
       arg0: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     noPrice(overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -107,12 +107,12 @@ export class UTokenPriceFeedMock extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getPrice(arg0: string, overrides?: Overrides): Promise<ContractTransaction>;
+  getPrice(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   "getPrice(address)"(
     arg0: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   noPrice(overrides?: CallOverrides): Promise<boolean>;
 
@@ -175,11 +175,11 @@ export class UTokenPriceFeedMock extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getPrice(arg0: string, overrides?: Overrides): Promise<BigNumber>;
+    getPrice(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "getPrice(address)"(
       arg0: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     noPrice(overrides?: CallOverrides): Promise<BigNumber>;
@@ -209,12 +209,12 @@ export class UTokenPriceFeedMock extends Contract {
 
     getPrice(
       arg0: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "getPrice(address)"(
       arg0: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     noPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
