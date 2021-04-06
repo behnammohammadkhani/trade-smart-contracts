@@ -244,7 +244,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
      */
     function _setXTokenWrapper(address _xTokenWrapper) internal {
         require(_xTokenWrapper != address(0), "xTokenWrapper is the zero address");
-        emit FeeReceiverSet(_xTokenWrapper);
+        emit XTokenWrapperSet(_xTokenWrapper);
         xTokenWrapper = IXTokenWrapper(_xTokenWrapper);
     }
 
