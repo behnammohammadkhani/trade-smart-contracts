@@ -170,14 +170,14 @@ export class XTokenWrapperMock extends Contract {
     "xToken()"(overrides?: CallOverrides): Promise<[string]>;
 
     xTokenToToken(
-      xToken: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      _xToken: string,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     "xTokenToToken(address)"(
-      xToken: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      _xToken: string,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
   };
 
   onERC1155BatchReceived(
@@ -254,15 +254,12 @@ export class XTokenWrapperMock extends Contract {
 
   "xToken()"(overrides?: CallOverrides): Promise<string>;
 
-  xTokenToToken(
-    xToken: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+  xTokenToToken(_xToken: string, overrides?: CallOverrides): Promise<string>;
 
   "xTokenToToken(address)"(
-    xToken: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    _xToken: string,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   callStatic: {
     onERC1155BatchReceived(
@@ -339,10 +336,10 @@ export class XTokenWrapperMock extends Contract {
 
     "xToken()"(overrides?: CallOverrides): Promise<string>;
 
-    xTokenToToken(xToken: string, overrides?: CallOverrides): Promise<string>;
+    xTokenToToken(_xToken: string, overrides?: CallOverrides): Promise<string>;
 
     "xTokenToToken(address)"(
-      xToken: string,
+      _xToken: string,
       overrides?: CallOverrides
     ): Promise<string>;
   };
@@ -424,11 +421,14 @@ export class XTokenWrapperMock extends Contract {
 
     "xToken()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    xTokenToToken(xToken: string, overrides?: Overrides): Promise<BigNumber>;
+    xTokenToToken(
+      _xToken: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     "xTokenToToken(address)"(
-      xToken: string,
-      overrides?: Overrides
+      _xToken: string,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
@@ -508,13 +508,13 @@ export class XTokenWrapperMock extends Contract {
     "xToken()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     xTokenToToken(
-      xToken: string,
-      overrides?: Overrides
+      _xToken: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "xTokenToToken(address)"(
-      xToken: string,
-      overrides?: Overrides
+      _xToken: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

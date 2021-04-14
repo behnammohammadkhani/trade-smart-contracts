@@ -154,13 +154,13 @@ interface XTokenMockInterface extends ethers.utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
-    "AuthorizationSetted(address)": EventFragment;
+    "AuthorizationSet(address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AuthorizationSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AuthorizationSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
@@ -642,7 +642,7 @@ export class XTokenMock extends Contract {
       value: null
     ): EventFilter;
 
-    AuthorizationSetted(newAuthorization: string | null): EventFilter;
+    AuthorizationSet(newAuthorization: string | null): EventFilter;
 
     OwnershipTransferred(
       previousOwner: string | null,

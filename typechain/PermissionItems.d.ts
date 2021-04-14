@@ -437,8 +437,8 @@ export class PermissionItems extends Contract {
       arg2: BigNumberish[],
       arg3: BigNumberish[],
       arg4: BytesLike,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[void]>;
 
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"(
       arg0: string,
@@ -446,8 +446,8 @@ export class PermissionItems extends Contract {
       arg2: BigNumberish[],
       arg3: BigNumberish[],
       arg4: BytesLike,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[void]>;
 
     safeTransferFrom(
       arg0: string,
@@ -455,8 +455,8 @@ export class PermissionItems extends Contract {
       arg2: BigNumberish,
       arg3: BigNumberish,
       arg4: BytesLike,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[void]>;
 
     "safeTransferFrom(address,address,uint256,uint256,bytes)"(
       arg0: string,
@@ -464,8 +464,8 @@ export class PermissionItems extends Contract {
       arg2: BigNumberish,
       arg3: BigNumberish,
       arg4: BytesLike,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[void]>;
 
     setAdmin(
       account: string,
@@ -480,14 +480,14 @@ export class PermissionItems extends Contract {
     setApprovalForAll(
       arg0: string,
       arg1: boolean,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[void]>;
 
     "setApprovalForAll(address,bool)"(
       arg0: string,
       arg1: boolean,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[void]>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -708,8 +708,8 @@ export class PermissionItems extends Contract {
     arg2: BigNumberish[],
     arg3: BigNumberish[],
     arg4: BytesLike,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"(
     arg0: string,
@@ -717,8 +717,8 @@ export class PermissionItems extends Contract {
     arg2: BigNumberish[],
     arg3: BigNumberish[],
     arg4: BytesLike,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   safeTransferFrom(
     arg0: string,
@@ -726,8 +726,8 @@ export class PermissionItems extends Contract {
     arg2: BigNumberish,
     arg3: BigNumberish,
     arg4: BytesLike,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   "safeTransferFrom(address,address,uint256,uint256,bytes)"(
     arg0: string,
@@ -735,8 +735,8 @@ export class PermissionItems extends Contract {
     arg2: BigNumberish,
     arg3: BigNumberish,
     arg4: BytesLike,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   setAdmin(
     account: string,
@@ -751,14 +751,14 @@ export class PermissionItems extends Contract {
   setApprovalForAll(
     arg0: string,
     arg1: boolean,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   "setApprovalForAll(address,bool)"(
     arg0: string,
     arg1: boolean,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   supportsInterface(
     interfaceId: BytesLike,
@@ -1289,7 +1289,7 @@ export class PermissionItems extends Contract {
       arg2: BigNumberish[],
       arg3: BigNumberish[],
       arg4: BytesLike,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"(
@@ -1298,7 +1298,7 @@ export class PermissionItems extends Contract {
       arg2: BigNumberish[],
       arg3: BigNumberish[],
       arg4: BytesLike,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     safeTransferFrom(
@@ -1307,7 +1307,7 @@ export class PermissionItems extends Contract {
       arg2: BigNumberish,
       arg3: BigNumberish,
       arg4: BytesLike,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "safeTransferFrom(address,address,uint256,uint256,bytes)"(
@@ -1316,7 +1316,7 @@ export class PermissionItems extends Contract {
       arg2: BigNumberish,
       arg3: BigNumberish,
       arg4: BytesLike,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     setAdmin(account: string, overrides?: Overrides): Promise<BigNumber>;
@@ -1329,13 +1329,13 @@ export class PermissionItems extends Contract {
     setApprovalForAll(
       arg0: string,
       arg1: boolean,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "setApprovalForAll(address,bool)"(
       arg0: string,
       arg1: boolean,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     supportsInterface(
@@ -1565,7 +1565,7 @@ export class PermissionItems extends Contract {
       arg2: BigNumberish[],
       arg3: BigNumberish[],
       arg4: BytesLike,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"(
@@ -1574,7 +1574,7 @@ export class PermissionItems extends Contract {
       arg2: BigNumberish[],
       arg3: BigNumberish[],
       arg4: BytesLike,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     safeTransferFrom(
@@ -1583,7 +1583,7 @@ export class PermissionItems extends Contract {
       arg2: BigNumberish,
       arg3: BigNumberish,
       arg4: BytesLike,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "safeTransferFrom(address,address,uint256,uint256,bytes)"(
@@ -1592,7 +1592,7 @@ export class PermissionItems extends Contract {
       arg2: BigNumberish,
       arg3: BigNumberish,
       arg4: BytesLike,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setAdmin(
@@ -1608,13 +1608,13 @@ export class PermissionItems extends Contract {
     setApprovalForAll(
       arg0: string,
       arg1: boolean,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "setApprovalForAll(address,bool)"(
       arg0: string,
       arg1: boolean,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     supportsInterface(

@@ -10,7 +10,7 @@ Interface to be implemented by any Authorization logic contract.
 
 - `setOperationsRegistry(address _operationsRegistry) (external)`
 
-- `setTradingLimint(uint256 _tradingLimit) (external)`
+- `setTradingLimit(uint256 _tradingLimit) (external)`
 
 - `setPoolFactory(address _poolFactory) (external)`
 
@@ -18,7 +18,7 @@ Interface to be implemented by any Authorization logic contract.
 
 - `isAuthorized(address _user, address _asset, bytes4 _operation, bytes _data) (external)`
 
-### Function `setPermissions(address _permissions) → bool external`
+### Function `setPermissions(address _permissions) external`
 
 Sets `_permissions` as the new Permissions module.
 
@@ -26,7 +26,7 @@ Sets `_permissions` as the new Permissions module.
 
 - `_permissions`: The address of the new Pemissions module.
 
-### Function `setEurPriceFeed(address _eurPriceFeed) → bool external`
+### Function `setEurPriceFeed(address _eurPriceFeed) external`
 
 Sets `_eurPriceFeed` as the new EUR Price feed module.
 
@@ -34,7 +34,7 @@ Sets `_eurPriceFeed` as the new EUR Price feed module.
 
 - `_eurPriceFeed`: The address of the new EUR Price feed module.
 
-### Function `setOperationsRegistry(address _operationsRegistry) → bool external`
+### Function `setOperationsRegistry(address _operationsRegistry) external`
 
 Sets `_operationsRegistry` as the new OperationsRegistry module.
 
@@ -42,7 +42,7 @@ Sets `_operationsRegistry` as the new OperationsRegistry module.
 
 - `_operationsRegistry`: The address of the new OperationsRegistry module.
 
-### Function `setTradingLimint(uint256 _tradingLimit) → bool external`
+### Function `setTradingLimit(uint256 _tradingLimit) external`
 
 Sets `_tradingLimit` as the new traiding limit.
 
@@ -50,7 +50,7 @@ Sets `_tradingLimit` as the new traiding limit.
 
 - `_tradingLimit`: The value of the new traiding limit.
 
-### Function `setPoolFactory(address _poolFactory) → bool external`
+### Function `setPoolFactory(address _poolFactory) external`
 
 Sets `_poolFactory` as the new BFactory module.
 
@@ -58,7 +58,7 @@ Sets `_poolFactory` as the new BFactory module.
 
 - `_poolFactory`: The address of the new Balance BFactory module.
 
-### Function `setXTokenWrapper(address _xTokenWrapper) → bool external`
+### Function `setXTokenWrapper(address _xTokenWrapper) external`
 
 Sets `_xTokenWrapper` as the new XTokenWrapper module.
 

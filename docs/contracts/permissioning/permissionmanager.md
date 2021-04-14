@@ -1,6 +1,6 @@
 # `PermissionManager`
 
-Provide tier based permissions assignments and revoking functions
+Provide tier based permissions assignments and revoking functions.
 
 ## Modifiers:
 
@@ -48,7 +48,7 @@ Provide tier based permissions assignments and revoking functions
 
 ## Events:
 
-- `PermissionItemsSetted(address newPermissions)`
+- `PermissionItemsSet(address newPermissions)`
 
 ### Modifier `onlyAdmin()`
 
@@ -306,6 +306,6 @@ Returns `true` if `_account` has been Rejected.
 
 - `_account`: The address of the user.
 
-### Event `PermissionItemsSetted(address newPermissions)`
+### Event `PermissionItemsSet(address newPermissions)`
 
-Emitted when `permissionItems` address is setted.
+Emitted when `permissionItems` address is set.

@@ -261,13 +261,13 @@ interface PermissionManagerInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "PermissionItemsSetted(address)": EventFragment;
+    "PermissionItemsSet(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "PermissionItemsSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PermissionItemsSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -1107,7 +1107,7 @@ export class PermissionManager extends Contract {
   };
 
   filters: {
-    PermissionItemsSetted(newPermissions: string | null): EventFilter;
+    PermissionItemsSet(newPermissions: string | null): EventFilter;
 
     RoleAdminChanged(
       role: BytesLike | null,

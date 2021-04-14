@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -11,12 +11,12 @@ import "../interfaces/IEurPriceFeed.sol";
 /**
  * @title XTokenFactory
  * @author Protofire
- * @dev Contract module which provides an functionality deploying a registering new xToken contracts.
+ * @dev Contract module which provides the functionalities for deploying a registering new xToken contracts.
  *
  */
 contract XTokenFactory is Ownable {
     /**
-     * @dev Address of xToke Wrapper module.
+     * @dev Address of xToken Wrapper module.
      */
     address public xTokenWrapper;
 
@@ -31,19 +31,19 @@ contract XTokenFactory is Ownable {
     address public eurPriceFeed;
 
     /**
-     * @dev Emitted when `xTokenWrapper` address is setted.
+     * @dev Emitted when `xTokenWrapper` address is set.
      */
-    event XTokenWrapperSetted(address indexed newXTokenWrapper);
+    event XTokenWrapperSet(address indexed newXTokenWrapper);
 
     /**
-     * @dev Emitted when `operationsRegistry` address is setted.
+     * @dev Emitted when `operationsRegistry` address is set.
      */
-    event OperationsRegistrySetted(address indexed newOperationsRegistry);
+    event OperationsRegistrySet(address indexed newOperationsRegistry);
 
     /**
-     * @dev Emitted when `eurPriceFeed` address is setted.
+     * @dev Emitted when `eurPriceFeed` address is set.
      */
-    event EurPriceFeedSetted(address indexed newEurPriceFeed);
+    event EurPriceFeedSet(address indexed newEurPriceFeed);
 
     /**
      * @dev Emitted when xToken is deployed.
@@ -60,14 +60,14 @@ contract XTokenFactory is Ownable {
         address _xTokenWrapper,
         address _operationsRegistry,
         address _eurPriceFeed
-    ) public {
+    ) {
         _setXTokenWrapper(_xTokenWrapper);
         _setOperationsRegistry(_operationsRegistry);
         _setEurPriceFeed(_eurPriceFeed);
     }
 
     /**
-     * @dev Sets `_eurPriceFeed` as the new EUR Price feed module.
+     * @dev Sets `_xTokenWrapper` as the new xToken Wrapper module.
      *
      * Requirements:
      *
@@ -76,13 +76,12 @@ contract XTokenFactory is Ownable {
      *
      * @param _xTokenWrapper The address of the new xToken Wrapper module.
      */
-    function setXTokenWrapper(address _xTokenWrapper) external onlyOwner returns (bool) {
+    function setXTokenWrapper(address _xTokenWrapper) external onlyOwner {
         _setXTokenWrapper(_xTokenWrapper);
-        return true;
     }
 
     /**
-     * @dev Sets `_eurPriceFeed` as the new EUR Price feed module.
+     * @dev Sets `_operationsRegistry` as the new Operations Registry module.
      *
      * Requirements:
      *
@@ -91,9 +90,8 @@ contract XTokenFactory is Ownable {
      *
      * @param _operationsRegistry The address of the new Operations Registry module.
      */
-    function setOperationsRegistry(address _operationsRegistry) external onlyOwner returns (bool) {
+    function setOperationsRegistry(address _operationsRegistry) external onlyOwner {
         _setOperationsRegistry(_operationsRegistry);
-        return true;
     }
 
     /**
@@ -106,9 +104,8 @@ contract XTokenFactory is Ownable {
      *
      * @param _eurPriceFeed The address of the new EUR Price feed module.
      */
-    function setEurPriceFeed(address _eurPriceFeed) external onlyOwner returns (bool) {
+    function setEurPriceFeed(address _eurPriceFeed) external onlyOwner {
         _setEurPriceFeed(_eurPriceFeed);
-        return true;
     }
 
     /**
@@ -166,7 +163,7 @@ contract XTokenFactory is Ownable {
      */
     function _setXTokenWrapper(address _xTokenWrapper) internal {
         require(_xTokenWrapper != address(0), "xToken wrapper is the zero address");
-        emit XTokenWrapperSetted(_xTokenWrapper);
+        emit XTokenWrapperSet(_xTokenWrapper);
         xTokenWrapper = _xTokenWrapper;
     }
 
@@ -182,7 +179,7 @@ contract XTokenFactory is Ownable {
      */
     function _setOperationsRegistry(address _operationsRegistry) internal {
         require(_operationsRegistry != address(0), "operations registry feed is the zero address");
-        emit OperationsRegistrySetted(_operationsRegistry);
+        emit OperationsRegistrySet(_operationsRegistry);
         operationsRegistry = _operationsRegistry;
     }
 
@@ -198,7 +195,7 @@ contract XTokenFactory is Ownable {
      */
     function _setEurPriceFeed(address _eurPriceFeed) internal {
         require(_eurPriceFeed != address(0), "eur price feed is the zero address");
-        emit EurPriceFeedSetted(_eurPriceFeed);
+        emit EurPriceFeedSet(_eurPriceFeed);
         eurPriceFeed = _eurPriceFeed;
     }
 }

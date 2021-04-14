@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 
 import "../interfaces/IUTokenPriceFeed.sol";
@@ -10,7 +10,7 @@ contract UTokenPriceFeedMock is IUTokenPriceFeed {
         noPrice = _noPrice;
     }
 
-    function getPrice(address) external override returns (uint256) {
+    function getPrice(address) external view override returns (uint256) {
         return noPrice ? 0 : 1;
     }
 

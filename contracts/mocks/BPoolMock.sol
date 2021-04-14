@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
@@ -10,7 +11,7 @@ contract BPoolMock is ERC20 {
     address[] public _tokens;
     bool public _extactAmount = true;
 
-    constructor(address[] memory tokens) public ERC20("Balancer Pool Token", "BPT") {
+    constructor(address[] memory tokens) ERC20("Balancer Pool Token", "BPT") {
         _tokens = tokens;
     }
 
@@ -19,56 +20,56 @@ contract BPoolMock is ERC20 {
     }
 
     function calcOutGivenIn(
-        uint256 tokenBalanceIn,
-        uint256 tokenWeightIn,
-        uint256 tokenBalanceOut,
-        uint256 tokenWeightOut,
+        uint256 ,
+        uint256 ,
+        uint256 ,
+        uint256 ,
         uint256 tokenAmountIn,
-        uint256 swapFee
+        uint256
     ) external pure returns (uint256) {
         return tokenAmountIn;
     }
 
     function calcInGivenOut(
-        uint256 tokenBalanceIn,
-        uint256 tokenWeightIn,
-        uint256 tokenBalanceOut,
-        uint256 tokenWeightOut,
+        uint256 ,
+        uint256 ,
+        uint256 ,
+        uint256 ,
         uint256 tokenAmountOut,
-        uint256 swapFee
+        uint256
     ) external pure returns (uint256) {
         return tokenAmountOut;
     }
 
-    function getBalance(address token) external view returns (uint256) {
+    function getBalance(address ) external pure returns (uint256) {
         return 1;
     }
 
-    function getDenormalizedWeight(address token) external view returns (uint256) {
+    function getDenormalizedWeight(address ) external pure returns (uint256) {
         return 1;
     }
 
-    function getSwapFee() external view returns (uint256) {
+    function getSwapFee() external pure returns (uint256) {
         return 1;
     }
 
     function swapExactAmountOut(
-        address tokenIn,
-        uint256 maxAmountIn,
-        address tokenOut,
+        address ,
+        uint256 ,
+        address ,
         uint256 tokenAmountOut,
-        uint256 maxPrice
-    ) external returns (uint256, uint256) {
+        uint256
+    ) external pure returns (uint256, uint256) {
         return (tokenAmountOut, 1);
     }
 
     function swapExactAmountIn(
-        address tokenIn,
-        uint256 tokenAmountIn,
-        address tokenOut,
+        address ,
+        uint256 ,
+        address ,
         uint256 minAmountOut,
-        uint256 maxPrice
-    ) external returns (uint256, uint256) {
+        uint256
+    ) external pure returns (uint256, uint256) {
         return (minAmountOut, 1);
     }
 

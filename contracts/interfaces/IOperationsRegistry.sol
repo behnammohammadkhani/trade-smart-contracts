@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 
 /**
@@ -21,21 +21,21 @@ interface IOperationsRegistry {
      *
      * @param _eurPriceFeed The address of the new EUR Price feed module.
      */
-    function setEurPriceFeed(address _eurPriceFeed) external returns (bool);
+    function setEurPriceFeed(address _eurPriceFeed) external;
 
     /**
      * @dev Sets `_asset` as allowed for calling `addTrade`.
      *
      * @param _asset asset's address.
      */
-    function allowAsset(address _asset) external returns (bool);
+    function allowAsset(address _asset) external;
 
     /**
      * @dev Sets `_asset` as disallowed for calling `addTrade`.
      *
      * @param _asset asset's address.
      */
-    function disallowAsset(address _asset) external returns (bool);
+    function disallowAsset(address _asset) external;
 
     /**
      * @dev Adds `_amount` converted to ERU to the balance traded by `_user` for an `_operation`.

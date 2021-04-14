@@ -111,18 +111,18 @@ interface XTokenFactoryInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "EurPriceFeedSetted(address)": EventFragment;
-    "OperationsRegistrySetted(address)": EventFragment;
+    "EurPriceFeedSet(address)": EventFragment;
+    "OperationsRegistrySet(address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "XTokenDeployed(address)": EventFragment;
-    "XTokenWrapperSetted(address)": EventFragment;
+    "XTokenWrapperSet(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "EurPriceFeedSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OperationsRegistrySetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EurPriceFeedSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OperationsRegistrySet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "XTokenDeployed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "XTokenWrapperSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "XTokenWrapperSet"): EventFragment;
 }
 
 export class XTokenFactory extends Contract {
@@ -346,32 +346,32 @@ export class XTokenFactory extends Contract {
     setEurPriceFeed(
       _eurPriceFeed: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     "setEurPriceFeed(address)"(
       _eurPriceFeed: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     setOperationsRegistry(
       _operationsRegistry: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     "setOperationsRegistry(address)"(
       _operationsRegistry: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     setXTokenWrapper(
       _xTokenWrapper: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     "setXTokenWrapper(address)"(
       _xTokenWrapper: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     transferOwnership(
       newOwner: string,
@@ -389,9 +389,9 @@ export class XTokenFactory extends Contract {
   };
 
   filters: {
-    EurPriceFeedSetted(newEurPriceFeed: string | null): EventFilter;
+    EurPriceFeedSet(newEurPriceFeed: string | null): EventFilter;
 
-    OperationsRegistrySetted(newOperationsRegistry: string | null): EventFilter;
+    OperationsRegistrySet(newOperationsRegistry: string | null): EventFilter;
 
     OwnershipTransferred(
       previousOwner: string | null,
@@ -400,7 +400,7 @@ export class XTokenFactory extends Contract {
 
     XTokenDeployed(xToken: string | null): EventFilter;
 
-    XTokenWrapperSetted(newXTokenWrapper: string | null): EventFilter;
+    XTokenWrapperSet(newXTokenWrapper: string | null): EventFilter;
   };
 
   estimateGas: {

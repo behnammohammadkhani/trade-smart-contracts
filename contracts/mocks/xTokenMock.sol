@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -22,7 +22,7 @@ contract xTokenMock is ERC20, Ownable, Authorizable {
         string memory symbol_,
         address authorization_,
         address operationsRegistry_
-    ) public ERC20(name_, symbol_) {
+    ) ERC20(name_, symbol_) {
         authorization = IAuthorization(authorization_);
         operationsRegistry = IOperationsRegistry(operationsRegistry_);
     }
@@ -30,6 +30,7 @@ contract xTokenMock is ERC20, Ownable, Authorizable {
     function transfer(address recipient, uint256 amount) public override onlyAuthorized returns (bool) {
         super.transfer(recipient, amount);
         operationsRegistry.addTrade(_msgSender(), msg.sig, amount);
+        return true;
     }
 
     function transferFrom(
@@ -39,6 +40,7 @@ contract xTokenMock is ERC20, Ownable, Authorizable {
     ) public override onlyAuthorized returns (bool) {
         super.transferFrom(sender, recipient, amount);
         operationsRegistry.addTrade(sender, ERC20_TRANSFER, amount);
+        return true;
     }
 
     function mint(address account, uint256 amount) public onlyOwner onlyAuthorized {

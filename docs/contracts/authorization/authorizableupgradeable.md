@@ -16,7 +16,7 @@ This module is used through inheritance. It will make available the modifier
 
 ## Events:
 
-- `AuthorizationSetted(address newAuthorization)`
+- `AuthorizationSet(address newAuthorization)`
 
 ### Modifier `onlyAuthorized()`
 
@@ -26,6 +26,6 @@ Throws if called by any account which is not authorized to execute the transacti
 
 Sets authorization.
 
-### Event `AuthorizationSetted(address newAuthorization)`
+### Event `AuthorizationSet(address newAuthorization)`
 
-Emitted when `authorization` address is setted.
+Emitted when `authorization` address is set.

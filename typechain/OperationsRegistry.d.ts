@@ -182,7 +182,7 @@ interface OperationsRegistryInterface extends ethers.utils.Interface {
   events: {
     "AssetAllowed(address)": EventFragment;
     "AssetDisallowed(address)": EventFragment;
-    "EurPriceFeedSetted(address)": EventFragment;
+    "EurPriceFeedSet(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -190,7 +190,7 @@ interface OperationsRegistryInterface extends ethers.utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "AssetAllowed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AssetDisallowed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EurPriceFeedSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EurPriceFeedSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -590,12 +590,12 @@ export class OperationsRegistry extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    allowAsset(_asset: string, overrides?: CallOverrides): Promise<boolean>;
+    allowAsset(_asset: string, overrides?: CallOverrides): Promise<void>;
 
     "allowAsset(address)"(
       _asset: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     allowedAssets(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
@@ -604,12 +604,12 @@ export class OperationsRegistry extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    disallowAsset(_asset: string, overrides?: CallOverrides): Promise<boolean>;
+    disallowAsset(_asset: string, overrides?: CallOverrides): Promise<void>;
 
     "disallowAsset(address)"(
       _asset: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     eurPriceFeed(overrides?: CallOverrides): Promise<string>;
 
@@ -705,12 +705,12 @@ export class OperationsRegistry extends Contract {
     setEurPriceFeed(
       _eurPriceFeed: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     "setEurPriceFeed(address)"(
       _eurPriceFeed: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     setFeedManager(_account: string, overrides?: CallOverrides): Promise<void>;
 
@@ -737,7 +737,7 @@ export class OperationsRegistry extends Contract {
 
     AssetDisallowed(asset: string | null): EventFilter;
 
-    EurPriceFeedSetted(newEurPriceFeed: string | null): EventFilter;
+    EurPriceFeedSet(newEurPriceFeed: string | null): EventFilter;
 
     RoleAdminChanged(
       role: BytesLike | null,

@@ -24,9 +24,9 @@ Module for protocol swap fee calculations.
 
 ## Events:
 
-- `ProtocolFeeSetted(uint256 protocolFee)`
+- `ProtocolFeeSet(uint256 protocolFee)`
 
-- `MinProtocolFeeSetted(uint256 minProtocolFee)`
+- `MinProtocolFeeSet(uint256 minProtocolFee)`
 
 ### Function `constructor(uint256 _protocolFee, uint256 _minProtocolFee) public`
 
@@ -124,10 +124,10 @@ Retives pool swap fee amount.
 
 - `swapAmount`: Total amount in.
 
-### Event `ProtocolFeeSetted(uint256 protocolFee)`
+### Event `ProtocolFeeSet(uint256 protocolFee)`
 
-Emitted when `protocolFee` is setted.
+Emitted when `protocolFee` is set.
 
-### Event `MinProtocolFeeSetted(uint256 minProtocolFee)`
+### Event `MinProtocolFeeSet(uint256 minProtocolFee)`
 
-Emitted when `minProtocolFee` is setted.
+Emitted when `minProtocolFee` is set.

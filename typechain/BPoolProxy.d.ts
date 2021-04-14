@@ -348,22 +348,22 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "FeeReceiverSetted(address)": EventFragment;
+    "FeeReceiverSet(address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "ProtocolFeeSetted(address)": EventFragment;
-    "RegistrySetted(address)": EventFragment;
-    "UtilityTokenFeedSetted(address)": EventFragment;
-    "UtilityTokenSetted(address)": EventFragment;
-    "XTokenWrapperSetted(address)": EventFragment;
+    "ProtocolFeeSet(address)": EventFragment;
+    "RegistrySet(address)": EventFragment;
+    "UtilityTokenFeedSet(address)": EventFragment;
+    "UtilityTokenSet(address)": EventFragment;
+    "XTokenWrapperSet(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "FeeReceiverSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeeReceiverSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProtocolFeeSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RegistrySetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "UtilityTokenFeedSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "UtilityTokenSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "XTokenWrapperSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProtocolFeeSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RegistrySet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UtilityTokenFeedSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UtilityTokenSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "XTokenWrapperSet"): EventFragment;
 }
 
 export class BPoolProxy extends Contract {
@@ -1977,22 +1977,22 @@ export class BPoolProxy extends Contract {
   };
 
   filters: {
-    FeeReceiverSetted(feeReceiver: null): EventFilter;
+    FeeReceiverSet(feeReceiver: null): EventFilter;
 
     OwnershipTransferred(
       previousOwner: string | null,
       newOwner: string | null
     ): EventFilter;
 
-    ProtocolFeeSetted(protocolFee: null): EventFilter;
+    ProtocolFeeSet(protocolFee: null): EventFilter;
 
-    RegistrySetted(registry: null): EventFilter;
+    RegistrySet(registry: null): EventFilter;
 
-    UtilityTokenFeedSetted(utilityTokenFeed: null): EventFilter;
+    UtilityTokenFeedSet(utilityTokenFeed: null): EventFilter;
 
-    UtilityTokenSetted(utilityToken: null): EventFilter;
+    UtilityTokenSet(utilityToken: null): EventFilter;
 
-    XTokenWrapperSetted(xTokenWrapper: null): EventFilter;
+    XTokenWrapperSet(xTokenWrapper: null): EventFilter;
   };
 
   estimateGas: {

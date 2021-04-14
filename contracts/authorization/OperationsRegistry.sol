@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
@@ -35,9 +35,9 @@ contract OperationsRegistry is IOperationsRegistry, AccessControl {
     mapping(address => mapping(bytes4 => uint256)) public override tradingBalanceByOperation;
 
     /**
-     * @dev Emitted when `eurPriceFeed` address is setted.
+     * @dev Emitted when `eurPriceFeed` address is set.
      */
-    event EurPriceFeedSetted(address indexed newEurPriceFeed);
+    event EurPriceFeedSet(address indexed newEurPriceFeed);
 
     /**
      * @dev Emitted when `asset` is allowed.
@@ -55,9 +55,9 @@ contract OperationsRegistry is IOperationsRegistry, AccessControl {
      * Grants the contract deployer the default admin role.
      *
      */
-    constructor(address _eurPriceFeed) public {
+    constructor(address _eurPriceFeed) {
         require(_eurPriceFeed != address(0), "eur price feed is the zero address");
-        emit EurPriceFeedSetted(_eurPriceFeed);
+        emit EurPriceFeedSet(_eurPriceFeed);
         eurPriceFeed = _eurPriceFeed;
 
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -111,13 +111,11 @@ contract OperationsRegistry is IOperationsRegistry, AccessControl {
      *
      * @param _eurPriceFeed The address of the new EUR Price feed module.
      */
-    function setEurPriceFeed(address _eurPriceFeed) public override returns (bool) {
+    function setEurPriceFeed(address _eurPriceFeed) external override {
         require(hasRole(FEED_MANAGER_ROLE, _msgSender()), "must have feed manager role");
         require(_eurPriceFeed != address(0), "eur price feed is the zero address");
-        emit EurPriceFeedSetted(_eurPriceFeed);
+        emit EurPriceFeedSet(_eurPriceFeed);
         eurPriceFeed = _eurPriceFeed;
-
-        return true;
     }
 
     /**
@@ -130,12 +128,10 @@ contract OperationsRegistry is IOperationsRegistry, AccessControl {
      *
      * @param _asset asset's address.
      */
-    function allowAsset(address _asset) public override onlyAssetsManager returns (bool) {
+    function allowAsset(address _asset) external override onlyAssetsManager {
         require(_asset != address(0), "asset is the zero address");
         emit AssetAllowed(_asset);
         allowedAssets[_asset] = true;
-
-        return true;
     }
 
     /**
@@ -148,12 +144,10 @@ contract OperationsRegistry is IOperationsRegistry, AccessControl {
      *
      * @param _asset asset's address.
      */
-    function disallowAsset(address _asset) public override onlyAssetsManager returns (bool) {
+    function disallowAsset(address _asset) external override onlyAssetsManager {
         require(_asset != address(0), "asset is the zero address");
         emit AssetDisallowed(_asset);
         allowedAssets[_asset] = false;
-
-        return true;
     }
 
     /**
@@ -171,7 +165,7 @@ contract OperationsRegistry is IOperationsRegistry, AccessControl {
         address _user,
         bytes4 _operation,
         uint256 _amount
-    ) public override onlyAllowedAsset {
+    ) external override onlyAllowedAsset {
         uint256 currentBalance = tradingBalanceByOperation[_user][_operation];
         tradingBalanceByOperation[_user][_operation] = currentBalance.add(
             IEurPriceFeed(eurPriceFeed).calculateAmount(_msgSender(), _amount)

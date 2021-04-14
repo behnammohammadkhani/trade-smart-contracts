@@ -54,10 +54,10 @@ describe('EurPriceFeed', function () {
     daiToken = (await ERC20DetailedFactory.deploy('DAI', 'DAI', 18)) as ERC20Detailed;
     await daiToken.deployed();
 
-    usdcToken = (await ERC20DetailedFactory.deploy('USDC', 'USDC', 8)) as ERC20Detailed;
+    usdcToken = (await ERC20DetailedFactory.deploy('USDC', 'USDC', 6)) as ERC20Detailed;
     await usdcToken.deployed();
 
-    wbtcToken = (await ERC20DetailedFactory.deploy('USDC', 'USDC', 8)) as ERC20Detailed;
+    wbtcToken = (await ERC20DetailedFactory.deploy('xBTC', 'xBTC', 8)) as ERC20Detailed;
     await wbtcToken.deployed();
 
     await reverter.snapshot();
@@ -432,10 +432,10 @@ describe('EurPriceFeed', function () {
       // 1212,96133391 usd = 1212,96133391/1,21376500 = 999,337873402 eur
       // dai/eth 0,000827400000000000
       // 1 eth = 999,337873402 eur
-      // 0,0008274 eth = 999,337873402 * 0,000827400000000000 = 0,825692390000000000 eur
+      // 0,0008274 eth = 999,337873402 * 0,000827400000000000 = 0,826852156 eur
 
       const price = await eurPriceFeedContract.getPrice(daiToken.address);
-      const amount = await eurPriceFeedContract.calculateAmount(daiToken.address, 50);
+      const amount = await eurPriceFeedContract.calculateAmount(daiToken.address, ethers.constants.WeiPerEther.mul(50));
 
       expect(price).to.equal('826852156452965771');
       expect(amount).to.equal('41342607822648288550');
@@ -451,11 +451,10 @@ describe('EurPriceFeed', function () {
       // 0,000839155 eth = 999,337873402 * 0,00083915500000000000 = 0,838599373000000000 eur
 
       const price = await eurPriceFeedContract.getPrice(usdcToken.address);
-      const amount = await eurPriceFeedContract.calculateAmount(usdcToken.address, 50);
+      const amount = await eurPriceFeedContract.calculateAmount(usdcToken.address, 50 * 1000000);
 
       expect(price).to.equal('838599373154808426');
-      // USDC is denominated in 8 decimal, so 50 USDC converted to 18 decimal is 500000000000
-      expect(amount).to.equal('419299686577404213000000000000');
+      expect(amount).to.equal('41929968657740421300');
     });
   });
 });

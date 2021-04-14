@@ -128,14 +128,14 @@ interface ProtocolFeeInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "MinProtocolFeeSetted(uint256)": EventFragment;
+    "MinProtocolFeeSet(uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "ProtocolFeeSetted(uint256)": EventFragment;
+    "ProtocolFeeSet(uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "MinProtocolFeeSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MinProtocolFeeSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProtocolFeeSetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProtocolFeeSet"): EventFragment;
 }
 
 export class ProtocolFee extends Contract {
@@ -486,14 +486,14 @@ export class ProtocolFee extends Contract {
   };
 
   filters: {
-    MinProtocolFeeSetted(minProtocolFee: null): EventFilter;
+    MinProtocolFeeSet(minProtocolFee: null): EventFilter;
 
     OwnershipTransferred(
       previousOwner: string | null,
       newOwner: string | null
     ): EventFilter;
 
-    ProtocolFeeSetted(protocolFee: null): EventFilter;
+    ProtocolFeeSet(protocolFee: null): EventFilter;
   };
 
   estimateGas: {

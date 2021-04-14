@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
@@ -12,7 +12,7 @@ import "./PermissionManagerStorage.sol";
 /**
  * @title PermissionManager
  * @author Protofire
- * @dev Provide tier based permissions assignments and revoking functions
+ * @dev Provide tier based permissions assignments and revoking functions.
  */
 contract PermissionManager is Initializable, AccessControlUpgradeable, PermissionManagerStorage {
     struct UserProxy {
@@ -21,9 +21,9 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
     }
 
     /**
-     * @dev Emitted when `permissionItems` address is setted.
+     * @dev Emitted when `permissionItems` address is set.
      */
-    event PermissionItemsSetted(address indexed newPermissions);
+    event PermissionItemsSet(address indexed newPermissions);
 
     /**
      * @dev Initalize the contract.
@@ -45,7 +45,7 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
 
         _setupRole(DEFAULT_ADMIN_ROLE, _admin);
 
-        emit PermissionItemsSetted(permissionItems);
+        emit PermissionItemsSet(permissionItems);
     }
 
     /**
@@ -87,9 +87,9 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
      *
      * @param _permissionItems The address of the new Pemissions module.
      */
-    function setPermissionItems(address _permissionItems) public onlyAdmin returns (bool) {
+    function setPermissionItems(address _permissionItems) external onlyAdmin returns (bool) {
         require(_permissionItems != address(0), "_permissionItems is the zero address");
-        emit PermissionItemsSetted(_permissionItems);
+        emit PermissionItemsSet(_permissionItems);
         permissionItems = _permissionItems;
         return true;
     }
@@ -104,7 +104,7 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
      *
      * @param _accounts The addresses to assign Tier1.
      */
-    function assingTier1(address[] memory _accounts) public onlyPermissionsAdmin {
+    function assingTier1(address[] memory _accounts) external onlyPermissionsAdmin {
         for (uint256 i = 0; i < _accounts.length; i++) {
             require(!hasTier1(_accounts[i]), "PermissionManager: Address already has Tier 1 assigned");
             PermissionItems(permissionItems).mint(_accounts[i], TIER_1_ID, 1, "");
@@ -123,7 +123,7 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
      * @param _usersProxies The addresses of the users and proxies.
      *                      An array of the struct UserProxy where user and proxy are bout required.
      */
-    function assingTier2(UserProxy[] memory _usersProxies) public onlyPermissionsAdmin {
+    function assingTier2(UserProxy[] memory _usersProxies) external onlyPermissionsAdmin {
         for (uint256 i = 0; i < _usersProxies.length; i++) {
             UserProxy memory userProxy = _usersProxies[i];
             require(!hasTier2(userProxy.user), "PermissionManager: Address already has Tier 2 assigned");
@@ -147,7 +147,7 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
      *                      An array of the struct UserProxy where is required
      *                      but proxy can be optional if it is set to zero address.
      */
-    function suspendUser(UserProxy[] memory _usersProxies) public onlyPermissionsAdmin {
+    function suspendUser(UserProxy[] memory _usersProxies) external onlyPermissionsAdmin {
         for (uint256 i = 0; i < _usersProxies.length; i++) {
             UserProxy memory userProxy = _usersProxies[i];
             require(!isSuspended(userProxy.user), "PermissionManager: Address is already suspended");
@@ -174,7 +174,7 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
      *                      An array of the struct UserProxy where is required
      *                      but proxy can be optional if it is set to zero address.
      */
-    function rejectUser(UserProxy[] memory _usersProxies) public onlyPermissionsAdmin {
+    function rejectUser(UserProxy[] memory _usersProxies) external onlyPermissionsAdmin {
         for (uint256 i = 0; i < _usersProxies.length; i++) {
             UserProxy memory userProxy = _usersProxies[i];
             require(!isRejected(userProxy.user), "PermissionManager: Address is already rejected");
@@ -197,7 +197,7 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
      *
      * @param _accounts The addresses to revoke Tier1.
      */
-    function revokeTier1(address[] memory _accounts) public onlyPermissionsAdmin {
+    function revokeTier1(address[] memory _accounts) external onlyPermissionsAdmin {
         for (uint256 i = 0; i < _accounts.length; i++) {
             require(hasTier1(_accounts[i]), "PermissionManager: Address doesn't has Tier 1 assigned");
             PermissionItems(permissionItems).burn(_accounts[i], TIER_1_ID, 1);
@@ -216,7 +216,7 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
      * @param _usersProxies The addresses of the users and proxies.
      *                      An array of the struct UserProxy where user and proxy are bout required.
      */
-    function revokeTier2(UserProxy[] memory _usersProxies) public onlyPermissionsAdmin {
+    function revokeTier2(UserProxy[] memory _usersProxies) external onlyPermissionsAdmin {
         for (uint256 i = 0; i < _usersProxies.length; i++) {
             UserProxy memory userProxy = _usersProxies[i];
             require(hasTier2(userProxy.user), "PermissionManager: Address doesn't has Tier 2 assigned");
@@ -240,7 +240,7 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
      *                      An array of the struct UserProxy where is required
      *                      but proxy can be optional if it is set to zero address.
      */
-    function unsuspendUser(UserProxy[] memory _usersProxies) public onlyPermissionsAdmin {
+    function unsuspendUser(UserProxy[] memory _usersProxies) external onlyPermissionsAdmin {
         for (uint256 i = 0; i < _usersProxies.length; i++) {
             UserProxy memory userProxy = _usersProxies[i];
             require(isSuspended(userProxy.user), "PermissionManager: Address is not currently suspended");
@@ -267,7 +267,7 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
      *                      An array of the struct UserProxy where is required
      *                      but proxy can be optional if it is set to zero address.
      */
-    function unrejectUser(UserProxy[] memory _usersProxies) public onlyPermissionsAdmin {
+    function unrejectUser(UserProxy[] memory _usersProxies) external onlyPermissionsAdmin {
         for (uint256 i = 0; i < _usersProxies.length; i++) {
             UserProxy memory userProxy = _usersProxies[i];
             require(isRejected(userProxy.user), "PermissionManager: Address is not currently rejected");
@@ -291,7 +291,7 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
      * @param _itemId Item to be assigned.
      * @param _accounts The addresses to assign Tier1.
      */
-    function assignItem(uint256 _itemId, address[] memory _accounts) public onlyPermissionsAdmin {
+    function assignItem(uint256 _itemId, address[] memory _accounts) external onlyPermissionsAdmin {
         for (uint256 i = 0; i < _accounts.length; i++) {
             require(!_hasItem(_accounts[i], _itemId), "PermissionManager: Account is assigned with item");
             PermissionItems(permissionItems).mint(_accounts[i], _itemId, 1, "");
@@ -309,7 +309,7 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
      * @param _itemId Item to be removeded
      * @param _accounts The addresses to assign Tier1.
      */
-    function removeItem(uint256 _itemId, address[] memory _accounts) public onlyPermissionsAdmin {
+    function removeItem(uint256 _itemId, address[] memory _accounts) external onlyPermissionsAdmin {
         for (uint256 i = 0; i < _accounts.length; i++) {
             require(_hasItem(_accounts[i], _itemId), "PermissionManager: Account is not assigned with item");
             PermissionItems(permissionItems).burn(_accounts[i], _itemId, 1);
@@ -317,10 +317,7 @@ contract PermissionManager is Initializable, AccessControlUpgradeable, Permissio
     }
 
     function _hasItem(address _user, uint256 itemId) internal view returns (bool) {
-        if (PermissionItems(permissionItems).balanceOf(_user, itemId) == 0) {
-            return false;
-        }
-        return true;
+        return PermissionItems(permissionItems).balanceOf(_user, itemId) > 0;
     }
 
     /**

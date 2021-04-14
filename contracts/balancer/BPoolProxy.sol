@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
@@ -14,12 +14,12 @@ import "../interfaces/IBRegistry.sol";
 import "../interfaces/IProtocolFee.sol";
 import "../interfaces/IUTokenPriceFeed.sol";
 
-import "hardhat/console.sol";
-
 /**
  * @title BPoolProxy
  * @author Protofire
- * @dev Forwarding proxy that allows users to batch execute swaps.
+ * @dev Forwarding proxy that allows users to batch execute swaps and join/exit pools.
+ * User should interact with pools through this contracts as it is the one that charge
+ * the protocol swap fee, and wrap/unwrap pool tokens into/from xPoolToken.
  *
  * This code is based on Balancer ExchangeProxy contract
  * https://docs.balancer.finance/smart-contracts/exchange-proxy
@@ -54,34 +54,34 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
     address public utilityToken;
 
     /**
-     * @dev Emitted when `registry` address is setted.
+     * @dev Emitted when `registry` address is set.
      */
-    event RegistrySetted(address registry);
+    event RegistrySet(address registry);
 
     /**
-     * @dev Emitted when `protocolFee` address is setted.
+     * @dev Emitted when `protocolFee` address is set.
      */
-    event ProtocolFeeSetted(address protocolFee);
+    event ProtocolFeeSet(address protocolFee);
 
     /**
-     * @dev Emitted when `feeReceiver` address is setted.
+     * @dev Emitted when `feeReceiver` address is set.
      */
-    event FeeReceiverSetted(address feeReceiver);
+    event FeeReceiverSet(address feeReceiver);
 
     /**
-     * @dev Emitted when `xTokenWrapper` address is setted.
+     * @dev Emitted when `xTokenWrapper` address is set.
      */
-    event XTokenWrapperSetted(address xTokenWrapper);
+    event XTokenWrapperSet(address xTokenWrapper);
 
     /**
-     * @dev Emitted when `utilityToken` address is setted.
+     * @dev Emitted when `utilityToken` address is set.
      */
-    event UtilityTokenSetted(address utilityToken);
+    event UtilityTokenSet(address utilityToken);
 
     /**
-     * @dev Emitted when `utilityTokenFeed` address is setted.
+     * @dev Emitted when `utilityTokenFeed` address is set.
      */
-    event UtilityTokenFeedSetted(address utilityTokenFeed);
+    event UtilityTokenFeedSet(address utilityTokenFeed);
 
     /**
      * @dev Sets the values for {registry}, {protocolFee}, {feeReceiver},
@@ -97,7 +97,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         address _xTokenWrapper,
         address _utilityToken,
         address _utilityTokenFeed
-    ) public {
+    ) {
         _setRegistry(_registry);
         _setProtocolFee(_protocolFee);
         _setFeeReceiver(_feeReceiver);
@@ -199,7 +199,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
      */
     function _setRegistry(address _registry) internal {
         require(_registry != address(0), "registry is the zero address");
-        emit RegistrySetted(_registry);
+        emit RegistrySet(_registry);
         registry = IBRegistry(_registry);
     }
 
@@ -214,7 +214,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
      */
     function _setProtocolFee(address _protocolFee) internal {
         require(_protocolFee != address(0), "protocolFee is the zero address");
-        emit ProtocolFeeSetted(_protocolFee);
+        emit ProtocolFeeSet(_protocolFee);
         protocolFee = IProtocolFee(_protocolFee);
     }
 
@@ -229,7 +229,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
      */
     function _setFeeReceiver(address _feeReceiver) internal {
         require(_feeReceiver != address(0), "feeReceiver is the zero address");
-        emit FeeReceiverSetted(_feeReceiver);
+        emit FeeReceiverSet(_feeReceiver);
         feeReceiver = _feeReceiver;
     }
 
@@ -244,7 +244,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
      */
     function _setXTokenWrapper(address _xTokenWrapper) internal {
         require(_xTokenWrapper != address(0), "xTokenWrapper is the zero address");
-        emit FeeReceiverSetted(_xTokenWrapper);
+        emit XTokenWrapperSet(_xTokenWrapper);
         xTokenWrapper = IXTokenWrapper(_xTokenWrapper);
     }
 
@@ -254,7 +254,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
      * @param _utilityToken The address of the utilityToken.
      */
     function _setUtilityToken(address _utilityToken) internal {
-        emit UtilityTokenSetted(_utilityToken);
+        emit UtilityTokenSet(_utilityToken);
         utilityToken = _utilityToken;
     }
 
@@ -268,7 +268,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
      * @param _utilityTokenFeed The address of the utilityTokenFeed.
      */
     function _setUtilityTokenFeed(address _utilityTokenFeed) internal {
-        emit UtilityTokenFeedSetted(_utilityTokenFeed);
+        emit UtilityTokenFeedSet(_utilityTokenFeed);
         utilityTokenFeed = IUTokenPriceFeed(_utilityTokenFeed);
     }
 
@@ -386,7 +386,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         uint256 totalAmountIn,
         uint256 minTotalAmountOut,
         bool useUtilityToken
-    ) public returns (uint256 totalAmountOut) {
+    ) external returns (uint256 totalAmountOut) {
         transferFrom(tokenIn, totalAmountIn);
 
         for (uint256 i = 0; i < swapSequences.length; i++) {
@@ -440,7 +440,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         IXToken tokenOut,
         uint256 maxTotalAmountIn,
         bool useUtilityToken
-    ) public returns (uint256 totalAmountIn) {
+    ) external returns (uint256 totalAmountIn) {
         transferFrom(tokenIn, maxTotalAmountIn);
 
         for (uint256 i = 0; i < swapSequences.length; i++) {
@@ -537,9 +537,12 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         uint256 minTotalAmountOut,
         uint256 nPools,
         bool useUtilityToken
-    ) public returns (uint256 totalAmountOut) {
+    ) external returns (uint256 totalAmountOut) {
         Swap[] memory swaps;
-        (swaps, ) = viewSplitExactIn(address(tokenIn), address(tokenOut), totalAmountIn, nPools);
+        uint256 totalOutput;
+        (swaps, totalOutput) = viewSplitExactIn(address(tokenIn), address(tokenOut), totalAmountIn, nPools);
+
+        require(totalOutput >= minTotalAmountOut, "ERR_LIMIT_OUT");
 
         totalAmountOut = batchSwapExactIn(swaps, tokenIn, tokenOut, totalAmountIn, minTotalAmountOut, useUtilityToken);
     }
@@ -560,9 +563,12 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         uint256 maxTotalAmountIn,
         uint256 nPools,
         bool useUtilityToken
-    ) public returns (uint256 totalAmountIn) {
+    ) external returns (uint256 totalAmountIn) {
         Swap[] memory swaps;
-        (swaps, ) = viewSplitExactOut(address(tokenIn), address(tokenOut), totalAmountOut, nPools);
+        uint256 totalInput;
+        (swaps, totalInput) = viewSplitExactOut(address(tokenIn), address(tokenOut), totalAmountOut, nPools);
+
+        require(totalInput <= maxTotalAmountIn, "ERR_LIMIT_IN");
 
         totalAmountIn = batchSwapExactOut(swaps, tokenIn, tokenOut, maxTotalAmountIn, useUtilityToken);
     }
@@ -580,7 +586,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         address pool,
         uint256 poolAmountOut,
         uint256[] calldata maxAmountsIn
-    ) public {
+    ) external {
         address[] memory tokens = IBPool(pool).getCurrentTokens();
 
         // pull xTokens
@@ -959,7 +965,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
      * @dev Trtansfers `token` from the sender to this conteract.
      *
      */
-    function transferFrom(IXToken token, uint256 amount) internal returns (bool) {
+    function transferFrom(IXToken token, uint256 amount) internal {
         require(token.transferFrom(msg.sender, address(this), amount), "ERR_TRANSFER_FAILED");
     }
 
@@ -971,7 +977,7 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         IXToken token,
         uint256 amount,
         bool useUtitlityToken
-    ) internal returns (bool) {
+    ) internal {
         if (useUtitlityToken && utilityToken != address(0) && address(utilityTokenFeed) != address(0)) {
             uint256 discountedFee = utilityTokenFeed.calculateAmount(address(token), amount.div(2));
 
@@ -986,21 +992,13 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         } else {
             require(token.transferFrom(msg.sender, feeReceiver, amount), "ERR_FEE_TRANSFER_FAILED");
         }
-
-        return true;
     }
 
     function getBalance(IXToken token) internal view returns (uint256) {
         return token.balanceOf(address(this));
     }
 
-    function transfer(IXToken token, uint256 amount) internal returns (bool) {
-        if (amount == 0) {
-            return true;
-        }
-
+    function transfer(IXToken token, uint256 amount) internal {
         require(token.transfer(msg.sender, amount), "ERR_TRANSFER_FAILED");
-
-        return true;
     }
 }

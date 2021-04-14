@@ -64,7 +64,7 @@ describe('xTokenWrapper', function () {
 
     daiTokenKakaroto = daiToken.connect(kakaroto);
 
-    usdcToken = (await ERC20DetailedFactory.deploy('USDC', 'USDC', 8)) as ERC20Detailed;
+    usdcToken = (await ERC20DetailedFactory.deploy('USDC', 'USDC', 6)) as ERC20Detailed;
     await usdcToken.deployed();
 
     eurPriceFeedContract = (await EurPriceFeed.deploy()) as EurPriceFeedMock;

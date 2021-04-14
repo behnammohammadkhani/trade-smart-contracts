@@ -1,11 +1,11 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 
 contract ChainlinkAggregatorMock {
     uint256 public decimals;
     int256 public price;
 
-    constructor(uint256 _decimals, int256 _price) public {
+    constructor(uint256 _decimals, int256 _price) {
         decimals = _decimals;
         price = _price;
     }

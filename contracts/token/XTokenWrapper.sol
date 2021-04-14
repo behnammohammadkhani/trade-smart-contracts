@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -11,7 +11,8 @@ import "../interfaces/IXToken.sol";
 /**
  * @title XTokenWrapper
  * @author Protofire
- * @dev Contract module which provides an functionality for wrapping tokens into the corresponding XToken.
+ * @dev Contract module which provides the functionalities for wrapping tokens into the corresponding
+ * XToken and unwrapping XTokens giving back the corresponding Token.
  *
  */
 contract XTokenWrapper is AccessControl, ERC1155Holder {
@@ -40,7 +41,7 @@ contract XTokenWrapper is AccessControl, ERC1155Holder {
      * @dev Grants the contract deployer the default admin role.
      *
      */
-    constructor() public {
+    constructor() {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
@@ -129,7 +130,7 @@ contract XTokenWrapper is AccessControl, ERC1155Holder {
             IERC20(tokenAddress).safeTransfer(_msgSender(), _amount);
         } else {
             // solhint-disable-next-line
-            (bool sent, ) = tx.origin.call{ value: _amount }("");
+            (bool sent, ) = msg.sender.call{ value: _amount }("");
             require(sent, "Failed to send Ether");
         }
 

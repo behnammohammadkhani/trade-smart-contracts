@@ -1,6 +1,6 @@
 # `XTokenFactory`
 
-Contract module which provides an functionality deploying a registering new xToken contracts.
+Contract module which provides the functionalities for deploying a registering new xToken contracts.
 
 ## Functions:
 
@@ -22,11 +22,11 @@ Contract module which provides an functionality deploying a registering new xTok
 
 ## Events:
 
-- `XTokenWrapperSetted(address newXTokenWrapper)`
+- `XTokenWrapperSet(address newXTokenWrapper)`
 
-- `OperationsRegistrySetted(address newOperationsRegistry)`
+- `OperationsRegistrySet(address newOperationsRegistry)`
 
-- `EurPriceFeedSetted(address newEurPriceFeed)`
+- `EurPriceFeedSet(address newEurPriceFeed)`
 
 - `XTokenDeployed(address xToken)`
 
@@ -36,9 +36,9 @@ Sets the values for {xTokenWrapper}, {operationsRegistry} and {eurPriceFeed}.
 
 Sets ownership to the account that deploys the contract.
 
-### Function `setXTokenWrapper(address _xTokenWrapper) → bool external`
+### Function `setXTokenWrapper(address _xTokenWrapper) external`
 
-Sets `_eurPriceFeed` as the new EUR Price feed module.
+Sets `_xTokenWrapper` as the new xToken Wrapper module.
 
 Requirements:
 
@@ -50,9 +50,9 @@ Requirements:
 
 - `_xTokenWrapper`: The address of the new xToken Wrapper module.
 
-### Function `setOperationsRegistry(address _operationsRegistry) → bool external`
+### Function `setOperationsRegistry(address _operationsRegistry) external`
 
-Sets `_eurPriceFeed` as the new EUR Price feed module.
+Sets `_operationsRegistry` as the new Operations Registry module.
 
 Requirements:
 
@@ -64,7 +64,7 @@ Requirements:
 
 - `_operationsRegistry`: The address of the new Operations Registry module.
 
-### Function `setEurPriceFeed(address _eurPriceFeed) → bool external`
+### Function `setEurPriceFeed(address _eurPriceFeed) external`
 
 Sets `_eurPriceFeed` as the new EUR Price feed module.
 
@@ -158,17 +158,17 @@ Requirements:
 
 - `_eurPriceFeed`: The address of the new EUR Price feed module.
 
-### Event `XTokenWrapperSetted(address newXTokenWrapper)`
+### Event `XTokenWrapperSet(address newXTokenWrapper)`
 
-Emitted when `xTokenWrapper` address is setted.
+Emitted when `xTokenWrapper` address is set.
 
-### Event `OperationsRegistrySetted(address newOperationsRegistry)`
+### Event `OperationsRegistrySet(address newOperationsRegistry)`
 
-Emitted when `operationsRegistry` address is setted.
+Emitted when `operationsRegistry` address is set.
 
-### Event `EurPriceFeedSetted(address newEurPriceFeed)`
+### Event `EurPriceFeedSet(address newEurPriceFeed)`
 
-Emitted when `eurPriceFeed` address is setted.
+Emitted when `eurPriceFeed` address is set.
 
 ### Event `XTokenDeployed(address xToken)`
 

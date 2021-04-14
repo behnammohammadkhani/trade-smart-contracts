@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 
 
@@ -5,7 +6,7 @@ pragma solidity ^0.7.0;
 contract BPoolSwapFeeMock {
     uint256 private _swapFee;
 
-    constructor(uint256 swapFee) public {
+    constructor(uint256 swapFee) {
         setSwapFee(swapFee);
     }
 
@@ -13,7 +14,7 @@ contract BPoolSwapFeeMock {
         _swapFee = swapFee;
     }
 
-    function getSwapFee() public returns (uint256) {
+    function getSwapFee() public view returns (uint256) {
         return _swapFee;
     }
 }

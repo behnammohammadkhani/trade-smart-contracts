@@ -24,7 +24,7 @@ Gets the balance traded by `_user` for an `_operation`.
 
 - `_operation`: msg.sig of the function considered an operation.
 
-### Function `setEurPriceFeed(address _eurPriceFeed) → bool external`
+### Function `setEurPriceFeed(address _eurPriceFeed) external`
 
 Sets `_eurPriceFeed` as the new EUR Price feed module.
 
@@ -32,7 +32,7 @@ Sets `_eurPriceFeed` as the new EUR Price feed module.
 
 - `_eurPriceFeed`: The address of the new EUR Price feed module.
 
-### Function `allowAsset(address _asset) → bool external`
+### Function `allowAsset(address _asset) external`
 
 Sets `_asset` as allowed for calling `addTrade`.
 
@@ -40,7 +40,7 @@ Sets `_asset` as allowed for calling `addTrade`.
 
 - `_asset`: asset's address.
 
-### Function `disallowAsset(address _asset) → bool external`
+### Function `disallowAsset(address _asset) external`
 
 Sets `_asset` as disallowed for calling `addTrade`.
 

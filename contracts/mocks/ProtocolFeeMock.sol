@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
@@ -8,7 +9,7 @@ import "../balancer/ISwap.sol";
 contract ProtocolFeeMock is ISwap {
     uint256 private _protocolFeeAmount;
 
-    constructor(uint256 protocolFeeAmount) public {
+    constructor(uint256 protocolFeeAmount) {
         setPotocolFeeAmount(protocolFeeAmount);
     }
 

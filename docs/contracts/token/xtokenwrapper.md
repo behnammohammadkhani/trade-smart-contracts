@@ -1,6 +1,8 @@
 # `XTokenWrapper`
 
-Contract module which provides an functionality for wrapping tokens into the corresponding XToken.
+Contract module which provides the functionalities for wrapping tokens into the corresponding
+
+XToken and unwrapping XTokens giving back the corresponding Token.
 
 ## Functions:
 

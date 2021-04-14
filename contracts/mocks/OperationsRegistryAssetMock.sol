@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 
 import "../interfaces/IOperationsRegistry.sol";
@@ -6,7 +6,7 @@ import "../interfaces/IOperationsRegistry.sol";
 contract OperationsRegistryAssetMock {
     IOperationsRegistry public operationsRegistry;
 
-    constructor(address operationsRegistry_) public {
+    constructor(address operationsRegistry_) {
         operationsRegistry = IOperationsRegistry(operationsRegistry_);
     }
 

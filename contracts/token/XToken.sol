@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20Pausable.sol";
@@ -23,18 +23,17 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
     /// @dev Know Your Asset
     string public kya;
 
-    bytes4 public constant ERC20_TRANSFER = bytes4(keccak256("transfer(address,uint256)"));
     bytes32 public constant WRAPPER_ROLE = keccak256("MINTER_ROLE");
 
     /**
-     * @dev Emitted when `operationsRegistry` address is setted.
+     * @dev Emitted when `operationsRegistry` address is set.
      */
-    event KyaSetted(string newKya);
+    event KyaSet(string newKya);
 
     /**
-     * @dev Emitted when `operationsRegistry` address is setted.
+     * @dev Emitted when `operationsRegistry` address is set.
      */
-    event OperationsRegistrySetted(address indexed newOperationsRegistry);
+    event OperationsRegistrySet(address indexed newOperationsRegistry);
 
     /**
      * @dev Sets the values for {name}, {symbol}, {decimals}, {kya}, {authorization} and {operationsRegistry}.
@@ -49,7 +48,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
         string memory kya_,
         address authorization_,
         address operationsRegistry_
-    ) public ERC20(name_, symbol_) {
+    ) ERC20(name_, symbol_) {
         require(decimals_ > 0, "decimals is 0");
         require(authorization_ != address(0), "authorization is the zero address");
         require(operationsRegistry_ != address(0), "operationsRegistry is the zero address");
@@ -85,7 +84,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      * - the caller must have ``role``'s admin role.
      */
-    function setWrapper(address account) public {
+    function setWrapper(address account) external {
         grantRole(WRAPPER_ROLE, account);
     }
 
@@ -97,7 +96,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      * - the caller must have ``role``'s admin role.
      * - the contract must not be paused.
      */
-    function pause() public onlyAdmin {
+    function pause() external onlyAdmin {
         _pause();
     }
 
@@ -109,7 +108,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      * - the caller must have ``role``'s admin role.
      * - the contract must be paused.
      */
-    function unpause() public onlyAdmin {
+    function unpause() external onlyAdmin {
         _unpause();
     }
 
@@ -120,7 +119,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      * - the caller must have ``role``'s admin role.
      */
-    function setAuthorization(address authorization_) public onlyAdmin {
+    function setAuthorization(address authorization_) external onlyAdmin {
         _setAuthorization(authorization_);
     }
 
@@ -131,9 +130,9 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      * - the caller must have ``role``'s admin role.
      */
-    function setOperationsRegistry(address operationsRegistry_) public onlyAdmin {
+    function setOperationsRegistry(address operationsRegistry_) external onlyAdmin {
         require(operationsRegistry_ != address(0), "operationsRegistry is the zero address");
-        emit OperationsRegistrySetted(operationsRegistry_);
+        emit OperationsRegistrySet(operationsRegistry_);
         operationsRegistry = IOperationsRegistry(operationsRegistry_);
     }
 
@@ -144,7 +143,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      * - the caller must have ``role``'s admin role.
      */
-    function setKya(string memory kya_) public onlyAdmin {
+    function setKya(string memory kya_) external onlyAdmin {
         _setKya(kya_);
     }
 
@@ -153,7 +152,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      *
      */
     function _setKya(string memory kya_) internal {
-        emit KyaSetted(kya_);
+        emit KyaSet(kya_);
         kya = kya_;
     }
 
@@ -173,9 +172,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
     function transfer(address recipient, uint256 amount) public override onlyAuthorized returns (bool) {
         super.transfer(recipient, amount);
 
-        // It uses tx.origin because user may use a CPK for interacting with the protocol
-        // solhint-disable-next-line avoid-tx-origin
-        operationsRegistry.addTrade(tx.origin, msg.sig, amount);
+        operationsRegistry.addTrade(msg.sender, msg.sig, amount);
         return true;
     }
 
@@ -201,7 +198,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
     ) public override onlyAuthorized returns (bool) {
         super.transferFrom(sender, recipient, amount);
 
-        operationsRegistry.addTrade(sender, ERC20_TRANSFER, amount);
+        operationsRegistry.addTrade(sender, this.transfer.selector, amount);
         return true;
     }
 
@@ -218,7 +215,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      * - the operation should be authorized.
      * - `to` cannot be the zero address.
      */
-    function mint(address account, uint256 amount) public onlyWrapper onlyAuthorized {
+    function mint(address account, uint256 amount) external onlyWrapper onlyAuthorized {
         _mint(account, amount);
         operationsRegistry.addTrade(account, msg.sig, amount);
     }
@@ -238,7 +235,7 @@ contract XToken is ERC20Pausable, AccessControl, Authorizable {
      * - `account` cannot be the zero address.
      * - `account` must have at least `amount` tokens.
      */
-    function burnFrom(address account, uint256 amount) public onlyWrapper onlyAuthorized {
+    function burnFrom(address account, uint256 amount) external onlyWrapper onlyAuthorized {
         _burn(account, amount);
         operationsRegistry.addTrade(account, msg.sig, amount);
     }

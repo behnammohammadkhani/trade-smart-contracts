@@ -95,26 +95,26 @@ export class EurPriceFeedMock extends Contract {
     setAssetFeed(
       arg0: string,
       arg1: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[void]>;
 
     "setAssetFeed(address,address)"(
       arg0: string,
       arg1: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[void]>;
 
     setAssetsFeeds(
       arg0: string[],
       arg1: string[],
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[void]>;
 
     "setAssetsFeeds(address[],address[])"(
       arg0: string[],
       arg1: string[],
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[void]>;
   };
 
   calculateAmount(
@@ -139,26 +139,26 @@ export class EurPriceFeedMock extends Contract {
   setAssetFeed(
     arg0: string,
     arg1: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   "setAssetFeed(address,address)"(
     arg0: string,
     arg1: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   setAssetsFeeds(
     arg0: string[],
     arg1: string[],
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   "setAssetsFeeds(address[],address[])"(
     arg0: string[],
     arg1: string[],
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   callStatic: {
     calculateAmount(
@@ -230,25 +230,25 @@ export class EurPriceFeedMock extends Contract {
     setAssetFeed(
       arg0: string,
       arg1: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "setAssetFeed(address,address)"(
       arg0: string,
       arg1: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     setAssetsFeeds(
       arg0: string[],
       arg1: string[],
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "setAssetsFeeds(address[],address[])"(
       arg0: string[],
       arg1: string[],
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
@@ -278,25 +278,25 @@ export class EurPriceFeedMock extends Contract {
     setAssetFeed(
       arg0: string,
       arg1: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "setAssetFeed(address,address)"(
       arg0: string,
       arg1: string,
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setAssetsFeeds(
       arg0: string[],
       arg1: string[],
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "setAssetsFeeds(address[],address[])"(
       arg0: string[],
       arg1: string[],
-      overrides?: Overrides
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
@@ -46,7 +46,7 @@ contract BRegistry {
 
     IBFactory public bfactory;
 
-    constructor(address _bfactory) public {
+    constructor(address _bfactory) {
         bfactory = IBFactory(_bfactory);
     }
 

@@ -23,7 +23,6 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface XTokenInterface extends ethers.utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "ERC20_TRANSFER()": FunctionFragment;
     "WRAPPER_ROLE()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
@@ -59,10 +58,6 @@ interface XTokenInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ERC20_TRANSFER",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -165,10 +160,6 @@ interface XTokenInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "ERC20_TRANSFER",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "WRAPPER_ROLE",
     data: BytesLike
   ): Result;
@@ -241,9 +232,9 @@ interface XTokenInterface extends ethers.utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
-    "AuthorizationSetted(address)": EventFragment;
-    "KyaSetted(string)": EventFragment;
-    "OperationsRegistrySetted(address)": EventFragment;
+    "AuthorizationSet(address)": EventFragment;
+    "KyaSet(string)": EventFragment;
+    "OperationsRegistrySet(address)": EventFragment;
     "Paused(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -253,9 +244,9 @@ interface XTokenInterface extends ethers.utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AuthorizationSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "KyaSetted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OperationsRegistrySetted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AuthorizationSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "KyaSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OperationsRegistrySet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
@@ -281,10 +272,6 @@ export class XToken extends Contract {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<[string]>;
-
-    ERC20_TRANSFER(overrides?: CallOverrides): Promise<[string]>;
-
-    "ERC20_TRANSFER()"(overrides?: CallOverrides): Promise<[string]>;
 
     WRAPPER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
@@ -554,10 +541,6 @@ export class XToken extends Contract {
 
   "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
 
-  ERC20_TRANSFER(overrides?: CallOverrides): Promise<string>;
-
-  "ERC20_TRANSFER()"(overrides?: CallOverrides): Promise<string>;
-
   WRAPPER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   "WRAPPER_ROLE()"(overrides?: CallOverrides): Promise<string>;
@@ -826,10 +809,6 @@ export class XToken extends Contract {
 
     "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
 
-    ERC20_TRANSFER(overrides?: CallOverrides): Promise<string>;
-
-    "ERC20_TRANSFER()"(overrides?: CallOverrides): Promise<string>;
-
     WRAPPER_ROLE(overrides?: CallOverrides): Promise<string>;
 
     "WRAPPER_ROLE()"(overrides?: CallOverrides): Promise<string>;
@@ -1095,11 +1074,11 @@ export class XToken extends Contract {
       value: null
     ): EventFilter;
 
-    AuthorizationSetted(newAuthorization: string | null): EventFilter;
+    AuthorizationSet(newAuthorization: string | null): EventFilter;
 
-    KyaSetted(newKya: null): EventFilter;
+    KyaSet(newKya: null): EventFilter;
 
-    OperationsRegistrySetted(newOperationsRegistry: string | null): EventFilter;
+    OperationsRegistrySet(newOperationsRegistry: string | null): EventFilter;
 
     Paused(account: null): EventFilter;
 
@@ -1130,10 +1109,6 @@ export class XToken extends Contract {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    ERC20_TRANSFER(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "ERC20_TRANSFER()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     WRAPPER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1402,12 +1377,6 @@ export class XToken extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "DEFAULT_ADMIN_ROLE()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    ERC20_TRANSFER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "ERC20_TRANSFER()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -40,5 +40,14 @@
   },
   "xWETH/xUSDC": {
     "address": "0xB647fdfd147aC22C52D987c807518b506017BCeD"
+  },
+  "SM Wrapped Pool Token - 33xSNX/33xAAVE/33xUNI": {
+    "address": "0xc0570F053aa7614b8b38EF744Aa0C13EBAd5fDAf"
+  },
+  "SM Wrapped Pool Token - 50xWETH/50xDAI": {
+    "address": "0x5f6931A384221B13a2a35F8981ceA9021B6ad5F9"
+  },
+  "SM Wrapped Pool Token - 50xWETH/50xUSDC": {
+    "address": "0x4E82356344ff67c5dde76f60aec335C27f0B8a6e"
   }
 }

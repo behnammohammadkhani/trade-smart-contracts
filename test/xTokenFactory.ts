@@ -72,7 +72,7 @@ describe('XTokenFactory', function () {
     daiToken = (await ERC20DetailedFactory.deploy('DAI', 'DAI', 18)) as ERC20Detailed;
     await daiToken.deployed();
 
-    usdcToken = (await ERC20DetailedFactory.deploy('USDC', 'USDC', 8)) as ERC20Detailed;
+    usdcToken = (await ERC20DetailedFactory.deploy('USDC', 'USDC', 6)) as ERC20Detailed;
     await usdcToken.deployed();
 
     eurPriceFeedContract = (await EurPriceFeedFactory.deploy(

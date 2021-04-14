@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: GPL-3.0-or-later
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155Holder.sol";
@@ -10,12 +10,8 @@ import "../interfaces/IXToken.sol";
 contract XTokenWrapperMock is ERC1155Holder {
     IXToken public xToken;
 
-    constructor() public {
-        true;
-    }
-
-    function xTokenToToken(address xToken) public returns (address) {
-        return xToken;
+    function xTokenToToken(address _xToken) public pure returns (address) {
+        return _xToken;
     }
 
     function wrap(address _xToken, uint256 _amount) public payable returns (bool) {
