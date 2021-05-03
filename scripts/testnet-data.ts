@@ -53,7 +53,6 @@ async function main(): Promise<void> {
 
   startLog('Deploying Mock AAVE');
   const AAVEContract: ERC20Mintable = (await ERC20MintableFactory.deploy('Aave Token', 'AAVE', 18)) as ERC20Mintable;
-  await AAVEContract.deployed();
 
   testData = {
     ...testData,
@@ -126,7 +125,7 @@ async function main(): Promise<void> {
       18,
       '',
       deploymentData.AuthorizationProxy.address,
-      '0x22B58f1EbEDfCA50feF632bD73368b2FdA96D541',
+      '0x773616E4d11A78F511299002da57A0a94577F1f4',
     )
   ).wait();
 
@@ -152,7 +151,7 @@ async function main(): Promise<void> {
       18,
       '',
       deploymentData.AuthorizationProxy.address,
-      '0xd04647B7CB523bb9f26730E9B6dE1174db7591Ad',
+      '0x6Df09E975c830ECae5bd4eD9d90f3A95a4f88012',
     )
   ).wait();
 
@@ -178,7 +177,7 @@ async function main(): Promise<void> {
       18,
       '',
       deploymentData.AuthorizationProxy.address,
-      '0xF9A76ae7a1075Fe7d646b06fF05Bd48b9FA5582e',
+      '0x79291A9d692Df95334B1a0B3B4AE6bC606782f8c',
     )
   ).wait();
 
@@ -204,7 +203,7 @@ async function main(): Promise<void> {
       18,
       '',
       deploymentData.AuthorizationProxy.address,
-      '0x17756515f112429471F86f98D5052aCB6C47f6ee',
+      '0xD6aA3D25116d8dA79Ea0246c4826EB951872e02e',
     )
   ).wait();
 
@@ -230,7 +229,7 @@ async function main(): Promise<void> {
       6,
       '',
       deploymentData.AuthorizationProxy.address,
-      '0x64EaC61A2DFda2c3Fa04eED49AA33D021AeC8838',
+      '0x986b5E1e1755e3C2440e960477f25201B0a8bbD4',
     )
   ).wait();
 
@@ -327,16 +326,27 @@ async function main(): Promise<void> {
 
     //mint required tokens
     startLog('Minting tokens');
-    await (await AAVEContract.mint(ethers.constants.WeiPerEther.mul(46))).wait();
-    await (await SNXContract.mint(ethers.constants.WeiPerEther.mul(897))).wait();
-    await (await UNIContract.mint(ethers.constants.WeiPerEther.mul(583))).wait();
+    await (await AAVEContract.mint(ethers.constants.WeiPerEther.mul(46), { gasLimit: '100000' })).wait();
+    await (await SNXContract.mint(ethers.constants.WeiPerEther.mul(897), { gasLimit: '100000' })).wait();
+    await (await UNIContract.mint(ethers.constants.WeiPerEther.mul(583), { gasLimit: '100000' })).wait();
     stopLog('Minting tokens');
 
     //wrapp tokens
     startLog('Wrapping tokens');
-    await (await xTokenWrapperContract.wrap(AAVEContract.address, ethers.constants.WeiPerEther.mul(46))).wait();
-    await (await xTokenWrapperContract.wrap(SNXContract.address, ethers.constants.WeiPerEther.mul(897))).wait();
-    await (await xTokenWrapperContract.wrap(UNIContract.address, ethers.constants.WeiPerEther.mul(583))).wait();
+    const meme = await xTokenWrapperContract
+      .wrap(AAVEContract.address, ethers.constants.WeiPerEther.mul(46), { gasLimit: '1000000' })
+      .catch(it => it);
+    console.log(meme);
+    await (
+      await xTokenWrapperContract.wrap(SNXContract.address, ethers.constants.WeiPerEther.mul(897), {
+        gasLimit: '1000000',
+      })
+    ).wait();
+    await (
+      await xTokenWrapperContract.wrap(UNIContract.address, ethers.constants.WeiPerEther.mul(583), {
+        gasLimit: '1000000',
+      })
+    ).wait();
     stopLog('Wrapping tokens');
 
     //approve xTokens
