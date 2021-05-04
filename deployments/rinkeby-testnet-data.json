@@ -1,38 +1,53 @@
 {
   "DAI": {
-    "address": "0x319bDa818A60d034Df97c49b2ce981537964682A"
+    "address": "0x557b9b35B0394F4508AFDa01DF84cb55695CE9a6"
   },
   "AAVE": {
-    "address": "0xf68Db62549A1922459E5Fcb400665aF57491E526"
+    "address": "0x8dfAC38eBf32752741a7DC506C8CCE9E399dB790"
   },
   "SNX": {
-    "address": "0x64027fFe04402B56f65348da88A0bB85F17DDfe2"
+    "address": "0x039e0Ad3495BE9ad0850582e08af707842717877"
   },
   "UNI": {
-    "address": "0x0B82B7746e1D6bc5B37ea42662292BEa4B0f5051"
+    "address": "0x905D82601F691f6aeffA0482d5778c91fDbA1892"
   },
   "USDC": {
-    "address": "0x9a4b59dA7D3877a041174940AeeD5de3Dcf9FEE8"
+    "address": "0x5EbB6C75a1E8e0C9d8759BAfE228bfEc01b07cCC"
   },
   "xDAI": {
-    "address": "0x77a303b8086287a71b325AA8b79a8EC73D427b64"
+    "address": "0x2a503d76941C6324a79DF7d732F3782D99a1CE4C"
   },
   "xAAVE": {
-    "address": "0xADf7100f8bF4A16eeec7d008bF0B4a2c8F3D1409"
+    "address": "0x5055392B9f2e213A17B8feDb690923f45DC63bBE"
   },
   "xSNX": {
-    "address": "0x353F64d77cb29208e295Ac6D5972ddc6FA1CB9f4"
+    "address": "0x308F1E1af25c7Fb19f146e44B9F35167f22EA724"
   },
   "xUNI": {
-    "address": "0x0B67870fF2A4b4d68da3273F2735113F8Dbb5Af8"
+    "address": "0xD45955E77C8cFa96eCf9F4D95B5c15BEC06cb88e"
   },
   "xUSDC": {
-    "address": "0xE3b4D40Ed827B0f387eC245d837b07DA72c7Ec09"
+    "address": "0x28B14a1Ec61c231c34BBd348f626CF4a65AdBDe2"
   },
   "xETH": {
-    "address": "0x8EDdb6d93b4F1ecD454F29537Baa2CFdad8Ab6fB"
+    "address": "0xd874Fea4909e4b90Fa2514eb48f9bf9b4Eb75CE4"
   },
   "xSNX/xAAVE/xUNI": {
-    "address": "0xcEFafBC938Ad8253E4708b70dfA012Dc6B3cb995"
+    "address": "0xdf93C11fB68e77C424823782eB811886223f9749"
+  },
+  "xWETH/xDAI": {
+    "address": "0x2DcA825d3D937Dd6994B1213Ca512E66CA556dd0"
+  },
+  "xWETH/xUSDC": {
+    "address": "0x66532A3a95E77cd9d73405F3796bA4C23B6c84dC"
+  },
+  "WBTC": {
+    "address": "0xA1E925403cC844B38F8CBaF928dA4b5bc1eE93cc"
+  },
+  "xWBTC": {
+    "address": "0xEd85009C7AE78F68d7d55c0db824BE7A31c05e5E"
+  },
+  "SM Wrapped Pool Token - 50xWETH/50xDAI": {
+    "address": "0x3dF85b29DF9685e54f702915A3263774836Bf53A"
   }
 }

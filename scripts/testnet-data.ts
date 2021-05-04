@@ -51,50 +51,19 @@ async function main(): Promise<void> {
   await write(testData);
   stopLog(`Mock DAI deployed - address: ${DAIContract.address}`);
 
-  startLog('Deploying Mock AAVE');
-  const AAVEContract: ERC20Mintable = (await ERC20MintableFactory.deploy('Aave Token', 'AAVE', 18)) as ERC20Mintable;
+  startLog('Deploying Mock WBTC');
+  const WBTCContract: ERC20Mintable = (await ERC20MintableFactory.deploy('Wrapped Bitcoin', 'WBTC', 18)) as ERC20Mintable;
+  await WBTCContract.deployed();
 
   testData = {
     ...testData,
-    AAVE: {
-      address: AAVEContract.address,
+    WBTC: {
+      address: WBTCContract.address,
     },
   };
 
   await write(testData);
-  stopLog(`Mock AAVE deployed - address: ${AAVEContract.address}`);
-
-  startLog('Deploying Mock SNX');
-  const SNXContract: ERC20Mintable = (await ERC20MintableFactory.deploy(
-    'Synthetix Network Token',
-    'SNX',
-    18,
-  )) as ERC20Mintable;
-  await SNXContract.deployed();
-
-  testData = {
-    ...testData,
-    SNX: {
-      address: SNXContract.address,
-    },
-  };
-
-  await write(testData);
-  stopLog(`Mock SNX deployed - address: ${SNXContract.address}`);
-
-  startLog('Deploying Mock UNI');
-  const UNIContract: ERC20Mintable = (await ERC20MintableFactory.deploy('Uniswap', 'UNI', 18)) as ERC20Mintable;
-  await UNIContract.deployed();
-
-  testData = {
-    ...testData,
-    UNI: {
-      address: UNIContract.address,
-    },
-  };
-
-  await write(testData);
-  stopLog(`Mock UNI deployed - address: ${UNIContract.address}`);
+  stopLog(`Mock WBTC deployed - address: ${WBTCContract.address}`);
 
   startLog('Deploying Mock USDC');
   const USDCContract: ERC20Mintable = (await ERC20MintableFactory.deploy('USD Coin', 'USDC', 6)) as ERC20Mintable;
@@ -125,7 +94,7 @@ async function main(): Promise<void> {
       18,
       '',
       deploymentData.AuthorizationProxy.address,
-      '0x773616E4d11A78F511299002da57A0a94577F1f4',
+      '0x74825DbC8BF76CC4e9494d0ecB210f676Efa001D',
     )
   ).wait();
 
@@ -142,83 +111,31 @@ async function main(): Promise<void> {
   await write(testData);
   stopLog(`xDAI deployed - address: ${xDaiAddress}`);
 
-  startLog('Deploying xAAVE');
-  const aaveReceipt = await (
-    await xTokenFactoryContract.deployXToken(
-      testData.AAVE.address,
-      'SM Wrapped Aave Token',
-      'xAAVE',
-      18,
-      '',
-      deploymentData.AuthorizationProxy.address,
-      '0x6Df09E975c830ECae5bd4eD9d90f3A95a4f88012',
-    )
-  ).wait();
-
-  const xAAVEDeployedEvent = aaveReceipt.events?.find(log => log.event && log.event === 'XTokenDeployed');
-  const xAAVEAddress = (xAAVEDeployedEvent && xAAVEDeployedEvent.args ? xAAVEDeployedEvent.args.xToken : '') as string;
-
-  testData = {
-    ...testData,
-    xAAVE: {
-      address: xAAVEAddress,
-    },
-  };
-
-  await write(testData);
-  stopLog(`xAAVE deployed - address: ${xAAVEAddress}`);
-
-  startLog('Deploying xSNX');
-  const SNXReceipt = await (
-    await xTokenFactoryContract.deployXToken(
-      testData.SNX.address,
-      'SM Wrapped Synthetix Network Token',
-      'xSNX',
-      18,
-      '',
-      deploymentData.AuthorizationProxy.address,
-      '0x79291A9d692Df95334B1a0B3B4AE6bC606782f8c',
-    )
-  ).wait();
-
-  const xSNXDeployedEvent = SNXReceipt.events?.find(log => log.event && log.event === 'XTokenDeployed');
-  const xSNXAddress = (xSNXDeployedEvent && xSNXDeployedEvent.args ? xSNXDeployedEvent.args.xToken : '') as string;
-
-  testData = {
-    ...testData,
-    xSNX: {
-      address: xSNXAddress,
-    },
-  };
-
-  await write(testData);
-  stopLog(`xSNX deployed - address: ${xSNXAddress}`);
-
-  startLog('Deploying xUNI');
+  startLog('Deploying xWBTC');
   const UNIReceipt = await (
     await xTokenFactoryContract.deployXToken(
-      testData.UNI.address,
-      'SM Wrapped Uniswap',
-      'xUNI',
+      testData.WBTC.address,
+      'SM Wrapped Wrapped Bitcoin',
+      'xWBTC',
       18,
       '',
       deploymentData.AuthorizationProxy.address,
-      '0xD6aA3D25116d8dA79Ea0246c4826EB951872e02e',
+      '0x2431452A0010a43878bF198e170F6319Af6d27F4',
     )
   ).wait();
 
-  const xUNIDeployedEvent = UNIReceipt.events?.find(log => log.event && log.event === 'XTokenDeployed');
-  const xUNIAddress = (xUNIDeployedEvent && xUNIDeployedEvent.args ? xUNIDeployedEvent.args.xToken : '') as string;
+  const xWBTCDeployedEvent = UNIReceipt.events?.find(log => log.event && log.event === 'XTokenDeployed');
+  const xWBTCAddress = (xWBTCDeployedEvent && xWBTCDeployedEvent.args ? xWBTCDeployedEvent.args.xToken : '') as string;
 
   testData = {
     ...testData,
-    xUNI: {
-      address: xUNIAddress,
+    xWBTC: {
+      address: xWBTCAddress,
     },
   };
 
   await write(testData);
-  stopLog(`xUNI deployed - address: ${xUNIAddress}`);
+  stopLog(`xWBTC deployed - address: ${xWBTCAddress}`);
 
   startLog('Deploying xUSDC');
   const USDCReceipt = await (
@@ -229,7 +146,7 @@ async function main(): Promise<void> {
       6,
       '',
       deploymentData.AuthorizationProxy.address,
-      '0x986b5E1e1755e3C2440e960477f25201B0a8bbD4',
+      '0xdCA36F27cbC4E38aE16C4E9f99D39b42337F6dcf',
     )
   ).wait();
 
@@ -281,25 +198,13 @@ async function main(): Promise<void> {
     deploymentData.BRegistry.address,
   )) as BRegistry;
 
-  const xAAVEContract: XToken = (await ethers.getContractAt('XToken', testData.xAAVE.address)) as XToken;
-  const xSNXContract: XToken = (await ethers.getContractAt('XToken', testData.xSNX.address)) as XToken;
-  const xUNIContract: XToken = (await ethers.getContractAt('XToken', testData.xUNI.address)) as XToken;
   const xDAIContract: XToken = (await ethers.getContractAt('XToken', testData.xDAI.address)) as XToken;
   const xUSDCContract: XToken = (await ethers.getContractAt('XToken', testData.xUSDC.address)) as XToken;
   const xETHContract: XToken = (await ethers.getContractAt('XToken', testData.xETH.address)) as XToken;
 
-  // // // TODO - REMOVE THIS
-  // const AAVEContract: ERC20Mintable = (await ethers.getContractAt('ERC20Mintable', testData.AAVE.address)) as ERC20Mintable;
-  // const SNXContract: ERC20Mintable = (await ethers.getContractAt('ERC20Mintable', testData.SNX.address)) as ERC20Mintable;
-  // const UNIContract: ERC20Mintable = (await ethers.getContractAt('ERC20Mintable', testData.UNI.address)) as ERC20Mintable;
-  // const DAIContract: ERC20Mintable = (await ethers.getContractAt('ERC20Mintable', testData.DAI.address)) as ERC20Mintable;
-  // const USDCContract: ERC20Mintable = (await ethers.getContractAt('ERC20Mintable', testData.USDC.address)) as ERC20Mintable;
-
   //approve tokens
   startLog('Approving tokens');
-  await await AAVEContract.approve(xTokenWrapperContract.address, ethers.constants.MaxUint256);
-  await await SNXContract.approve(xTokenWrapperContract.address, ethers.constants.MaxUint256);
-  await await UNIContract.approve(xTokenWrapperContract.address, ethers.constants.MaxUint256);
+  await await WBTCContract.approve(xTokenWrapperContract.address, ethers.constants.MaxUint256);
   await await DAIContract.approve(xTokenWrapperContract.address, ethers.constants.MaxUint256);
   await await USDCContract.approve(xTokenWrapperContract.address, ethers.constants.MaxUint256);
   stopLog('Approving tokens');
@@ -307,104 +212,11 @@ async function main(): Promise<void> {
   // Pools
   if (process.env.BFACTORY) {
     const bFactoryContract: IBFactory = (await ethers.getContractAt('IBFactory', process.env.BFACTORY)) as IBFactory;
-    // ----------- POOL 1
-    //create
-    startLog('Deploying 33% xSNX - 33% xAAVE - 33% xUNI Pool');
-    const pool1Receipt = await (await bFactoryContract.newBPool()).wait();
-    const newPoolEvent = pool1Receipt.events?.find(log => log.event && log.event === 'LOG_NEW_POOL');
-    const pool1Address = (newPoolEvent && newPoolEvent.args ? newPoolEvent.args.pool : '') as string;
-
-    testData = {
-      ...testData,
-      'xSNX/xAAVE/xUNI': {
-        address: pool1Address,
-      },
-    };
-
-    await write(testData);
-    stopLog(`xSNX/xAAVE/xUNI Pool - address: ${pool1Address}`);
-
-    //mint required tokens
-    startLog('Minting tokens');
-    await (await AAVEContract.mint(ethers.constants.WeiPerEther.mul(46), { gasLimit: '100000' })).wait();
-    await (await SNXContract.mint(ethers.constants.WeiPerEther.mul(897), { gasLimit: '100000' })).wait();
-    await (await UNIContract.mint(ethers.constants.WeiPerEther.mul(583), { gasLimit: '100000' })).wait();
-    stopLog('Minting tokens');
-
-    //wrapp tokens
-    startLog('Wrapping tokens');
-    const meme = await xTokenWrapperContract
-      .wrap(AAVEContract.address, ethers.constants.WeiPerEther.mul(46), { gasLimit: '1000000' })
-      .catch(it => it);
-    console.log(meme);
-    await (
-      await xTokenWrapperContract.wrap(SNXContract.address, ethers.constants.WeiPerEther.mul(897), {
-        gasLimit: '1000000',
-      })
-    ).wait();
-    await (
-      await xTokenWrapperContract.wrap(UNIContract.address, ethers.constants.WeiPerEther.mul(583), {
-        gasLimit: '1000000',
-      })
-    ).wait();
-    stopLog('Wrapping tokens');
-
-    //approve xTokens
-    startLog('Approving xTokens');
-    await (await xAAVEContract.approve(testData['xSNX/xAAVE/xUNI'].address, ethers.constants.MaxUint256)).wait();
-    await (await xSNXContract.approve(testData['xSNX/xAAVE/xUNI'].address, ethers.constants.MaxUint256)).wait();
-    await (await xUNIContract.approve(testData['xSNX/xAAVE/xUNI'].address, ethers.constants.MaxUint256)).wait();
-    stopLog('Approving xTokens');
-
-    //configure (bind)
-    startLog('Binding xTokens on Pool');
-    const pool1Contract: IBPool = (await ethers.getContractAt('IBPool', testData['xSNX/xAAVE/xUNI'].address)) as IBPool;
-    await (await pool1Contract.setSwapFee('3000000000000000')).wait();
-    await (
-      await pool1Contract.bind(testData.xAAVE.address, ethers.constants.WeiPerEther.mul(46), '5000000000000000000')
-    ).wait();
-    await (
-      await pool1Contract.bind(testData.xSNX.address, ethers.constants.WeiPerEther.mul(897), '5000000000000000000')
-    ).wait();
-    await (
-      await pool1Contract.bind(testData.xUNI.address, ethers.constants.WeiPerEther.mul(583), '5000000000000000000')
-    ).wait();
-    stopLog('Binding xTokens on Pool');
-
-    // finalize
-    startLog('Finalizing Pool');
-    await (await pool1Contract.finalize()).wait();
-    stopLog('Finalizing Pool');
-
-    //set pares in BRegistry
-    startLog('Registering Pairs');
-    await (
-      await bRegistryContract.addPoolPair(
-        testData['xSNX/xAAVE/xUNI'].address,
-        testData.xAAVE.address,
-        testData.xSNX.address,
-      )
-    ).wait();
-    await (
-      await bRegistryContract.addPoolPair(
-        testData['xSNX/xAAVE/xUNI'].address,
-        testData.xAAVE.address,
-        testData.xUNI.address,
-      )
-    ).wait();
-    await (
-      await bRegistryContract.addPoolPair(
-        testData['xSNX/xAAVE/xUNI'].address,
-        testData.xSNX.address,
-        testData.xUNI.address,
-      )
-    ).wait();
-    stopLog('Registering Pairs');
 
     // ----------- POOL 2
     //create
     startLog('Deploying xWETH 50% xDAI 50% Pool');
-    const pool2Receipt = await (await bFactoryContract.newBPool()).wait();
+    const pool2Receipt = await (await bFactoryContract.newBPool({gasLimit: '1000000'})).wait();
     const newPool2Event = pool2Receipt.events?.find(log => log.event && log.event === 'LOG_NEW_POOL');
     const pool2Address = (newPool2Event && newPool2Event.args ? newPool2Event.args.pool : '') as string;
 
@@ -420,17 +232,18 @@ async function main(): Promise<void> {
 
     //mint required tokens
     startLog('Minting tokens');
-    await (await DAIContract.mint(ethers.constants.WeiPerEther.mul(17963))).wait();
+    await (await DAIContract.mint(ethers.constants.WeiPerEther.mul(1000))).wait();
     stopLog('Minting tokens');
 
     //wrapp tokens
     startLog('Wrapping tokens');
     await (
       await xTokenWrapperContract.wrap('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', 0, {
-        value: ethers.constants.WeiPerEther.mul(20),
+        value: '200000000000000000',
+        gasLimit: '1000000'
       })
     ).wait();
-    await (await xTokenWrapperContract.wrap(DAIContract.address, ethers.constants.WeiPerEther.mul(17963))).wait();
+    await (await xTokenWrapperContract.wrap(DAIContract.address, ethers.constants.WeiPerEther.mul(500))).wait();
     stopLog('Wrapping tokens');
 
     //approve xTokens
@@ -442,12 +255,12 @@ async function main(): Promise<void> {
     //configure (bind)
     startLog('Binding xTokens on Pool');
     const pool2Contract: IBPool = (await ethers.getContractAt('IBPool', testData['xWETH/xDAI'].address)) as IBPool;
-    await (await pool2Contract.setSwapFee('1500000000000000')).wait();
+    await (await pool2Contract.setSwapFee('1500000000000000', {gasLimit: '1000000'})).wait();
     await (
-      await pool2Contract.bind(testData.xETH.address, ethers.constants.WeiPerEther.mul(10), '25000000000000000000')
+      await pool2Contract.bind(testData.xETH.address,  '100000000000000000', '25000000000000000000', {gasLimit: '1000000'})
     ).wait();
     await (
-      await pool2Contract.bind(testData.xDAI.address, ethers.constants.WeiPerEther.mul(17963), '25000000000000000000')
+      await pool2Contract.bind(testData.xDAI.address, ethers.constants.WeiPerEther.mul(179), '25000000000000000000', {gasLimit: '1000000'})
     ).wait();
     stopLog('Binding xTokens on Pool');
 
@@ -462,95 +275,7 @@ async function main(): Promise<void> {
       await bRegistryContract.addPoolPair(testData['xWETH/xDAI'].address, testData.xETH.address, testData.xDAI.address)
     ).wait();
     stopLog('Registering Pairs');
-
-    // ----------- POOL 3
-    //create
-    startLog('Deploying xWETH 50% xUSDC 50% Pool');
-    const pool3Receipt = await (await bFactoryContract.newBPool()).wait();
-    const newPool3Event = pool3Receipt.events?.find(log => log.event && log.event === 'LOG_NEW_POOL');
-    const pool3Address = (newPool3Event && newPool3Event.args ? newPool3Event.args.pool : '') as string;
-
-    testData = {
-      ...testData,
-      'xWETH/xUSDC': {
-        address: pool3Address,
-      },
-    };
-
-    await write(testData);
-    stopLog(`xWETH/xUSDC Pool - address: ${pool3Address}`);
-
-    //mint required tokens
-    startLog('Minting tokens');
-    await (await USDCContract.mint(ethers.constants.WeiPerEther.mul(17856))).wait();
-    stopLog('Minting tokens');
-
-    //wrapp tokens
-    startLog('Wrapping tokens');
-    await (await xTokenWrapperContract.wrap(USDCContract.address, ethers.constants.WeiPerEther.mul(17856))).wait();
-    stopLog('Wrapping tokens');
-
-    //approve xTokens
-    startLog('Approving xTokens');
-    await (await xETHContract.approve(testData['xWETH/xUSDC'].address, ethers.constants.MaxUint256)).wait();
-    await (await xUSDCContract.approve(testData['xWETH/xUSDC'].address, ethers.constants.MaxUint256)).wait();
-    stopLog('Approving xTokens');
-
-    //configure (bind)
-    startLog('Binding xTokens on Pool');
-    const pool3Contract: IBPool = (await ethers.getContractAt('IBPool', testData['xWETH/xUSDC'].address)) as IBPool;
-    await (await pool3Contract.setSwapFee('8000000000000000')).wait();
-    await (
-      await pool3Contract.bind(testData.xETH.address, ethers.constants.WeiPerEther.mul(10), '25000000000000000000')
-    ).wait();
-
-    await (
-      await pool3Contract.bind(testData.xUSDC.address, ethers.constants.WeiPerEther.mul(17856), '25000000000000000000')
-    ).wait();
-    stopLog('Binding xTokens on Pool');
-
-    // NOT finalize
-
-    //set pares in BRegistry
-    startLog('Registering Pairs');
-    await (
-      await bRegistryContract.addPoolPair(
-        testData['xWETH/xUSDC'].address,
-        testData.xETH.address,
-        testData.xUSDC.address,
-      )
-    ).wait();
-    stopLog('Registering Pairs');
   }
-
-  // Deploy xPool Tokens
-  startLog('Deploying SM Wrapped Pool Token - 33xSNX/33xAAVE/33xUNI');
-  const xPool1Receipt = await (
-    await xTokenFactoryContract.deployXToken(
-      testData['xSNX/xAAVE/xUNI'].address,
-      'SM Wrapped Pool Token - 33% xSNX / 33% xAAVE / 33% xUNI',
-      'xSPT',
-      18,
-      '',
-      deploymentData.AuthorizationProxy.address,
-      deploymentData.EthPriceFeed.address, // assetFeed can't be zero addres so we need to set something  althought xBPT wont use the assetFeed
-    )
-  ).wait();
-
-  const xPool1DeployedEvent = xPool1Receipt.events?.find(log => log.event && log.event === 'XTokenDeployed');
-  const xPool1Address = (xPool1DeployedEvent && xPool1DeployedEvent.args
-    ? xPool1DeployedEvent.args.xToken
-    : '') as string;
-
-  testData = {
-    ...testData,
-    'SM Wrapped Pool Token - 33xSNX/33xAAVE/33xUNI': {
-      address: xPool1Address,
-    },
-  };
-
-  await write(testData);
-  stopLog(`SM Wrapped Pool Token - 33% xSNX / 33% xAAVE / 33% xUNI deployed - address: ${xPool1Address}`);
 
   // Deploy xPool Tokens
   startLog('Deploying SM Wrapped Pool Token - 50% xWETH / 50% xDAI');
@@ -580,35 +305,6 @@ async function main(): Promise<void> {
 
   await write(testData);
   stopLog(`SM Wrapped Pool Token - 50% xWETH / 50% xDAI deployed - address: ${xPool2Address}`);
-
-  // Deploy xPool Tokens
-  startLog('Deploying SM Wrapped Pool Token - 50% xWETH / 50% xUSDC');
-  const xPool3Receipt = await (
-    await xTokenFactoryContract.deployXToken(
-      testData['xWETH/xUSDC'].address,
-      'SM Wrapped Pool Token - 50% xWETH / 50% xUSDC',
-      'xSPT',
-      18,
-      '',
-      deploymentData.AuthorizationProxy.address,
-      deploymentData.EthPriceFeed.address, // assetFeed can't be zero addres so we need to set something  althought xBPT wont use the assetFeed
-    )
-  ).wait();
-
-  const xPool3DeployedEvent = xPool3Receipt.events?.find(log => log.event && log.event === 'XTokenDeployed');
-  const xPool3Address = (xPool3DeployedEvent && xPool3DeployedEvent.args
-    ? xPool3DeployedEvent.args.xToken
-    : '') as string;
-
-  testData = {
-    ...testData,
-    'SM Wrapped Pool Token - 50xWETH/50xUSDC': {
-      address: xPool3Address,
-    },
-  };
-
-  await write(testData);
-  stopLog(`SM Wrapped Pool Token - 50% xWETH / 50% xUSDC deployed - address: ${xPool3Address}`);
 }
 
 async function read(filename: string): Promise<any> {

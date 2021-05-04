@@ -4,6 +4,7 @@ pragma solidity ^0.7.0;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol";
+import "hardhat/console.sol";
 
 import "../interfaces/IEurPriceFeed.sol";
 
@@ -219,6 +220,7 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
         require(_asset != address(0), "asset is the zero address");
         require(_feed != address(0), "asset feed is the zero address");
         emit AssetEthFeedSet(_asset, _feed);
+        console.log("set asset %s %s",_asset, _feed);
         assetEthFeed[_asset] = _feed;
     }
 
@@ -238,8 +240,11 @@ contract EurPriceFeed is IEurPriceFeed, AccessControl {
         int256 eurUsdPrice = AggregatorV2V3Interface(eurUsdFeed).latestAnswer();
 
         uint256 ethUsdDecimals = AggregatorV2V3Interface(ethUsdFeed).decimals();
+
+        console.log("ethUsdFeed %s ",ethUsdFeed);
         int256 ethUsdPrice = AggregatorV2V3Interface(ethUsdFeed).latestAnswer();
 
+        console.log("using feed %s ",assetEthFeed[_asset]);
         uint256 assetEthDecimals = AggregatorV2V3Interface(assetEthFeed[_asset]).decimals();
         int256 assetEthPrice = AggregatorV2V3Interface(assetEthFeed[_asset]).latestAnswer();
 
