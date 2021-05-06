@@ -65,14 +65,15 @@ const config: HardhatUserConfig = {
     hardhat: {
       forking: {
         url: 'not commiting this',
+        enabled: true,
       },
       blockGasLimit: 1000000000,
       throwOnCallFailures: false,
+      chainId: 1,
       accounts: {
         mnemonic,
         accountsBalance: '10000000000000000000000000000000000',
       },
-      chainId: chainIds.hardhat,
     },
     goerli: createTestnetConfig('goerli'),
     kovan: createTestnetConfig('kovan'),

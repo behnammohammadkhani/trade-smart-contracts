@@ -16,6 +16,11 @@ import { promises as fs } from 'fs';
 import fsExtra from 'fs-extra';
 import { getChainId, networkNames } from '@openzeppelin/upgrades-core';
 import ora, { Ora } from 'ora';
+import * as chainlinkFeeds from './chainlink-feeds.json' 
+
+type ValidChainId = keyof typeof chainlinkFeeds;
+
+type Token = 'USDC'| 'DAI'| 'BTC'| 'SNX'| 'AAVE'
 
 let spinner: Ora;
 
@@ -31,7 +36,14 @@ async function main(): Promise<void> {
     deploymentData.PermissionManagerProxy.address,
   )) as PermissionManager;
   startLog('Assigning Tier2 to user');
-  await (await permissionManagerContract.assignItem(2, [deployerAddress])).wait();
+  // FIXME: this wastes gas
+  await permissionManagerContract.assignItem(2, [deployerAddress]).catch(err => {
+    if(err.message.includes('Account is assigned with item')){
+      console.log('The deployer already has the required permissions. Skipping');
+    }else{
+      throw err;
+    }
+  });
   stopLog('Assigning Tier2 to user');
 
   const ERC20MintableFactory: ContractFactory = await ethers.getContractFactory('ERC20Mintable');
@@ -94,7 +106,7 @@ async function main(): Promise<void> {
       18,
       '',
       deploymentData.AuthorizationProxy.address,
-      '0x74825DbC8BF76CC4e9494d0ecB210f676Efa001D',
+      await getAssetToEthPricefeed('DAI'),
     )
   ).wait();
 
@@ -120,7 +132,7 @@ async function main(): Promise<void> {
       18,
       '',
       deploymentData.AuthorizationProxy.address,
-      '0x2431452A0010a43878bF198e170F6319Af6d27F4',
+      await getAssetToEthPricefeed('BTC'),
     )
   ).wait();
 
@@ -146,7 +158,7 @@ async function main(): Promise<void> {
       6,
       '',
       deploymentData.AuthorizationProxy.address,
-      '0xdCA36F27cbC4E38aE16C4E9f99D39b42337F6dcf',
+      await getAssetToEthPricefeed('USDC'),
     )
   ).wait();
 
@@ -323,6 +335,18 @@ async function write(data: any): Promise<void> {
   const deploymentsFile = await getTestnetDataFile();
   await fsExtra.ensureFile(deploymentsFile);
   await fs.writeFile(deploymentsFile, JSON.stringify(data, null, 2) + '\n');
+}
+
+async function getAssetToEthPricefeed(asset: Token): Promise<string>{
+  // trust, don't verify
+  // TODO: learn typescript
+  const chainId: ValidChainId = (await getChainId(hre.network.provider)).toString() as ValidChainId;
+  console.log(chainId);
+  const feedAddress = chainlinkFeeds[chainId][asset] as string;
+  if (!feedAddress){
+    throw new Error(`feed ${asset} unavailable on network ${chainId}`);
+  }
+  return feedAddress;
 }
 
 async function getDeploymentFile() {
