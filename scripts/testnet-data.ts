@@ -18,14 +18,14 @@ import { getChainId, networkNames } from '@openzeppelin/upgrades-core';
 import ora, { Ora } from 'ora';
 import * as chainlinkFeeds from './chainlink-feeds.json' 
 
-type ValidChainId = keyof typeof chainlinkFeeds;
+const { ethers } = hre;
 
-type Token = 'USDC'| 'DAI'| 'BTC'| 'SNX'| 'AAVE'
+type ValidChainId = keyof typeof chainlinkFeeds;
+type Token = 'USDC'| 'DAI'| 'WBTC'| 'SNX'| 'AAVE'
 
 let spinner: Ora;
 
 async function main(): Promise<void> {
-  const { ethers } = hre;
   const [deployer] = await ethers.getSigners();
   const deployerAddress = await deployer.getAddress();
   const deploymentData = await read(await getDeploymentFile());
@@ -37,59 +37,22 @@ async function main(): Promise<void> {
   )) as PermissionManager;
   startLog('Assigning Tier2 to user');
   // FIXME: this wastes gas
-  await permissionManagerContract.assignItem(2, [deployerAddress]).catch(err => {
+  await permissionManagerContract.assignItem(2, [deployerAddress])
+  .then(() => {
+    stopLog('Assigning Tier2 to user');
+  })
+  .catch(err => {
     if(err.message.includes('Account is assigned with item')){
-      console.log('The deployer already has the required permissions. Skipping');
+      stopLog('The deployer already has the required permissions. Skipping');
     }else{
       throw err;
     }
   });
-  stopLog('Assigning Tier2 to user');
-
-  const ERC20MintableFactory: ContractFactory = await ethers.getContractFactory('ERC20Mintable');
 
   // Mock Tokens
-  startLog('Deploying Mock DAI');
-  const DAIContract: ERC20Mintable = (await ERC20MintableFactory.deploy('Dai Stablecoin', 'DAI', 18)) as ERC20Mintable;
-  await DAIContract.deployed();
-
-  testData = {
-    ...testData,
-    DAI: {
-      address: DAIContract.address,
-    },
-  };
-
-  await write(testData);
-  stopLog(`Mock DAI deployed - address: ${DAIContract.address}`);
-
-  startLog('Deploying Mock WBTC');
-  const WBTCContract: ERC20Mintable = (await ERC20MintableFactory.deploy('Wrapped Bitcoin', 'WBTC', 18)) as ERC20Mintable;
-  await WBTCContract.deployed();
-
-  testData = {
-    ...testData,
-    WBTC: {
-      address: WBTCContract.address,
-    },
-  };
-
-  await write(testData);
-  stopLog(`Mock WBTC deployed - address: ${WBTCContract.address}`);
-
-  startLog('Deploying Mock USDC');
-  const USDCContract: ERC20Mintable = (await ERC20MintableFactory.deploy('USD Coin', 'USDC', 6)) as ERC20Mintable;
-  await USDCContract.deployed();
-
-  testData = {
-    ...testData,
-    USDC: {
-      address: USDCContract.address,
-    },
-  };
-
-  await write(testData);
-  stopLog(`Mock USDC deployed - address: ${USDCContract.address}`);
+  const DAIContract = await deployMockedToken(testData, 'DAI', 'DAI stablecoin', 18);
+  const WBTCContract = await deployMockedToken(testData, 'WBTC', 'Wrapped Bitcoin', 8);
+  const USDCContract = await deployMockedToken(testData, 'USDC', 'USD Coin', 18);
 
   // // xTokens
   const xTokenFactoryContract: XTokenFactory = (await ethers.getContractAt(
@@ -132,7 +95,7 @@ async function main(): Promise<void> {
       18,
       '',
       deploymentData.AuthorizationProxy.address,
-      await getAssetToEthPricefeed('BTC'),
+      await getAssetToEthPricefeed('WBTC'),
     )
   ).wait();
 
@@ -319,7 +282,9 @@ async function main(): Promise<void> {
   stopLog(`SM Wrapped Pool Token - 50% xWETH / 50% xDAI deployed - address: ${xPool2Address}`);
 }
 
-async function read(filename: string): Promise<any> {
+type TestnetData = {[key: string]: {address: string }}
+
+async function read(filename: string): Promise<TestnetData> {
   try {
     return JSON.parse(await fs.readFile(filename, 'utf8'));
   } catch (e) {
@@ -341,7 +306,6 @@ async function getAssetToEthPricefeed(asset: Token): Promise<string>{
   // trust, don't verify
   // TODO: learn typescript
   const chainId: ValidChainId = (await getChainId(hre.network.provider)).toString() as ValidChainId;
-  console.log(chainId);
   const feedAddress = chainlinkFeeds[chainId][asset] as string;
   if (!feedAddress){
     throw new Error(`feed ${asset} unavailable on network ${chainId}`);
@@ -367,6 +331,20 @@ function startLog(message: string) {
 
 function stopLog(message: string) {
   spinner.succeed(message);
+}
+
+async function deployMockedToken(testData: TestnetData, symbol: Token, name: string, decimals: number): Promise<ERC20Mintable>{
+  startLog(`Deploying Mock ${symbol}`);
+  const ERC20MintableFactory: ContractFactory = await ethers.getContractFactory('ERC20Mintable');
+
+  const contract: ERC20Mintable = (await ERC20MintableFactory.deploy(name,symbol, decimals)) as ERC20Mintable;
+  await contract.deployed();
+
+  testData[symbol] = { address: contract.address };
+
+  await write(testData);
+  stopLog(`Mock ${symbol} deployed - address: ${contract.address}`);
+  return contract;
 }
 
 // We recommend this pattern to be able to use async/await everywhere
