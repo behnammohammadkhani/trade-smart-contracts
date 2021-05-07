@@ -1,4 +1,5 @@
 import hre from 'hardhat';
+import assert from 'assert';
 import { ContractFactory } from 'ethers';
 import {
   XTokenFactory,
@@ -90,113 +91,8 @@ async function main(): Promise<void> {
   startLog('Approving tokens');
   await await WBTCContract.approve(xTokenWrapperContract.address, ethers.constants.MaxUint256);
   await await DAIContract.approve(xTokenWrapperContract.address, ethers.constants.MaxUint256);
-  await await USDCContract.approve(xTokenWrapperContract.address, ethers.constants.MaxUint256);
+  // await await USDCContract.approve(xTokenWrapperContract.address, ethers.constants.MaxUint256);
   stopLog('Approving tokens');
-
-  // Pools
-  if (process.env.BFACTORY) {
-    const bFactoryContract: IBFactory = (await ethers.getContractAt('IBFactory', process.env.BFACTORY)) as IBFactory;
-
-    // ----------- POOL 2
-    //create
-    startLog('Deploying xWETH 50% xDAI 50% Pool');
-    const pool2Receipt = await (await bFactoryContract.newBPool({ gasLimit: '1000000' })).wait();
-    const newPool2Event = pool2Receipt.events?.find(log => log.event && log.event === 'LOG_NEW_POOL');
-    const pool2Address = (newPool2Event && newPool2Event.args ? newPool2Event.args.pool : '') as string;
-
-    testData = {
-      ...testData,
-      'xWETH/xDAI': {
-        address: pool2Address,
-      },
-    };
-
-    await write(testData);
-    stopLog(`xWETH/xDAI Pool - address: ${pool2Address}`);
-
-    //mint required tokens
-    startLog('Minting tokens');
-    await (await DAIContract.mint(ethers.constants.WeiPerEther.mul(1000))).wait();
-    stopLog('Minting tokens');
-
-    //wrapp tokens
-    startLog('Wrapping tokens');
-    await (
-      await xTokenWrapperContract.wrap('0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', 0, {
-        value: '200000000000000000',
-        gasLimit: '1000000',
-      })
-    ).wait();
-    await (await xTokenWrapperContract.wrap(DAIContract.address, ethers.constants.WeiPerEther.mul(500))).wait();
-    stopLog('Wrapping tokens');
-
-    //approve xTokens
-    startLog('Approving xTokens');
-    await (await xETHContract.approve(testData['xWETH/xDAI'].address, ethers.constants.MaxUint256)).wait();
-    await (await xDAIContract.approve(testData['xWETH/xDAI'].address, ethers.constants.MaxUint256)).wait();
-    stopLog('Approving xTokens');
-
-    //configure (bind)
-    startLog('Binding xTokens on Pool');
-    const pool2Contract: IBPool = (await ethers.getContractAt('IBPool', testData['xWETH/xDAI'].address)) as IBPool;
-    await (await pool2Contract.setSwapFee('1500000000000000', { gasLimit: '1000000' })).wait();
-    await (
-      await pool2Contract.bind(testData.xETH.address, '100000000000000000', '25000000000000000000', {
-        gasLimit: '1000000',
-      })
-    ).wait();
-    await (
-      await pool2Contract.bind(testData.xDAI.address, ethers.constants.WeiPerEther.mul(179), '25000000000000000000', {
-        gasLimit: '1000000',
-      })
-    ).wait();
-    stopLog('Binding xTokens on Pool');
-
-    // finalize
-    startLog('Finalizing Pool');
-    await (await pool2Contract.finalize()).wait();
-    stopLog('Finalizing Pool');
-
-    //set pares in BRegistry
-    startLog('Registering Pairs');
-    await (
-      await bRegistryContract.addPoolPair(testData['xWETH/xDAI'].address, testData.xETH.address, testData.xDAI.address)
-    ).wait();
-    stopLog('Registering Pairs');
-  }
-
-  const xTokenFactoryContract: XTokenFactory = (await ethers.getContractAt(
-    'XTokenFactory',
-    deploymentData.XTokenFactory.address,
-  )) as XTokenFactory;
-  // Deploy xPool Tokens
-  startLog('Deploying SM Wrapped Pool Token - 50% xWETH / 50% xDAI');
-  const xPool2Receipt = await (
-    await xTokenFactoryContract.deployXToken(
-      testData['xWETH/xDAI'].address,
-      'SM Wrapped Pool Token - 50% xWETH / 50% xDAI',
-      'xSPT',
-      18,
-      '',
-      deploymentData.AuthorizationProxy.address,
-      deploymentData.EthPriceFeed.address, // assetFeed can't be zero addres so we need to set something  althought xBPT wont use the assetFeed
-    )
-  ).wait();
-
-  const xPool2DeployedEvent = xPool2Receipt.events?.find(log => log.event && log.event === 'XTokenDeployed');
-  const xPool2Address = (xPool2DeployedEvent && xPool2DeployedEvent.args
-    ? xPool2DeployedEvent.args.xToken
-    : '') as string;
-
-  testData = {
-    ...testData,
-    'SM Wrapped Pool Token - 50xWETH/50xDAI': {
-      address: xPool2Address,
-    },
-  };
-
-  await write(testData);
-  stopLog(`SM Wrapped Pool Token - 50% xWETH / 50% xDAI deployed - address: ${xPool2Address}`);
 }
 
 type TestnetData = { [key: string]: { address: string } };
@@ -310,6 +206,99 @@ async function deployXToken(
   stopLog(`deployed xToken for ${tokenSymbol}, ${xTokenSymbol} at address: ${xTokenAddress}`);
   // I'm doing a return await just to do a cast 😭
   return (await ethers.getContractAt('XToken', xTokenAddress)) as XToken;
+}
+
+async function createPool(deploymentData: any, testData: TestnetData, identifier: string, contracts:[{contract: ERC20Mintable, amount: number}]){
+  assert(process.env.BFACTORY);
+  const bFactoryContract: IBFactory = (await ethers.getContractAt('IBFactory', process.env.BFACTORY)) as IBFactory;
+  const xTokenWrapperContract: XTokenWrapper = (await ethers.getContractAt(
+    'XTokenWrapper',
+    deploymentData.XTokenWrapper.address,
+  )) as XTokenWrapper;
+
+  //create
+  startLog(`Deploying ${identifier} Pool`);
+  const poolReceipt = await (await bFactoryContract.newBPool({ gasLimit: '1000000' })).wait();
+  const newPoolEvent = poolReceipt.events?.find(log => log.event && log.event === 'LOG_NEW_POOL');
+  const poolAddress = (newPoolEvent && newPoolEvent.args ? newPoolEvent.args.pool : '') as string;
+  const poolContract: IBPool = (await ethers.getContractAt('IBPool', poolAddress)) as IBPool;
+  await poolContract.setSwapFee('1500000000000000', { gasLimit: '1000000' });
+
+  testData[identifier] = {
+    address: poolAddress,
+  };
+
+  await write(testData);
+  stopLog(`${identifier} Pool - address: ${poolAddress}`);
+
+  //mint required tokens
+  // TODO: deal with real tokens
+  await contracts.reduce((async function(acc:Promise<void>, {contract, amount}) {
+    const tokenSymbol: string = await contract.symbol();
+    startLog(`Minting ${tokenSymbol}`);
+    await contract.mint(amount);
+    stopLog(`Minting ${tokenSymbol}`);
+    startLog(`Approving ${tokenSymbol}`);
+    // TODO: there are tokens that revert when changing the allowance from non-zero to non-zero
+    // yes that makes sense: https://github.com/sec-bit/awesome-buggy-erc20-tokens/blob/master/ERC20_token_issue_list.md#a20-re-approve
+    await contract.approve(xTokenWrapperContract.address, amount);
+    stopLog(`Approving ${tokenSymbol}`);
+    startLog(`Wrapping ${tokenSymbol}`);
+    await xTokenWrapperContract.wrap(contract.address, amount);
+    stopLog(`Wrapping ${tokenSymbol}`);
+    // TODO figure out what the last parameter even means
+    startLog(`Binding ${tokenSymbol} on ${identifier}, amount: ${amount}`);
+    await poolContract.bind(contract.address, amount, '25000000000000000000', {
+      gasLimit: '1000000',
+    })
+    stopLog(`Bound ${tokenSymbol} on ${identifier}, amount: ${amount}`);
+  }),Promise.resolve());
+
+  // finalize
+  startLog(`Finalizing Pool ${identifier}`);
+  await pool2Contract.finalize();
+  stopLog(`Finalizing Pool ${identifier}`);
+
+  //set pares in BRegistry
+  startLog('Registering Pairs');
+  await (
+    await bRegistryContract.addPoolPair(testData['xWETH/xDAI'].address, testData.xETH.address, testData.xDAI.address)
+  ).wait();
+  stopLog('Registering Pairs');
+  }
+
+  const xTokenFactoryContract: XTokenFactory = (await ethers.getContractAt(
+    'XTokenFactory',
+    deploymentData.XTokenFactory.address,
+  )) as XTokenFactory;
+  // Deploy xPool Tokens
+  startLog('Deploying SM Wrapped Pool Token - 50% xWETH / 50% xDAI');
+  const xPool2Receipt = await (
+    await xTokenFactoryContract.deployXToken(
+      testData['xWETH/xDAI'].address,
+      'SM Wrapped Pool Token - 50% xWETH / 50% xDAI',
+      'xSPT',
+      18,
+      '',
+      deploymentData.AuthorizationProxy.address,
+      deploymentData.EthPriceFeed.address, // assetFeed can't be zero addres so we need to set something  althought xBPT wont use the assetFeed
+    )
+  ).wait();
+
+  const xPool2DeployedEvent = xPool2Receipt.events?.find(log => log.event && log.event === 'XTokenDeployed');
+  const xPool2Address = (xPool2DeployedEvent && xPool2DeployedEvent.args
+    ? xPool2DeployedEvent.args.xToken
+    : '') as string;
+
+  testData = {
+    ...testData,
+    'SM Wrapped Pool Token - 50xWETH/50xDAI': {
+      address: xPool2Address,
+    },
+  };
+
+  await write(testData);
+  stopLog(`SM Wrapped Pool Token - 50% xWETH / 50% xDAI deployed - address: ${xPool2Address}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
