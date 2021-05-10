@@ -41,23 +41,6 @@ if (!process.env.INFURA_API_KEY) {
   infuraApiKey = process.env.INFURA_API_KEY;
 }
 
-// DO NOT REMOVE YET, USEFUL FOR USE A FORKED NETWORK FOR TEST
-// let hardHatNetwork: HardhatNetworkUserConfig = { chainId: chainIds.hardhat };
-// if (process.env.FORK_RPC_URL) {
-//   hardHatNetwork = {
-//     chainId: chainIds.hardhat,
-//     forking: {
-//       url: process.env.FORK_RPC_URL,
-//       blockNumber: 11843408,
-//     },
-//     gas: 'auto',
-//     throwOnCallFailures: false,
-//     accounts: {
-//       accountsBalance: '10000000000000000000000000000000000',
-//     },
-//   };
-// }
-
 function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig {
   const url: string = 'https://' + network + '.infura.io/v3/' + infuraApiKey;
   return {
@@ -68,6 +51,7 @@ function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig 
       path: "m/44'/60'/0'/0",
     },
     chainId: chainIds[network],
+    gas: 'auto',
     url,
   };
 }
@@ -75,7 +59,22 @@ function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   networks: {
-    hardhat: { chainId: chainIds.hardhat },
+    ganache: {
+      url: 'http://localhost:8545', // Localhost (default: none)
+    },
+    hardhat: {
+      forking: {
+        url: 'not commiting this',
+        enabled: true,
+      },
+      blockGasLimit: 1000000000,
+      throwOnCallFailures: false,
+      chainId: 1,
+      accounts: {
+        mnemonic,
+        accountsBalance: '10000000000000000000000000000000000',
+      },
+    },
     goerli: createTestnetConfig('goerli'),
     kovan: createTestnetConfig('kovan'),
     rinkeby: createTestnetConfig('rinkeby'),
