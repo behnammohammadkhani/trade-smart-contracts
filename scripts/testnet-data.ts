@@ -59,7 +59,7 @@ async function main(): Promise<void> {
   startLog('Assigning Tier2 to user');
   // FIXME: this wastes gas
   await permissionManagerContract
-    .assignItem(2, [deployerAddress])
+    .assignItem(2, [deployerAddress], {gasLimit: '200000'})
     .then(() => {
       stopLog('Assigning Tier2 to user');
     })
@@ -96,8 +96,8 @@ async function main(): Promise<void> {
     'xDAI/xWBTC',
     'SM Wrapped Pool Token - 50% xWBTC / 50% xDAI',
     [
-      {token: WBTCContract, xToken: xWBTCContract, amount: '60000000000000000000000'},
-      {token: DAIContract, xToken: xDAIContract, amount: '60000000000000000000000'}
+      {token: WBTCContract, xToken: xWBTCContract, amount: '100000000'},
+      {token: DAIContract, xToken: xDAIContract, amount:'55000000000000000000000'}
     ]
   );
 }
@@ -160,6 +160,12 @@ async function deployMockedToken(
   name: string,
   decimals: number,
 ): Promise<ERC20Mintable> {
+  if(testData[symbol]){
+    const address:string = testData[symbol].address;
+    startLog(`token ${symbol} already deployed, at address: ${address}`);
+    stopLog(`token ${symbol} already deployed, at address: ${address}`);
+    return (await ethers.getContractAt('ERC20Mintable', address)) as ERC20Mintable;
+  }
   startLog(`Deploying Mock ${symbol}`);
   const ERC20MintableFactory: ContractFactory = await ethers.getContractFactory('ERC20Mintable');
 
@@ -188,6 +194,12 @@ async function deployXToken(
 
   const tokenSymbol: TokenSymbol = token === 'ETH' ? 'ETH' : ((await token.symbol()) as TokenSymbol);
   const xTokenSymbol: XTokenSymbol = tokenToXToken(tokenSymbol);
+  if(testData[xTokenSymbol]){
+    const address:string = testData[xTokenSymbol].address;
+    startLog(`xtoken ${tokenSymbol} already deployed, at address: ${address}`);
+    stopLog(`xtoken ${tokenSymbol} already deployed, at address: ${address}`);
+    return (await ethers.getContractAt('XToken', address)) as XToken;
+  }
   const tokenAddress: string = token === 'ETH' ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : token.address;
   const decimals: number = token === 'ETH' ? 18 : await token.decimals();
 
@@ -272,7 +284,7 @@ async function createPool(deploymentData: any, testData: TestnetData, identifier
 
   // finalize
   startLog(`Finalizing Pool ${identifier}`);
-  await poolContract.finalize();
+  await poolContract.finalize({gasLimit: '300000'});
   stopLog(`Finalizing Pool ${identifier}`);
 
   //set pares in BRegistry
@@ -283,8 +295,8 @@ async function createPool(deploymentData: any, testData: TestnetData, identifier
       bRegistryContract.addPoolPair(poolContract.address, left.xToken.address, right.xToken.address))
   );
   stopLog('Registering Pairs');
-  // TODO: use erc20 type and see if I can get it to conform
   const poolAsToken: ERC20Mintable = (await ethers.getContractAt('ERC20Mintable', poolContract.address)) as ERC20Mintable;
+  // TODO: this saves the pool token under `xBPT`, so we should work on redefining how will the testnetData file look like
   return deployXToken(deploymentData, testData, poolAsToken, name);
 }
 
