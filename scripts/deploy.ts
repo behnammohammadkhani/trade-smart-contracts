@@ -376,6 +376,13 @@ async function main(): Promise<void> {
   await proConTx.wait();
   stopLog(`Granting PROTOCOL_CONTRACT permission to BPoolProxy contract - txHash: ${proConTx.hash}`);
 
+  //Grant TIER_2 permission to BPoolProxy 
+  startLog('Grant TIER_2 permission to BPoolProxy');
+  const tier2BpoolTx = await permissionManagerContract.assignItem(2, [bPoolProxyContract.address]);
+  updatetLog(`Granting TIER_2 permission to BPoolProxy contract - txHash: ${tier2BpoolTx.hash}`);
+  await tier2BpoolTx.wait();
+  stopLog(`Granting TIER_2 permission to BPoolProxy contract - txHash: ${tier2BpoolTx.hash}`);
+
   // POOL_CREATOR_USER is required
   if (process.env.POOL_CREATOR_USER) {
     //Grant POOL_CREATOR permission to Admin
