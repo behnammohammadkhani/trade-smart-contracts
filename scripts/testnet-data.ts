@@ -26,8 +26,8 @@ const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 
 type ValidChainId = keyof typeof chainlinkFeeds;
 type EthAsToken = 'ETH';
-type TokenSymbol = 'USDC' | 'DAI' | 'WBTC' | 'SNX' | 'AAVE'|'SPT' | EthAsToken;
-type XTokenSymbol = 'xUSDC' | 'xDAI' | 'xWBTC' | 'xSNX' | 'xAAVE' | 'xETH'|'xSPT';
+type TokenSymbol = 'USDC' | 'DAI' | 'WBTC' | 'SNX' | 'AAVE'|'SPT' | 'WETH'|EthAsToken;
+type XTokenSymbol = 'xUSDC' | 'xDAI' | 'xWBTC' | 'xSNX' | 'xAAVE' | 'xETH'|'xSPT'|'xWETH';
 
 type PoolConfig = {
   token: ERC20Mintable|EthAsToken,
@@ -40,6 +40,7 @@ function tokenToXToken(token: TokenSymbol): XTokenSymbol {
   const map = {
     USDC: 'xUSDC',
     ETH: 'xETH',
+    WETH: 'xWETH',
     DAI: 'xDAI',
     WBTC: 'xWBTC',
     SPT: 'xSPT',
@@ -79,47 +80,27 @@ async function main(): Promise<void> {
   // Mock Tokens
   const DAIContract = await deployMockedToken(testData, 'DAI', 'DAI stablecoin', 18);
   const WBTCContract = await deployMockedToken(testData, 'WBTC', 'Wrapped Bitcoin', 8);
-  const USDCContract = await deployMockedToken(testData, 'USDC', 'USD Coin', 18);
 
   // // xTokens
   const xDAIContract: XToken = await deployXToken(deploymentData, testData, DAIContract, 'SM Wrapped Dai Stablecoin');
   const xWBTCContract: XToken =  await deployXToken(deploymentData, testData, WBTCContract, 'SM Wrapped Wrapped Bitcoin');
-  const xUSDCContract: XToken =  await deployXToken(deploymentData, testData, USDCContract, 'SM Wrapped Wrapped Bitcoin');
 
   const xTokenWrapperAddress: string =  deploymentData.XTokenWrapper.address;
   //approve tokens
   startLog('Approving tokens');
-  await await WBTCContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
-  await await USDCContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
-  await await DAIContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
+  await WBTCContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
+  await DAIContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
   stopLog('Approving tokens');
-  startLog(`Minting tokens`);
-  await DAIContract.mint('6000000000000000000000000');
-  await WBTCContract.mint('6000000000000000000000000');
-  await USDCContract.mint('6000000000000000000000000');
-  stopLog(`Minting tokens`);
 
   await createPool(
     deploymentData,
     testData,
     'xDAI/xWBTC',
     'SM Wrapped Pool Token - 50% xWBTC / 50% xDAI',
-    '1500000000000000',
+    '2500000000000000',
     [
-      {token: WBTCContract, xToken: xWBTCContract, amount: '100000000', denorm:  '25000000000000000000'},
-      {token: DAIContract, xToken: xDAIContract, amount:'55000000000000000000000', denorm:  '25000000000000000000'}
-    ]
-  );
-
-  await createPool(
-    deploymentData,
-    testData,
-    'xDAI/xUSDC',
-    'SM Wrapped Pool Token - 50% xUSDC / 50% xDAI',
-    '1500000000000000',
-    [
-      {token: USDCContract, xToken: xUSDCContract, amount: '55000000000000000000000', denorm:  '25000000000000000000'},
-      {token: DAIContract, xToken: xDAIContract, amount:'55000000000000000000000', denorm:  '25000000000000000000'}
+      {token: WBTCContract, xToken: xWBTCContract, amount: '1000000', denorm:  '25000000000000000000'},
+      {token: DAIContract, xToken: xDAIContract, amount:'230000000000000000000', denorm:  '25000000000000000000'}
     ]
   );
 }
@@ -148,7 +129,8 @@ async function getAssetToEthPricefeed(asset: TokenSymbol): Promise<string> {
   // trust, don't verify
   // TODO: learn typescript
   const chainId: ValidChainId = (await getChainId(hre.network.provider)).toString() as ValidChainId;
-  if(asset == 'SPT') return chainlinkFeeds[chainId]['ETH'];
+  // i'd do a .includes but that doesn't help with static checking
+  if(asset == 'SPT' || asset =='WETH') return chainlinkFeeds[chainId]['ETH'];
   const feedAddress = chainlinkFeeds[chainId][asset] as string;
   if (!feedAddress) {
     throw new Error(`feed ${asset} unavailable on network ${chainId}`);
