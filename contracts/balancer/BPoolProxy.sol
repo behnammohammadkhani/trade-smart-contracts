@@ -53,6 +53,16 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
     /// @dev Address Utitlity Token - Used as feature flag for discounted fee
     address public utilityToken;
 
+     /**
+     * @dev Emitted when `joinPool` function is executed.
+     */
+    event JoinPool(address liquidityProvider, address bpool, uint256 shares);
+
+    /**
+     * @dev Emitted when `exitPool` function is executed.
+     */
+    event ExitPool(address iquidityProvider, address bpool, uint256 shares);
+
     /**
      * @dev Emitted when `registry` address is set.
      */
@@ -607,6 +617,8 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         require(xTokenWrapper.wrap(pool, poolAmountOut), "ERR_WRAP_POOL");
 
         transfer(IXToken(xTokenWrapper.tokenToXToken(pool)), poolAmountOut);
+
+        emit JoinPool(msg.sender, pool,  poolAmountOut);
     }
 
     /**
@@ -638,6 +650,8 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         for (uint256 i = 0; i < tokens.length; i++) {
             transfer(IXToken(tokens[i]), getBalance(IXToken(tokens[i])));
         }
+
+        emit ExitPool(msg.sender, pool, poolAmountIn); 
     }
 
     /**
@@ -665,6 +679,8 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         require(xTokenWrapper.wrap(pool, poolAmountOut), "ERR_WRAP_POOL");
 
         transfer(IXToken(xTokenWrapper.tokenToXToken(pool)), poolAmountOut);
+
+        emit JoinPool(msg.sender, pool,  poolAmountOut);
     }
 
     /**
@@ -696,6 +712,8 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
         require(xTokenWrapper.wrap(pool, poolAmountOut), "ERR_WRAP_POOL");
 
         transfer(IXToken(xTokenWrapper.tokenToXToken(pool)), poolAmountOut);
+
+        emit JoinPool(msg.sender, pool,  poolAmountOut);
     }
 
     /**
@@ -726,6 +744,8 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
 
         // push xToken
         transfer(IXToken(tokenOut), tokenAmountOut);
+
+        emit ExitPool(msg.sender, pool, poolAmountIn);
     }
 
     /**
@@ -765,6 +785,8 @@ contract BPoolProxy is Ownable, ISwap, ERC1155Holder {
 
             transfer(IXToken(wrappedLPT), remainingLPT);
         }
+
+        emit ExitPool(msg.sender, pool, poolAmountIn);
     }
 
     /**
