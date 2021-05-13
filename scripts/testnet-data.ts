@@ -26,10 +26,15 @@ const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 
 type ValidChainId = keyof typeof chainlinkFeeds;
 type EthAsToken = 'ETH';
-type TokenSymbol = 'USDC' | 'DAI' | 'WBTC' | 'SNX' | 'AAVE'|'BPT' | EthAsToken;
-type XTokenSymbol = 'xUSDC' | 'xDAI' | 'xWBTC' | 'xSNX' | 'xAAVE' | 'xETH'|'xBPT';
+type TokenSymbol = 'USDC' | 'DAI' | 'WBTC' | 'SNX' | 'AAVE'|'SPT' | EthAsToken;
+type XTokenSymbol = 'xUSDC' | 'xDAI' | 'xWBTC' | 'xSNX' | 'xAAVE' | 'xETH'|'xSPT';
 
-type PoolConfig = {token: ERC20Mintable|EthAsToken, xToken: XToken, amount: BigNumberish}
+type PoolConfig = {
+  token: ERC20Mintable|EthAsToken,
+  xToken: XToken,
+  amount: BigNumberish,
+  denorm: BigNumberish,
+}
 
 function tokenToXToken(token: TokenSymbol): XTokenSymbol {
   const map = {
@@ -37,7 +42,7 @@ function tokenToXToken(token: TokenSymbol): XTokenSymbol {
     ETH: 'xETH',
     DAI: 'xDAI',
     WBTC: 'xWBTC',
-    BPT: 'xBPT',
+    SPT: 'xSPT',
     SNX: 'xSNX',
     AAVE: 'xAAVE',
   };
@@ -74,20 +79,24 @@ async function main(): Promise<void> {
   // Mock Tokens
   const DAIContract = await deployMockedToken(testData, 'DAI', 'DAI stablecoin', 18);
   const WBTCContract = await deployMockedToken(testData, 'WBTC', 'Wrapped Bitcoin', 8);
+  const USDCContract = await deployMockedToken(testData, 'USDC', 'USD Coin', 18);
 
   // // xTokens
   const xDAIContract: XToken = await deployXToken(deploymentData, testData, DAIContract, 'SM Wrapped Dai Stablecoin');
   const xWBTCContract: XToken =  await deployXToken(deploymentData, testData, WBTCContract, 'SM Wrapped Wrapped Bitcoin');
+  const xUSDCContract: XToken =  await deployXToken(deploymentData, testData, USDCContract, 'SM Wrapped Wrapped Bitcoin');
 
   const xTokenWrapperAddress: string =  deploymentData.XTokenWrapper.address;
   //approve tokens
   startLog('Approving tokens');
   await await WBTCContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
+  await await USDCContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
   await await DAIContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
   stopLog('Approving tokens');
   startLog(`Minting tokens`);
   await DAIContract.mint('6000000000000000000000000');
   await WBTCContract.mint('6000000000000000000000000');
+  await USDCContract.mint('6000000000000000000000000');
   stopLog(`Minting tokens`);
 
   await createPool(
@@ -95,9 +104,22 @@ async function main(): Promise<void> {
     testData,
     'xDAI/xWBTC',
     'SM Wrapped Pool Token - 50% xWBTC / 50% xDAI',
+    '1500000000000000',
     [
-      {token: WBTCContract, xToken: xWBTCContract, amount: '100000000'},
-      {token: DAIContract, xToken: xDAIContract, amount:'55000000000000000000000'}
+      {token: WBTCContract, xToken: xWBTCContract, amount: '100000000', denorm:  '25000000000000000000'},
+      {token: DAIContract, xToken: xDAIContract, amount:'55000000000000000000000', denorm:  '25000000000000000000'}
+    ]
+  );
+
+  await createPool(
+    deploymentData,
+    testData,
+    'xDAI/xUSDC',
+    'SM Wrapped Pool Token - 50% xUSDC / 50% xDAI',
+    '1500000000000000',
+    [
+      {token: USDCContract, xToken: xUSDCContract, amount: '55000000000000000000000', denorm:  '25000000000000000000'},
+      {token: DAIContract, xToken: xDAIContract, amount:'55000000000000000000000', denorm:  '25000000000000000000'}
     ]
   );
 }
@@ -126,7 +148,7 @@ async function getAssetToEthPricefeed(asset: TokenSymbol): Promise<string> {
   // trust, don't verify
   // TODO: learn typescript
   const chainId: ValidChainId = (await getChainId(hre.network.provider)).toString() as ValidChainId;
-  if(asset == 'BPT') return chainlinkFeeds[chainId]['ETH'];
+  if(asset == 'SPT') return chainlinkFeeds[chainId]['ETH'];
   const feedAddress = chainlinkFeeds[chainId][asset] as string;
   if (!feedAddress) {
     throw new Error(`feed ${asset} unavailable on network ${chainId}`);
@@ -185,6 +207,7 @@ async function deployXToken(
   testData: TestnetData,
   token: ERC20Mintable | EthAsToken,
   name: string,
+  overrideIdentifier?: string
 ): Promise<XToken> {
 
   const xTokenFactoryContract: XTokenFactory = (await ethers.getContractAt(
@@ -193,11 +216,13 @@ async function deployXToken(
   )) as XTokenFactory;
 
   const tokenSymbol: TokenSymbol = token === 'ETH' ? 'ETH' : ((await token.symbol()) as TokenSymbol);
+  // always use the symbol here. wrapped pools have symbol SPT and should always have a warpper with symbol xSPT
   const xTokenSymbol: XTokenSymbol = tokenToXToken(tokenSymbol);
-  if(testData[xTokenSymbol]){
-    const address:string = testData[xTokenSymbol].address;
-    startLog(`xtoken ${tokenSymbol} already deployed, at address: ${address}`);
-    stopLog(`xtoken ${tokenSymbol} already deployed, at address: ${address}`);
+  const identifier: string = overrideIdentifier || xTokenSymbol;
+  if(testData[identifier]){
+    const address:string = testData[identifier].address;
+    startLog(`xtoken ${identifier} already deployed, at address: ${address}`);
+    stopLog(`xtoken ${identifier} already deployed, at address: ${address}`);
     return (await ethers.getContractAt('XToken', address)) as XToken;
   }
   const tokenAddress: string = token === 'ETH' ? '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' : token.address;
@@ -219,7 +244,7 @@ async function deployXToken(
   const deploymentEvent = receipt.events?.find(log => log.event && log.event === 'XTokenDeployed');
   const xTokenAddress = (deploymentEvent && deploymentEvent.args ? deploymentEvent.args.xToken : '') as string;
 
-  testData[xTokenSymbol] = {
+  testData[identifier] = {
     address: xTokenAddress,
   };
 
@@ -229,7 +254,7 @@ async function deployXToken(
   return (await ethers.getContractAt('XToken', xTokenAddress)) as XToken;
 }
 
-async function createPool(deploymentData: any, testData: TestnetData, identifier: string, name: string, contracts:Array<PoolConfig>){
+async function createPool(deploymentData: any, testData: TestnetData, identifier: string, name: string, swapFee: BigNumberish, contracts:Array<PoolConfig>){
   assert(process.env.BFACTORY);
   const bFactoryContract: IBFactory = (await ethers.getContractAt('IBFactory', process.env.BFACTORY)) as IBFactory;
   const bRegistryContract: BRegistry = (await ethers.getContractAt(
@@ -247,7 +272,7 @@ async function createPool(deploymentData: any, testData: TestnetData, identifier
   const newPoolEvent = poolReceipt.events?.find(log => log.event && log.event === 'LOG_NEW_POOL');
   const poolAddress = (newPoolEvent && newPoolEvent.args ? newPoolEvent.args.pool : '') as string;
   const poolContract: IBPool = (await ethers.getContractAt('IBPool', poolAddress)) as IBPool;
-  await poolContract.setSwapFee('1500000000000000', { gasLimit: '1000000' });
+  await poolContract.setSwapFee(swapFee, { gasLimit: '1000000' });
 
   testData[identifier] = {
     address: poolAddress,
@@ -256,7 +281,7 @@ async function createPool(deploymentData: any, testData: TestnetData, identifier
   await write(testData);
   stopLog(`${identifier} Pool - address: ${poolAddress}`);
 
-  await contracts.reduce((async function(acc:Promise<void>, {token, xToken, amount}) {
+  await contracts.reduce((async function(acc:Promise<void>, {token, xToken, amount, denorm}) {
     await acc;
     const tokenSymbol: string = token === 'ETH'? 'ETH' : await token.symbol();
     if(token !== 'ETH'){
@@ -276,7 +301,7 @@ async function createPool(deploymentData: any, testData: TestnetData, identifier
     }
     startLog(`Binding ${tokenSymbol} on ${identifier}, amount: ${amount}`);
     // TODO figure out what the last parameter even means
-    await poolContract.bind(xToken.address, BigNumber.from(amount), '25000000000000000000', {
+    await poolContract.bind(xToken.address, BigNumber.from(amount), denorm, {
       gasLimit: '1000000',
     })
     stopLog(`Bound ${tokenSymbol} on ${identifier}, amount: ${amount}`);
@@ -296,8 +321,8 @@ async function createPool(deploymentData: any, testData: TestnetData, identifier
   );
   stopLog('Registering Pairs');
   const poolAsToken: ERC20Mintable = (await ethers.getContractAt('ERC20Mintable', poolContract.address)) as ERC20Mintable;
-  // TODO: this saves the pool token under `xBPT`, so we should work on redefining how will the testnetData file look like
-  return deployXToken(deploymentData, testData, poolAsToken, name);
+  // TODO: this saves the pool token under `xSPT`, so we should work on redefining how will the testnetData file look like
+  return deployXToken(deploymentData, testData, poolAsToken, name, name);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
