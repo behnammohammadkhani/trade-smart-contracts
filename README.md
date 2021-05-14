@@ -12,6 +12,27 @@
 
 ## Addresses
 
+### Mainnet
+- **Deployer**: `0xbeAeE712741c7f99B64B798Ca127FE776d491FB4`
+
+- **Authorization**: `0xeFbcbD94d9C411E3f0FFa559CE627498122aCA82`
+- **OperationsRegistry**: `0xd641ae2aD8a0e72AD92dDEda7CEF67eE3f2A49b9`
+
+- **PermissionItems**: `0xB441417E6ff3ACf60B9F0216D8c3179913080dAa`
+- **PermissionManager**: `0xE214d97ba7fF83144699737f73D271C006013d91`
+
+- **XTokenWrapper**: `0x2b9dc65253c035Eb21778cB3898eab5A0AdA0cCe`
+- **XTokenFactory**: `0xE1532De8fa6EAd8aF4e461a9c3C9544c938F33B5`
+
+- **BPoolProxy**: `0x5321647F3c3769bc7bb9e10aB10d7F5C2E402c56`
+- **BRegistry**: `0x8133EEB249F0636bba0B8230Ba1089a219263c04`
+- **ProtocolFee**: `20000000000000000`
+- **MinProtocolFee**: `20000000000000000`
+- **MinProtocolFee**: `5000000000000000`
+- **FeeReceiver**: `0xCf6a97d02f9Cc47C94dE5a4874C32a0182638fb4`
+- **BFactrory**: `0x9186503AF1D7D3317b4C2c44A815BE984838C296`
+- **BPool Implementation**: `0xF5FaDa32917350b91fbD9BbdE62e69bF483A960A`
+
 ### Kovan
 - **Deployer**: `0xa16A6DcE3718846d6A02c8E8135b9aaE178eD17b`
 - **ProxyAdmin for AuthorizationProxy and PermissionManagerProxy**: `0x1aA868366D380683a42A5Bb559b6323697F25fF0`
