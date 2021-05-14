@@ -250,56 +250,67 @@ async function createPool(deploymentData: any, testData: TestnetData, identifier
 
   //create
   startLog(`Deploying ${identifier} Pool`);
-  const poolReceipt = await (await bFactoryContract.newBPool({ gasLimit: '1000000' })).wait();
-  const newPoolEvent = poolReceipt.events?.find(log => log.event && log.event === 'LOG_NEW_POOL');
-  const poolAddress = (newPoolEvent && newPoolEvent.args ? newPoolEvent.args.pool : '') as string;
-  const poolContract: IBPool = (await ethers.getContractAt('IBPool', poolAddress)) as IBPool;
-  await poolContract.setSwapFee(swapFee, { gasLimit: '1000000' });
+  let poolContract: IBPool;
 
-  testData[identifier] = {
-    address: poolAddress,
-  };
+  // TODO: this skips straight to finalization if the pool is already present,
+  // because it's what was useful for a particular deploy. In the future we'll
+  // probably want to check for every step separately
+  if(testData[identifier]){
+    const poolAddress = testData[identifier].address;
+    poolContract= (await ethers.getContractAt('IBPool', poolAddress)) as IBPool;
+    stopLog(`${identifier} Pool already deployed at address: ${poolAddress}`);
+  } else {
+    const poolReceipt = await (await bFactoryContract.newBPool({ gasLimit: '1000000' })).wait();
+    const newPoolEvent = poolReceipt.events?.find(log => log.event && log.event === 'LOG_NEW_POOL');
+    const poolAddress = (newPoolEvent && newPoolEvent.args ? newPoolEvent.args.pool : '') as string;
+    poolContract = (await ethers.getContractAt('IBPool', poolAddress)) as IBPool;
+    await poolContract.setSwapFee(swapFee, { gasLimit: '1000000' });
 
-  await write(testData);
-  stopLog(`${identifier} Pool - address: ${poolAddress}`);
+    testData[identifier] = {
+      address: poolAddress,
+    };
 
-  await contracts.reduce((async function(acc:Promise<void>, {token, xToken, amount, denorm}) {
-    await acc;
-    const tokenSymbol: string = token === 'ETH'? 'ETH' : await token.symbol();
-    if(token !== 'ETH'){
-      startLog(`Approving ${tokenSymbol}`);
-      // TODO: there are tokens that revert when changing the allowance from non-zero to non-zero
-      // yes that makes sense: https://github.com/sec-bit/awesome-buggy-erc20-tokens/blob/master/ERC20_token_issue_list.md#a20-re-approve
-      await token.approve(xTokenWrapperContract.address, amount);
-      await xToken.approve(poolContract.address, amount);
-      stopLog(`Approving ${tokenSymbol}`);
-      startLog(`Wrapping ${tokenSymbol}`);
-      await xTokenWrapperContract.wrap(token.address, amount);
-      stopLog(`Wraped ${tokenSymbol}`);
-    } else {
-      startLog(`Wrapping ${tokenSymbol}`);
-      await xTokenWrapperContract.wrap(ETH_ADDRESS, amount);
-      stopLog(`Wraped ${tokenSymbol}`);
-    }
-    startLog(`Binding ${tokenSymbol} on ${identifier}, amount: ${amount}`);
-    // TODO figure out what the last parameter even means
-    await poolContract.bind(xToken.address, BigNumber.from(amount), denorm, {
-      gasLimit: '1000000',
-    })
-    stopLog(`Bound ${tokenSymbol} on ${identifier}, amount: ${amount}`);
-  }),Promise.resolve());
+    await write(testData);
+    stopLog(`${identifier} Pool - address: ${poolAddress}`);
 
-  // finalize
-  startLog(`Finalizing Pool ${identifier}`);
-  await poolContract.finalize({gasLimit: '300000'});
-  stopLog(`Finalizing Pool ${identifier}`);
+    await contracts.reduce((async function(acc:Promise<void>, {token, xToken, amount, denorm}) {
+      await acc;
+      const tokenSymbol: string = token === 'ETH'? 'ETH' : await token.symbol();
+      if(token !== 'ETH'){
+        startLog(`Approving ${tokenSymbol}`);
+        // TODO: there are tokens that revert when changing the allowance from non-zero to non-zero
+        // yes that makes sense: https://github.com/sec-bit/awesome-buggy-erc20-tokens/blob/master/ERC20_token_issue_list.md#a20-re-approve
+        await token.approve(xTokenWrapperContract.address, amount);
+        await xToken.approve(poolContract.address, amount);
+        stopLog(`Approving ${tokenSymbol}`);
+        startLog(`Wrapping ${tokenSymbol}`);
+        await xTokenWrapperContract.wrap(token.address, amount);
+        stopLog(`Wraped ${tokenSymbol}`);
+      } else {
+        startLog(`Wrapping ${tokenSymbol}`);
+        await xTokenWrapperContract.wrap(ETH_ADDRESS, amount);
+        stopLog(`Wraped ${tokenSymbol}`);
+      }
+      startLog(`Binding ${tokenSymbol} on ${identifier}, amount: ${amount}`);
+      // TODO figure out what the last parameter even means
+      await poolContract.bind(xToken.address, BigNumber.from(amount), denorm, {
+        gasLimit: '1000000',
+      })
+      stopLog(`Bound ${tokenSymbol} on ${identifier}, amount: ${amount}`);
+    }),Promise.resolve());
+
+    // finalize
+    startLog(`Finalizing Pool ${identifier}`);
+    await poolContract.finalize({gasLimit: '300000'});
+    stopLog(`Finalizing Pool ${identifier}`);
+  }
 
   //set pares in BRegistry
   startLog('Registering Pairs');
   await Promise.all(
     combinations(contracts, 2 ).map(
       ([left, right]: [PoolConfig, PoolConfig]) =>
-      bRegistryContract.addPoolPair(poolContract.address, left.xToken.address, right.xToken.address))
+      bRegistryContract.addPoolPair(poolContract.address, left.xToken.address, right.xToken.address, {gasLimit:'700000'}))
   );
   stopLog('Registering Pairs');
   const poolAsToken: ERC20Mintable = (await ethers.getContractAt('ERC20Mintable', poolContract.address)) as ERC20Mintable;
