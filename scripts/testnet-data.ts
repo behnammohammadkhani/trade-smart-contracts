@@ -12,22 +12,12 @@ import {
   PermissionManager,
 } from '../typechain';
 
-import path from 'path';
-import { promises as fs } from 'fs';
-import fsExtra from 'fs-extra';
-import _ from 'lodash';
-import { getChainId, networkNames } from '@openzeppelin/upgrades-core';
 import ora, { Ora } from 'ora';
-import * as chainlinkFeeds from './chainlink-feeds.json';
+import {readDeploymentFile, readTestnetDataFile, combinations, EthAsToken, TestnetData, TokenSymbol, writeTestnetData, XTokenSymbol, tokenToXToken, getAssetToEthPricefeed} from './common';
 
 const { ethers } = hre;
 
 const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
-
-type ValidChainId = keyof typeof chainlinkFeeds;
-type EthAsToken = 'ETH';
-type TokenSymbol = 'USDC' | 'DAI' | 'WBTC' | 'SNX' | 'AAVE'|'SPT' | 'WETH'|EthAsToken;
-type XTokenSymbol = 'xUSDC' | 'xDAI' | 'xWBTC' | 'xSNX' | 'xAAVE' | 'xETH'|'xSPT'|'xWETH';
 
 type PoolConfig = {
   token: ERC20Mintable|EthAsToken,
@@ -36,27 +26,15 @@ type PoolConfig = {
   denorm: BigNumberish,
 }
 
-function tokenToXToken(token: TokenSymbol): XTokenSymbol {
-  const map = {
-    USDC: 'xUSDC',
-    ETH: 'xETH',
-    WETH: 'xWETH',
-    DAI: 'xDAI',
-    WBTC: 'xWBTC',
-    SPT: 'xSPT',
-    SNX: 'xSNX',
-    AAVE: 'xAAVE',
-  };
-  return map[token] as XTokenSymbol;
-}
 
 let spinner: Ora;
 
 async function main(): Promise<void> {
   const [deployer] = await ethers.getSigners();
   const deployerAddress = await deployer.getAddress();
-  const deploymentData = await read(await getDeploymentFile());
-  const testData = await read(await getTestnetDataFile());
+  console.log(deployerAddress);
+  const deploymentData = await readDeploymentFile();
+  const testData = await readTestnetDataFile();
 
   const permissionManagerContract: PermissionManager = (await ethers.getContractAt(
     'PermissionManager',
@@ -105,51 +83,6 @@ async function main(): Promise<void> {
   );
 }
 
-type TestnetData = { [key: string]: { address: string } };
-
-async function read(filename: string): Promise<TestnetData> {
-  try {
-    return JSON.parse(await fs.readFile(filename, 'utf8'));
-  } catch (e) {
-    if (e.code === 'ENOENT') {
-      return {};
-    } else {
-      throw e;
-    }
-  }
-}
-
-async function write(data: any): Promise<void> {
-  const deploymentsFile = await getTestnetDataFile();
-  await fsExtra.ensureFile(deploymentsFile);
-  await fs.writeFile(deploymentsFile, JSON.stringify(data, null, 2) + '\n');
-}
-
-async function getAssetToEthPricefeed(asset: TokenSymbol): Promise<string> {
-  // trust, don't verify
-  // TODO: learn typescript
-  const chainId: ValidChainId = (await getChainId(hre.network.provider)).toString() as ValidChainId;
-  // i'd do a .includes but that doesn't help with static checking
-  if(asset == 'SPT' || asset =='WETH') return chainlinkFeeds[chainId]['ETH'];
-  const feedAddress = chainlinkFeeds[chainId][asset] as string;
-  if (!feedAddress) {
-    throw new Error(`feed ${asset} unavailable on network ${chainId}`);
-  }
-  return feedAddress;
-}
-
-async function getDeploymentFile() {
-  const chainId = await getChainId(hre.network.provider);
-  const name = networkNames[chainId] ?? `unknown-${chainId}`;
-  return path.join(`deployments/${name}.json`);
-}
-
-async function getTestnetDataFile() {
-  const chainId = await getChainId(hre.network.provider);
-  const name = networkNames[chainId] ?? `unknown-${chainId}`;
-  return path.join(`deployments/${name}-testnet-data.json`);
-}
-
 function startLog(message: string) {
   spinner = ora().start(message);
 }
@@ -178,7 +111,7 @@ async function deployMockedToken(
 
   testData[symbol] = { address: contract.address };
 
-  await write(testData);
+  await writeTestnetData(testData);
   stopLog(`Mock ${symbol} deployed - address: ${contract.address}`);
   return contract;
 }
@@ -230,7 +163,7 @@ async function deployXToken(
     address: xTokenAddress,
   };
 
-  await write(testData);
+  await writeTestnetData(testData);
   stopLog(`deployed xToken for ${tokenSymbol}, ${xTokenSymbol} at address: ${xTokenAddress}`);
   // I'm doing a return await just to do a cast 😭
   return (await ethers.getContractAt('XToken', xTokenAddress)) as XToken;
@@ -270,7 +203,7 @@ async function createPool(deploymentData: any, testData: TestnetData, identifier
       address: poolAddress,
     };
 
-    await write(testData);
+    await writeTestnetData(testData);
     stopLog(`${identifier} Pool - address: ${poolAddress}`);
 
     await contracts.reduce((async function(acc:Promise<void>, {token, xToken, amount, denorm}) {
@@ -327,27 +260,3 @@ main()
     spinner.fail();
     process.exit(1);
   });
-
-// FIXME: figure out the proper way to add type bindings withoug copypasting the code
-function combinations<Type>(collection: Array<Type>, n: number) :Array<[Type, Type]>{
-  const array = _.values(collection);
-  if (array.length < n) {
-    return [];
-  }
-  const recur = ((array: any, n: number) => {
-    if (--n < 0) {
-      return [[]];
-    }
-    const workingCombinations: any = [];
-    array = array.slice();
-    while (array.length - n) {
-      const value: any = array.shift();
-      recur(array, n).forEach((combination: any) => {
-        combination.unshift(value);
-        workingCombinations.push(combination);
-      });
-    }
-    return workingCombinations;
-  });
-  return recur(array, n);
-}

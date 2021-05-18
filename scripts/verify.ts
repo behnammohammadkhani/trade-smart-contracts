@@ -1,9 +1,7 @@
 import hre from 'hardhat';
 import assert from 'assert';
-import path from 'path';
-import { promises as fs } from 'fs';
 
-import { getChainId, networkNames } from '@openzeppelin/upgrades-core';
+import {readOZFile, readDeploymentFile, readTestnetDataFile} from './common';
 
 const requiredConfigs = [
   'EUR_USD_FEED',
@@ -19,8 +17,8 @@ requiredConfigs.forEach(conf => assert(process.env[conf], `Missing configuration
 
 async function main(): Promise<void> {
   const { ethers } = hre;
-  const deploymentData = await read(await getDeploymentFile());
-  const ozData = await read(await getOZFile());
+  const deploymentData = await readDeploymentFile();
+  const ozData = await readOZFile();
 
   // PermissionItems
   await hre.run('verify:verify', {
@@ -105,33 +103,6 @@ async function main(): Promise<void> {
     address: deploymentData.EthPriceFeed.address,
     constructorArguments: [],
   }).catch(ignoreAlreadyVerifiedError);
-
-}
-
-async function read(filename: string): Promise<any> {
-  // const deploymentsFile = await getDeploymentFile();
-
-  try {
-    return JSON.parse(await fs.readFile(filename, 'utf8'));
-  } catch (e) {
-    if (e.code === 'ENOENT') {
-      return {};
-    } else {
-      throw e;
-    }
-  }
-}
-
-async function getDeploymentFile() {
-  const chainId = await getChainId(hre.network.provider);
-  const name = networkNames[chainId] ?? `unknown-${chainId}`;
-  return path.join(`deployments/${name}.json`);
-}
-
-async function getOZFile() {
-  const chainId = await getChainId(hre.network.provider);
-  const name = networkNames[chainId] ?? `unknown-${chainId}`;
-  return path.join(`.openzeppelin/${name}.json`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
