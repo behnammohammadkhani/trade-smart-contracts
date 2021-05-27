@@ -1,9 +1,7 @@
 import hre from 'hardhat';
 import assert from 'assert';
-import path from 'path';
-import { promises as fs } from 'fs';
 
-import { getChainId, networkNames } from '@openzeppelin/upgrades-core';
+import {readOZFile, readDeploymentFile, readTestnetDataFile} from './common';
 
 const requiredConfigs = [
   'EUR_USD_FEED',
@@ -19,14 +17,14 @@ requiredConfigs.forEach(conf => assert(process.env[conf], `Missing configuration
 
 async function main(): Promise<void> {
   const { ethers } = hre;
-  const deploymentData = await read(await getDeploymentFile());
-  const ozData = await read(await getOZFile());
+  const deploymentData = await readDeploymentFile();
+  const ozData = await readOZFile();
 
   // PermissionItems
   await hre.run('verify:verify', {
     address: deploymentData.PermissionItems.address,
     constructorArguments: [],
-  });
+  }).catch(ignoreAlreadyVerifiedError);
 
   // PermissionManagerImpl
   const proxyAdmin: any = (await ethers.getContractAt(
@@ -38,32 +36,32 @@ async function main(): Promise<void> {
   await hre.run('verify:verify', {
     address: permissionManagerImpl,
     constructorArguments: [],
-  });
+  }).catch(ignoreAlreadyVerifiedError);
 
   // EurPriceFeed
   await hre.run('verify:verify', {
     address: deploymentData.EurPriceFeed.address,
     constructorArguments: [process.env.EUR_USD_FEED, process.env.ETH_USD_FEED, [], []],
-  });
+  }).catch(ignoreAlreadyVerifiedError);
 
   // OperationsRegistry
   await hre.run('verify:verify', {
     address: deploymentData.OperationsRegistry.address,
     constructorArguments: [deploymentData.EurPriceFeed.address],
-  });
+  }).catch(ignoreAlreadyVerifiedError);
 
   // XTokenWrapper
   await hre.run('verify:verify', {
     address: deploymentData.XTokenWrapper.address,
     constructorArguments: [],
-  });
+  }).catch(ignoreAlreadyVerifiedError);
 
   // AuthorizationImple
   const authorizationImple = await proxyAdmin.getProxyImplementation(deploymentData.AuthorizationProxy.address);
   await hre.run('verify:verify', {
     address: authorizationImple,
     constructorArguments: [],
-  });
+  }).catch(ignoreAlreadyVerifiedError);
 
   // XTokenFactory
   await hre.run('verify:verify', {
@@ -73,19 +71,19 @@ async function main(): Promise<void> {
       deploymentData.OperationsRegistry.address,
       deploymentData.EurPriceFeed.address,
     ],
-  });
+  }).catch(ignoreAlreadyVerifiedError);
 
   // ProtocolFee
   await hre.run('verify:verify', {
     address: deploymentData.ProtocolFee.address,
     constructorArguments: [process.env.PROTOCOL_FEE, process.env.MIN_PROTOCOL_FEE],
-  });
+  }).catch(ignoreAlreadyVerifiedError);
 
   // BRegistry
   await hre.run('verify:verify', {
     address: deploymentData.BRegistry.address,
     constructorArguments: [process.env.BFACTORY],
-  });
+  }).catch(ignoreAlreadyVerifiedError);
 
   // BPoolProxy
   await hre.run('verify:verify', {
@@ -98,39 +96,13 @@ async function main(): Promise<void> {
       ethers.constants.AddressZero,
       ethers.constants.AddressZero,
     ],
-  });
+  }).catch(ignoreAlreadyVerifiedError);
 
   // EthPriceFeed
   await hre.run('verify:verify', {
     address: deploymentData.EthPriceFeed.address,
     constructorArguments: [],
-  });
-}
-
-async function read(filename: string): Promise<any> {
-  // const deploymentsFile = await getDeploymentFile();
-
-  try {
-    return JSON.parse(await fs.readFile(filename, 'utf8'));
-  } catch (e) {
-    if (e.code === 'ENOENT') {
-      return {};
-    } else {
-      throw e;
-    }
-  }
-}
-
-async function getDeploymentFile() {
-  const chainId = await getChainId(hre.network.provider);
-  const name = networkNames[chainId] ?? `unknown-${chainId}`;
-  return path.join(`deployments/${name}.json`);
-}
-
-async function getOZFile() {
-  const chainId = await getChainId(hre.network.provider);
-  const name = networkNames[chainId] ?? `unknown-${chainId}`;
-  return path.join(`.openzeppelin/${name}.json`);
+  }).catch(ignoreAlreadyVerifiedError);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
@@ -142,3 +114,12 @@ main()
     console.error(error);
     process.exit(1);
   });
+
+  function ignoreAlreadyVerifiedError(err:Error){
+    if(err.message.includes('Contract source code already verified')){
+      console.log('contract already verfied, skipping');
+      return;
+    } else {
+      throw err;
+    }
+  }

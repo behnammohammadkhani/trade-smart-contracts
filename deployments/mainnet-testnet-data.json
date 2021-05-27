@@ -1,0 +1,20 @@
+{
+  "DAI": {
+    "address": "0x6b175474e89094c44da98b954eedeac495271d0f"
+  },
+  "WBTC": {
+    "address": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
+  },
+  "xDAI": {
+    "address": "0x6ceb875d9E8D75e0E68040D9BB63b21DE134E843"
+  },
+  "xWBTC": {
+    "address": "0xFc6274505D08210117C56b541794a72338eD3Fb6"
+  },
+  "xDAI/xWBTC": {
+    "address": "0x8c4167154aCcD56797d122d8BCAaD3a9432ED4aF"
+  },
+  "SM Wrapped Pool Token - 50% xWBTC / 50% xDAI": {
+    "address": "0x71B3C05aFC180e528529e0c026501e606118894C"
+  }
+}

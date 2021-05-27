@@ -348,7 +348,9 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
+    "ExitPool(address,address,uint256)": EventFragment;
     "FeeReceiverSet(address)": EventFragment;
+    "JoinPool(address,address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "ProtocolFeeSet(address)": EventFragment;
     "RegistrySet(address)": EventFragment;
@@ -357,7 +359,9 @@ interface BPoolProxyInterface extends ethers.utils.Interface {
     "XTokenWrapperSet(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "ExitPool"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeeReceiverSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "JoinPool"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProtocolFeeSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RegistrySet"): EventFragment;
@@ -1977,7 +1981,11 @@ export class BPoolProxy extends Contract {
   };
 
   filters: {
+    ExitPool(iquidityProvider: null, bpool: null, shares: null): EventFilter;
+
     FeeReceiverSet(feeReceiver: null): EventFilter;
+
+    JoinPool(liquidityProvider: null, bpool: null, shares: null): EventFilter;
 
     OwnershipTransferred(
       previousOwner: string | null,

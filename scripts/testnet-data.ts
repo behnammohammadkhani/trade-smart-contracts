@@ -12,22 +12,12 @@ import {
   PermissionManager,
 } from '../typechain';
 
-import path from 'path';
-import { promises as fs } from 'fs';
-import fsExtra from 'fs-extra';
-import _ from 'lodash';
-import { getChainId, networkNames } from '@openzeppelin/upgrades-core';
 import ora, { Ora } from 'ora';
-import * as chainlinkFeeds from './chainlink-feeds.json';
+import {readDeploymentFile, readTestnetDataFile, combinations, EthAsToken, TestnetData, TokenSymbol, writeTestnetData, XTokenSymbol, tokenToXToken, getAssetToEthPricefeed} from './common';
 
 const { ethers } = hre;
 
 const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
-
-type ValidChainId = keyof typeof chainlinkFeeds;
-type EthAsToken = 'ETH';
-type TokenSymbol = 'USDC' | 'DAI' | 'WBTC' | 'SNX' | 'AAVE'|'SPT' | EthAsToken;
-type XTokenSymbol = 'xUSDC' | 'xDAI' | 'xWBTC' | 'xSNX' | 'xAAVE' | 'xETH'|'xSPT';
 
 type PoolConfig = {
   token: ERC20Mintable|EthAsToken,
@@ -36,26 +26,14 @@ type PoolConfig = {
   denorm: BigNumberish,
 }
 
-function tokenToXToken(token: TokenSymbol): XTokenSymbol {
-  const map = {
-    USDC: 'xUSDC',
-    ETH: 'xETH',
-    DAI: 'xDAI',
-    WBTC: 'xWBTC',
-    SPT: 'xSPT',
-    SNX: 'xSNX',
-    AAVE: 'xAAVE',
-  };
-  return map[token] as XTokenSymbol;
-}
-
 let spinner: Ora;
 
 async function main(): Promise<void> {
   const [deployer] = await ethers.getSigners();
   const deployerAddress = await deployer.getAddress();
-  const deploymentData = await read(await getDeploymentFile());
-  const testData = await read(await getTestnetDataFile());
+  console.log(deployerAddress);
+  const deploymentData = await readDeploymentFile();
+  const testData = await readTestnetDataFile();
 
   const permissionManagerContract: PermissionManager = (await ethers.getContractAt(
     'PermissionManager',
@@ -79,93 +57,34 @@ async function main(): Promise<void> {
   // Mock Tokens
   const DAIContract = await deployMockedToken(testData, 'DAI', 'DAI stablecoin', 18);
   const WBTCContract = await deployMockedToken(testData, 'WBTC', 'Wrapped Bitcoin', 8);
-  const USDCContract = await deployMockedToken(testData, 'USDC', 'USD Coin', 18);
 
   // // xTokens
   const xDAIContract: XToken = await deployXToken(deploymentData, testData, DAIContract, 'SM Wrapped Dai Stablecoin');
   const xWBTCContract: XToken =  await deployXToken(deploymentData, testData, WBTCContract, 'SM Wrapped Wrapped Bitcoin');
-  const xUSDCContract: XToken =  await deployXToken(deploymentData, testData, USDCContract, 'SM Wrapped Wrapped Bitcoin');
 
   const xTokenWrapperAddress: string =  deploymentData.XTokenWrapper.address;
   //approve tokens
   startLog('Approving tokens');
-  await await WBTCContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
-  await await USDCContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
-  await await DAIContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
+  await WBTCContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
+  await DAIContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
   stopLog('Approving tokens');
-  startLog(`Minting tokens`);
-  await DAIContract.mint('6000000000000000000000000');
-  await WBTCContract.mint('6000000000000000000000000');
-  await USDCContract.mint('6000000000000000000000000');
-  stopLog(`Minting tokens`);
+  startLog('Minting tokens');
+  // remove for mainnet
+  await WBTCContract.mint('90000000000000000000000000');
+  await DAIContract.mint('90000000000000000000000000');
+  stopLog('Minting tokens');
 
   await createPool(
     deploymentData,
     testData,
     'xDAI/xWBTC',
     'SM Wrapped Pool Token - 50% xWBTC / 50% xDAI',
-    '1500000000000000',
+    '2500000000000000',
     [
-      {token: WBTCContract, xToken: xWBTCContract, amount: '100000000', denorm:  '25000000000000000000'},
-      {token: DAIContract, xToken: xDAIContract, amount:'55000000000000000000000', denorm:  '25000000000000000000'}
+      {token: WBTCContract, xToken: xWBTCContract, amount: '1000000', denorm:  '25000000000000000000'},
+      {token: DAIContract, xToken: xDAIContract, amount:'230000000000000000000', denorm:  '25000000000000000000'}
     ]
   );
-
-  await createPool(
-    deploymentData,
-    testData,
-    'xDAI/xUSDC',
-    'SM Wrapped Pool Token - 50% xUSDC / 50% xDAI',
-    '1500000000000000',
-    [
-      {token: USDCContract, xToken: xUSDCContract, amount: '55000000000000000000000', denorm:  '25000000000000000000'},
-      {token: DAIContract, xToken: xDAIContract, amount:'55000000000000000000000', denorm:  '25000000000000000000'}
-    ]
-  );
-}
-
-type TestnetData = { [key: string]: { address: string } };
-
-async function read(filename: string): Promise<TestnetData> {
-  try {
-    return JSON.parse(await fs.readFile(filename, 'utf8'));
-  } catch (e) {
-    if (e.code === 'ENOENT') {
-      return {};
-    } else {
-      throw e;
-    }
-  }
-}
-
-async function write(data: any): Promise<void> {
-  const deploymentsFile = await getTestnetDataFile();
-  await fsExtra.ensureFile(deploymentsFile);
-  await fs.writeFile(deploymentsFile, JSON.stringify(data, null, 2) + '\n');
-}
-
-async function getAssetToEthPricefeed(asset: TokenSymbol): Promise<string> {
-  // trust, don't verify
-  // TODO: learn typescript
-  const chainId: ValidChainId = (await getChainId(hre.network.provider)).toString() as ValidChainId;
-  if(asset == 'SPT') return chainlinkFeeds[chainId]['ETH'];
-  const feedAddress = chainlinkFeeds[chainId][asset] as string;
-  if (!feedAddress) {
-    throw new Error(`feed ${asset} unavailable on network ${chainId}`);
-  }
-  return feedAddress;
-}
-
-async function getDeploymentFile() {
-  const chainId = await getChainId(hre.network.provider);
-  const name = networkNames[chainId] ?? `unknown-${chainId}`;
-  return path.join(`deployments/${name}.json`);
-}
-
-async function getTestnetDataFile() {
-  const chainId = await getChainId(hre.network.provider);
-  const name = networkNames[chainId] ?? `unknown-${chainId}`;
-  return path.join(`deployments/${name}-testnet-data.json`);
 }
 
 function startLog(message: string) {
@@ -194,9 +113,14 @@ async function deployMockedToken(
   const contract: ERC20Mintable = (await ERC20MintableFactory.deploy(name, symbol, decimals)) as ERC20Mintable;
   await contract.deployed();
 
+  await hre.run('verify:verify', {
+    address: contract.address,
+    constructorArguments: [name,symbol, decimals],
+  }).catch(console.error);
+
   testData[symbol] = { address: contract.address };
 
-  await write(testData);
+  await writeTestnetData(testData);
   stopLog(`Mock ${symbol} deployed - address: ${contract.address}`);
   return contract;
 }
@@ -244,11 +168,16 @@ async function deployXToken(
   const deploymentEvent = receipt.events?.find(log => log.event && log.event === 'XTokenDeployed');
   const xTokenAddress = (deploymentEvent && deploymentEvent.args ? deploymentEvent.args.xToken : '') as string;
 
+  await hre.run('verify:verify', {
+    address: xTokenAddress,
+    constructorArguments: [name, xTokenSymbol, decimals, xTokenSymbol, deploymentData.AuthorizationProxy.address, deploymentData.OperationsRegistry.address],
+  }).catch(console.error);
+
   testData[identifier] = {
     address: xTokenAddress,
   };
 
-  await write(testData);
+  await writeTestnetData(testData);
   stopLog(`deployed xToken for ${tokenSymbol}, ${xTokenSymbol} at address: ${xTokenAddress}`);
   // I'm doing a return await just to do a cast 😭
   return (await ethers.getContractAt('XToken', xTokenAddress)) as XToken;
@@ -268,56 +197,67 @@ async function createPool(deploymentData: any, testData: TestnetData, identifier
 
   //create
   startLog(`Deploying ${identifier} Pool`);
-  const poolReceipt = await (await bFactoryContract.newBPool({ gasLimit: '1000000' })).wait();
-  const newPoolEvent = poolReceipt.events?.find(log => log.event && log.event === 'LOG_NEW_POOL');
-  const poolAddress = (newPoolEvent && newPoolEvent.args ? newPoolEvent.args.pool : '') as string;
-  const poolContract: IBPool = (await ethers.getContractAt('IBPool', poolAddress)) as IBPool;
-  await poolContract.setSwapFee(swapFee, { gasLimit: '1000000' });
+  let poolContract: IBPool;
 
-  testData[identifier] = {
-    address: poolAddress,
-  };
+  // TODO: this skips straight to finalization if the pool is already present,
+  // because it's what was useful for a particular deploy. In the future we'll
+  // probably want to check for every step separately
+  if(testData[identifier]){
+    const poolAddress = testData[identifier].address;
+    poolContract= (await ethers.getContractAt('IBPool', poolAddress)) as IBPool;
+    stopLog(`${identifier} Pool already deployed at address: ${poolAddress}`);
+  } else {
+    const poolReceipt = await (await bFactoryContract.newBPool({ gasLimit: '1000000' })).wait();
+    const newPoolEvent = poolReceipt.events?.find(log => log.event && log.event === 'LOG_NEW_POOL');
+    const poolAddress = (newPoolEvent && newPoolEvent.args ? newPoolEvent.args.pool : '') as string;
+    poolContract = (await ethers.getContractAt('IBPool', poolAddress)) as IBPool;
+    await poolContract.setSwapFee(swapFee, { gasLimit: '1000000' });
 
-  await write(testData);
-  stopLog(`${identifier} Pool - address: ${poolAddress}`);
+    testData[identifier] = {
+      address: poolAddress,
+    };
 
-  await contracts.reduce((async function(acc:Promise<void>, {token, xToken, amount, denorm}) {
-    await acc;
-    const tokenSymbol: string = token === 'ETH'? 'ETH' : await token.symbol();
-    if(token !== 'ETH'){
-      startLog(`Approving ${tokenSymbol}`);
-      // TODO: there are tokens that revert when changing the allowance from non-zero to non-zero
-      // yes that makes sense: https://github.com/sec-bit/awesome-buggy-erc20-tokens/blob/master/ERC20_token_issue_list.md#a20-re-approve
-      await token.approve(xTokenWrapperContract.address, amount);
-      await xToken.approve(poolContract.address, amount);
-      stopLog(`Approving ${tokenSymbol}`);
-      startLog(`Wrapping ${tokenSymbol}`);
-      await xTokenWrapperContract.wrap(token.address, amount);
-      stopLog(`Wraped ${tokenSymbol}`);
-    } else {
-      startLog(`Wrapping ${tokenSymbol}`);
-      await xTokenWrapperContract.wrap(ETH_ADDRESS, amount);
-      stopLog(`Wraped ${tokenSymbol}`);
-    }
-    startLog(`Binding ${tokenSymbol} on ${identifier}, amount: ${amount}`);
-    // TODO figure out what the last parameter even means
-    await poolContract.bind(xToken.address, BigNumber.from(amount), denorm, {
-      gasLimit: '1000000',
-    })
-    stopLog(`Bound ${tokenSymbol} on ${identifier}, amount: ${amount}`);
-  }),Promise.resolve());
+    await writeTestnetData(testData);
+    stopLog(`${identifier} Pool - address: ${poolAddress}`);
 
-  // finalize
-  startLog(`Finalizing Pool ${identifier}`);
-  await poolContract.finalize({gasLimit: '300000'});
-  stopLog(`Finalizing Pool ${identifier}`);
+    await contracts.reduce((async function(acc:Promise<void>, {token, xToken, amount, denorm}) {
+      await acc;
+      const tokenSymbol: string = token === 'ETH'? 'ETH' : await token.symbol();
+      if(token !== 'ETH'){
+        startLog(`Approving ${tokenSymbol}`);
+        // TODO: there are tokens that revert when changing the allowance from non-zero to non-zero
+        // yes that makes sense: https://github.com/sec-bit/awesome-buggy-erc20-tokens/blob/master/ERC20_token_issue_list.md#a20-re-approve
+        await token.approve(xTokenWrapperContract.address, amount);
+        await xToken.approve(poolContract.address, amount);
+        stopLog(`Approving ${tokenSymbol}`);
+        startLog(`Wrapping ${tokenSymbol}`);
+        await xTokenWrapperContract.wrap(token.address, amount, {gasLimit: '400000'});
+        stopLog(`Wraped ${tokenSymbol}`);
+      } else {
+        startLog(`Wrapping ${tokenSymbol}`);
+        await xTokenWrapperContract.wrap(ETH_ADDRESS, amount, {gasLimit: '400000'});
+        stopLog(`Wraped ${tokenSymbol}`);
+      }
+      startLog(`Binding ${tokenSymbol} on ${identifier}, amount: ${amount}`);
+      // TODO figure out what the last parameter even means
+      await poolContract.bind(xToken.address, BigNumber.from(amount), denorm, {
+        gasLimit: '1000000',
+      })
+      stopLog(`Bound ${tokenSymbol} on ${identifier}, amount: ${amount}`);
+    }),Promise.resolve());
+
+    // finalize
+    startLog(`Finalizing Pool ${identifier}`);
+    await poolContract.finalize({gasLimit: '300000'});
+    stopLog(`Finalizing Pool ${identifier}`);
+  }
 
   //set pares in BRegistry
   startLog('Registering Pairs');
   await Promise.all(
     combinations(contracts, 2 ).map(
       ([left, right]: [PoolConfig, PoolConfig]) =>
-      bRegistryContract.addPoolPair(poolContract.address, left.xToken.address, right.xToken.address))
+      bRegistryContract.addPoolPair(poolContract.address, left.xToken.address, right.xToken.address, {gasLimit:'700000'}))
   );
   stopLog('Registering Pairs');
   const poolAsToken: ERC20Mintable = (await ethers.getContractAt('ERC20Mintable', poolContract.address)) as ERC20Mintable;
@@ -334,27 +274,3 @@ main()
     spinner.fail();
     process.exit(1);
   });
-
-// FIXME: figure out the proper way to add type bindings withoug copypasting the code
-function combinations<Type>(collection: Array<Type>, n: number) :Array<[Type, Type]>{
-  const array = _.values(collection);
-  if (array.length < n) {
-    return [];
-  }
-  const recur = ((array: any, n: number) => {
-    if (--n < 0) {
-      return [[]];
-    }
-    const workingCombinations: any = [];
-    array = array.slice();
-    while (array.length - n) {
-      const value: any = array.shift();
-      recur(array, n).forEach((combination: any) => {
-        combination.unshift(value);
-        workingCombinations.push(combination);
-      });
-    }
-    return workingCombinations;
-  });
-  return recur(array, n);
-}
