@@ -57,38 +57,22 @@ async function main(): Promise<void> {
   // Mock Tokens
   const DAIContract = await deployMockedToken(testData, 'DAI', 'DAI stablecoin', 18);
   const WBTCContract = await deployMockedToken(testData, 'WBTC', 'Wrapped Bitcoin', 8);
-  const USDCContract = await deployMockedToken(testData, 'USDC', 'USD Coin', 6);
 
   // // xTokens
   const xDAIContract: XToken = await deployXToken(deploymentData, testData, DAIContract, 'SM Wrapped Dai Stablecoin');
   const xWBTCContract: XToken =  await deployXToken(deploymentData, testData, WBTCContract, 'SM Wrapped Wrapped Bitcoin');
-  const xUSDCContract: XToken =  await deployXToken(deploymentData, testData, USDCContract, 'SM Wrapped USD Coin');
 
   const xTokenWrapperAddress: string =  deploymentData.XTokenWrapper.address;
   //approve tokens
   startLog('Approving tokens');
   await WBTCContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
-  await USDCContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
   await DAIContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
   stopLog('Approving tokens');
   startLog('Minting tokens');
   // remove for mainnet
   await WBTCContract.mint('90000000000000000000000000');
-  await USDCContract.mint('90000000000000000000000000');
   await DAIContract.mint('90000000000000000000000000');
   stopLog('Minting tokens');
-
-  await createPool(
-    deploymentData,
-    testData,
-    'xUSDC/xWBTC',
-    'SM Wrapped Pool Token - 50% xWBTC / 50% xUSDC',
-    '2500000000000000',
-    [
-      {token: WBTCContract, xToken: xWBTCContract, amount: '1000000', denorm:  '25000000000000000000'},
-      {token: USDCContract, xToken: xUSDCContract, amount:'230000000', denorm:  '25000000000000000000'}
-    ]
-  );
 
   await createPool(
     deploymentData,
