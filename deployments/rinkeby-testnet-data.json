@@ -2,29 +2,11 @@
   "DAI": {
     "address": "0x557b9b35B0394F4508AFDa01DF84cb55695CE9a6"
   },
-  "AAVE": {
-    "address": "0x8dfAC38eBf32752741a7DC506C8CCE9E399dB790"
-  },
-  "SNX": {
-    "address": "0x039e0Ad3495BE9ad0850582e08af707842717877"
-  },
-  "UNI": {
-    "address": "0x905D82601F691f6aeffA0482d5778c91fDbA1892"
-  },
   "USDC": {
     "address": "0x5EbB6C75a1E8e0C9d8759BAfE228bfEc01b07cCC"
   },
   "xDAI": {
     "address": "0x2a503d76941C6324a79DF7d732F3782D99a1CE4C"
-  },
-  "xAAVE": {
-    "address": "0x5055392B9f2e213A17B8feDb690923f45DC63bBE"
-  },
-  "xSNX": {
-    "address": "0x308F1E1af25c7Fb19f146e44B9F35167f22EA724"
-  },
-  "xUNI": {
-    "address": "0xD45955E77C8cFa96eCf9F4D95B5c15BEC06cb88e"
   },
   "xUSDC": {
     "address": "0x28B14a1Ec61c231c34BBd348f626CF4a65AdBDe2"
@@ -32,14 +14,8 @@
   "xETH": {
     "address": "0xd874Fea4909e4b90Fa2514eb48f9bf9b4Eb75CE4"
   },
-  "xSNX/xAAVE/xUNI": {
-    "address": "0xdf93C11fB68e77C424823782eB811886223f9749"
-  },
   "xWETH/xDAI": {
     "address": "0x2DcA825d3D937Dd6994B1213Ca512E66CA556dd0"
-  },
-  "xWETH/xUSDC": {
-    "address": "0x66532A3a95E77cd9d73405F3796bA4C23B6c84dC"
   },
   "WBTC": {
     "address": "0xA1E925403cC844B38F8CBaF928dA4b5bc1eE93cc"
@@ -49,5 +25,11 @@
   },
   "SM Wrapped Pool Token - 50xWETH/50xDAI": {
     "address": "0x3dF85b29DF9685e54f702915A3263774836Bf53A"
+  },
+  "xDAI/xWBTC": {
+    "address": "0xa9340486EDe801585165Edf9B495896021791ae3"
+  },
+  "xBPT": {
+    "address": "0xc2f8A0cCde725103A28Fbfa204a5b07e57be296f"
   }
 }
