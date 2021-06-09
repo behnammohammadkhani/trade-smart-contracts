@@ -56,21 +56,25 @@ async function main(): Promise<void> {
 
   // Mock Tokens
   const DAIContract = await deployMockedToken(testData, 'DAI', 'DAI stablecoin', 18);
+  const WETHContract = await deployMockedToken(testData, 'WETH', 'Wrapped Ether', 18);
   const WBTCContract = await deployMockedToken(testData, 'WBTC', 'Wrapped Bitcoin', 8);
 
   // // xTokens
   const xDAIContract: XToken = await deployXToken(deploymentData, testData, DAIContract, 'SM Wrapped Dai Stablecoin');
+  const xWETHContract: XToken = await deployXToken(deploymentData, testData, WETHContract, 'SM Wrapped Wrapped Ether');
   const xWBTCContract: XToken =  await deployXToken(deploymentData, testData, WBTCContract, 'SM Wrapped Wrapped Bitcoin');
 
   const xTokenWrapperAddress: string =  deploymentData.XTokenWrapper.address;
   //approve tokens
   startLog('Approving tokens');
   await WBTCContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
+  await WETHContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
   await DAIContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
   stopLog('Approving tokens');
   startLog('Minting tokens');
   // remove for mainnet
   await WBTCContract.mint('90000000000000000000000000');
+  await WETHContract.mint('90000000000000000000000000');
   await DAIContract.mint('90000000000000000000000000');
   stopLog('Minting tokens');
 
@@ -83,6 +87,18 @@ async function main(): Promise<void> {
     [
       {token: WBTCContract, xToken: xWBTCContract, amount: '1000000', denorm:  '25000000000000000000'},
       {token: DAIContract, xToken: xDAIContract, amount:'230000000000000000000', denorm:  '25000000000000000000'}
+    ]
+  );
+
+  await createPool(
+    deploymentData,
+    testData,
+    'xWETH/xWBTC',
+    'SM Wrapped Pool Token - 50% xWBTC / 50% xWETH',
+    '1500000000000000',
+    [
+      {token: WBTCContract, xToken: xWBTCContract, amount: '1000000', denorm:  '25000000000000000000'}, // ~334 usd
+      {token: WETHContract, xToken: xWETHContract, amount:'133600000000000000', denorm:  '25000000000000000000'} // ~334 usd
     ]
   );
 }
@@ -199,9 +215,6 @@ async function createPool(deploymentData: any, testData: TestnetData, identifier
   startLog(`Deploying ${identifier} Pool`);
   let poolContract: IBPool;
 
-  // TODO: this skips straight to finalization if the pool is already present,
-  // because it's what was useful for a particular deploy. In the future we'll
-  // probably want to check for every step separately
   if(testData[identifier]){
     const poolAddress = testData[identifier].address;
     poolContract= (await ethers.getContractAt('IBPool', poolAddress)) as IBPool;
@@ -250,16 +263,17 @@ async function createPool(deploymentData: any, testData: TestnetData, identifier
     startLog(`Finalizing Pool ${identifier}`);
     await poolContract.finalize({gasLimit: '300000'});
     stopLog(`Finalizing Pool ${identifier}`);
+
+    //set pares in BRegistry
+    startLog('Registering Pairs');
+    await Promise.all(
+      combinations(contracts, 2 ).map(
+        ([left, right]: [PoolConfig, PoolConfig]) =>
+        bRegistryContract.addPoolPair(poolContract.address, left.xToken.address, right.xToken.address, {gasLimit:'700000'}))
+    );
+    stopLog('Registering Pairs');
   }
 
-  //set pares in BRegistry
-  startLog('Registering Pairs');
-  await Promise.all(
-    combinations(contracts, 2 ).map(
-      ([left, right]: [PoolConfig, PoolConfig]) =>
-      bRegistryContract.addPoolPair(poolContract.address, left.xToken.address, right.xToken.address, {gasLimit:'700000'}))
-  );
-  stopLog('Registering Pairs');
   const poolAsToken: ERC20Mintable = (await ethers.getContractAt('ERC20Mintable', poolContract.address)) as ERC20Mintable;
   // TODO: this saves the pool token under `xSPT`, so we should work on redefining how will the testnetData file look like
   return deployXToken(deploymentData, testData, poolAsToken, name, name);
