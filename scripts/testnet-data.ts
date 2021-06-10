@@ -58,16 +58,10 @@ async function main(): Promise<void> {
 
   // Mock Tokens
   const DAIContract = await deployMockedToken(testData, 'DAI', 'DAI stablecoin', 18);
-  let SMTContract;
-  if (chainId != 1){
-    SMTContract = await deployMockedToken(testData, 'SMT', 'Swarm Markets Token', 18);
-  }
   const WETHContract = await deployMockedToken(testData, 'WETH', 'Wrapped Ether', 18);
   const WBTCContract = await deployMockedToken(testData, 'WBTC', 'Wrapped Bitcoin', 8);
 
   // // xTokens
-  let xSMTContract: XToken;
-  xSMTContract= await deployXToken(deploymentData, testData, SMTContract, 'SM Wrapped Swarm Markets Token');
   const xDAIContract: XToken = await deployXToken(deploymentData, testData, DAIContract, 'SM Wrapped Dai Stablecoin');
   const xWETHContract: XToken = await deployXToken(deploymentData, testData, WETHContract, 'SM Wrapped Wrapped Ether');
   const xWBTCContract: XToken =  await deployXToken(deploymentData, testData, WBTCContract, 'SM Wrapped Wrapped Bitcoin');
@@ -75,60 +69,54 @@ async function main(): Promise<void> {
   const xTokenWrapperAddress: string =  deploymentData.XTokenWrapper.address;
   //approve tokens
   startLog('Approving tokens');
-  await SMTContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
   await WBTCContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
   await WETHContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
   await DAIContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
   stopLog('Approving tokens');
-  if (chainId != 1) {
+  // remove for mainnet or mainnet fork
+  if (chainId != 1 && chainId != 1337){
     startLog('Minting tokens');
-    // don't mint smt
     await WBTCContract.mint('90000000000000000000000000');
     await WETHContract.mint('90000000000000000000000000');
     await DAIContract.mint('90000000000000000000000000');
     stopLog('Minting tokens');
   }
 
-  if (chainId == 4){
-    await createPool(
-      deploymentData,
-      testData,
-      'xDAI/xWBTC',
-      'SM Wrapped Pool Token - 50% xWBTC / 50% xDAI',
-      '2500000000000000',
-      [
-        {token: WBTCContract, xToken: xWBTCContract, amount: '1000000', denorm:  '25000000000000000000'},
-        {token: DAIContract, xToken: xDAIContract, amount:'230000000000000000000', denorm:  '25000000000000000000'}
-      ]
-    );
+  await createPool(
+    deploymentData,
+    testData,
+    'xDAI/xWETH',
+    'SM Wrapped Pool Token - 80% xWETH / 20% xDAI',
+    '2500000000000000',
+    [
+      {token: WETHContract, xToken: xWETHContract, amount: '100000000000000000', denorm:  '40000000000000000000'}, // ~250 usd
+      {token: DAIContract, xToken: xDAIContract, amount:'62000000000000000000', denorm:  '10000000000000000000'} // ~62 usd
+    ]
+  );
 
-    await createPool(
-      deploymentData,
-      testData,
-      'xWETH/xSMT',
-      'SM Wrapped Pool Token - 50% xSMT / 50% xWETH',
-      '1500000000000000',
-      [
-        {token: SMTContract, xToken: xSMTContract, amount: '2500000000000000000000', denorm:  '25000000000000000000'}, // 2500 usd, assuming smt price of U$ 1
-        {token: WETHContract, xToken: xWETHContract, amount:'1000000000000000000', denorm:  '25000000000000000000'} // ~2500 usd
-      ]
-    );
+  await createPool(
+    deploymentData,
+    testData,
+    'xDAI/xWBTC',
+    'SM Wrapped Pool Token - 70% xWBTC / 30% xDAI',
+    '2500000000000000',
+    [
+      {token: WBTCContract, xToken: xWBTCContract, amount: '1000000', denorm:  '30000000000000000000'}, // ~350 usd
+      {token: DAIContract, xToken: xDAIContract, amount:'230000000000000000000', denorm:  '15000000000000000000'} // ~150 usd
+    ]
+  );
 
-    await createPool(
-      deploymentData,
-      testData,
-      'xWETH/xWBTC',
-      'SM Wrapped Pool Token - 50% xWBTC / 50% xWETH',
-      '1500000000000000',
-      [
-        {token: WBTCContract, xToken: xWBTCContract, amount: '1000000', denorm:  '25000000000000000000'}, // ~334 usd
-        {token: WETHContract, xToken: xWETHContract, amount:'133600000000000000', denorm:  '25000000000000000000'} // ~334 usd
-      ]
-    );
-  } else if (chainId == 1){
-
-  }
-
+  await createPool(
+    deploymentData,
+    testData,
+    'xWETH/xWBTC',
+    'SM Wrapped Pool Token - 50% xWBTC / 50% xWETH',
+    '4000000000000000',
+    [
+      {token: WBTCContract, xToken: xWBTCContract, amount: '1000000', denorm:  '25000000000000000000'}, // ~350 usd
+      {token: WETHContract, xToken: xWETHContract, amount:'120000000000000000', denorm:  '25000000000000000000'} // ~334 usd
+    ]
+  );
 }
 
 function startLog(message: string) {
@@ -248,7 +236,7 @@ async function createPool(deploymentData: any, testData: TestnetData, identifier
     poolContract= (await ethers.getContractAt('IBPool', poolAddress)) as IBPool;
     stopLog(`${identifier} Pool already deployed at address: ${poolAddress}`);
   } else {
-    const poolReceipt = await (await bFactoryContract.newBPool({ gasLimit: '1000000' })).wait();
+    const poolReceipt = await (await bFactoryContract.newBPool({ gasLimit: '9000000' })).wait();
     const newPoolEvent = poolReceipt.events?.find(log => log.event && log.event === 'LOG_NEW_POOL');
     const poolAddress = (newPoolEvent && newPoolEvent.args ? newPoolEvent.args.pool : '') as string;
     poolContract = (await ethers.getContractAt('IBPool', poolAddress)) as IBPool;

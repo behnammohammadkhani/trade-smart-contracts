@@ -61,6 +61,11 @@ const config: HardhatUserConfig = {
   networks: {
     ganache: {
       url: 'http://localhost:8545', // Localhost (default: none)
+      gasPrice: 40000000000,
+      chainId: 1337,
+      accounts: {
+        mnemonic
+      }
     },
     hardhat: {
       forking: {
@@ -68,6 +73,7 @@ const config: HardhatUserConfig = {
         enabled: true,
       },
       blockGasLimit: 1000000000,
+      gasPrice: 40000000000,
       throwOnCallFailures: false,
       chainId: 1,
       accounts: {
