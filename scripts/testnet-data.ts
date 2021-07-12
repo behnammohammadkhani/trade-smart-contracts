@@ -1,6 +1,7 @@
 import hre from 'hardhat';
 import assert from 'assert';
 import { BigNumberish, ContractFactory, BigNumber } from 'ethers';
+import { getChainId, networkNames } from '@openzeppelin/upgrades-core';
 import {
   XTokenFactory,
   ERC20Mintable,
@@ -34,6 +35,7 @@ async function main(): Promise<void> {
   console.log(deployerAddress);
   const deploymentData = await readDeploymentFile();
   const testData = await readTestnetDataFile();
+  const chainId = await getChainId(hre.network.provider)
 
   const permissionManagerContract: PermissionManager = (await ethers.getContractAt(
     'PermissionManager',
@@ -56,33 +58,63 @@ async function main(): Promise<void> {
 
   // Mock Tokens
   const DAIContract = await deployMockedToken(testData, 'DAI', 'DAI stablecoin', 18);
+  const WETHContract = await deployMockedToken(testData, 'WETH', 'Wrapped Ether', 18);
   const WBTCContract = await deployMockedToken(testData, 'WBTC', 'Wrapped Bitcoin', 8);
 
   // // xTokens
   const xDAIContract: XToken = await deployXToken(deploymentData, testData, DAIContract, 'SM Wrapped Dai Stablecoin');
+  const xWETHContract: XToken = await deployXToken(deploymentData, testData, WETHContract, 'SM Wrapped Wrapped Ether');
   const xWBTCContract: XToken =  await deployXToken(deploymentData, testData, WBTCContract, 'SM Wrapped Wrapped Bitcoin');
 
   const xTokenWrapperAddress: string =  deploymentData.XTokenWrapper.address;
   //approve tokens
   startLog('Approving tokens');
   await WBTCContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
+  await WETHContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
   await DAIContract.approve(xTokenWrapperAddress, ethers.constants.MaxUint256);
   stopLog('Approving tokens');
-  startLog('Minting tokens');
-  // remove for mainnet
-  await WBTCContract.mint('90000000000000000000000000');
-  await DAIContract.mint('90000000000000000000000000');
-  stopLog('Minting tokens');
+  // remove for mainnet or mainnet fork
+  if (chainId != 1 && chainId != 1337){
+    startLog('Minting tokens');
+    await WBTCContract.mint('90000000000000000000000000');
+    await WETHContract.mint('90000000000000000000000000');
+    await DAIContract.mint('90000000000000000000000000');
+    stopLog('Minting tokens');
+  }
+
+  await createPool(
+    deploymentData,
+    testData,
+    'xDAI/xWETH',
+    'SM Wrapped Pool Token - 80% xWETH / 20% xDAI',
+    '2500000000000000',
+    [
+      {token: WETHContract, xToken: xWETHContract, amount: '100000000000000000', denorm:  '40000000000000000000'}, // ~250 usd
+      {token: DAIContract, xToken: xDAIContract, amount:'62000000000000000000', denorm:  '10000000000000000000'} // ~62 usd
+    ]
+  );
 
   await createPool(
     deploymentData,
     testData,
     'xDAI/xWBTC',
-    'SM Wrapped Pool Token - 50% xWBTC / 50% xDAI',
+    'SM Wrapped Pool Token - 70% xWBTC / 30% xDAI',
     '2500000000000000',
     [
-      {token: WBTCContract, xToken: xWBTCContract, amount: '1000000', denorm:  '25000000000000000000'},
-      {token: DAIContract, xToken: xDAIContract, amount:'230000000000000000000', denorm:  '25000000000000000000'}
+      {token: WBTCContract, xToken: xWBTCContract, amount: '1000000', denorm:  '30000000000000000000'}, // ~350 usd
+      {token: DAIContract, xToken: xDAIContract, amount:'230000000000000000000', denorm:  '15000000000000000000'} // ~150 usd
+    ]
+  );
+
+  await createPool(
+    deploymentData,
+    testData,
+    'xWETH/xWBTC',
+    'SM Wrapped Pool Token - 50% xWBTC / 50% xWETH',
+    '4000000000000000',
+    [
+      {token: WBTCContract, xToken: xWBTCContract, amount: '1000000', denorm:  '25000000000000000000'}, // ~350 usd
+      {token: WETHContract, xToken: xWETHContract, amount:'120000000000000000', denorm:  '25000000000000000000'} // ~334 usd
     ]
   );
 }
@@ -199,15 +231,12 @@ async function createPool(deploymentData: any, testData: TestnetData, identifier
   startLog(`Deploying ${identifier} Pool`);
   let poolContract: IBPool;
 
-  // TODO: this skips straight to finalization if the pool is already present,
-  // because it's what was useful for a particular deploy. In the future we'll
-  // probably want to check for every step separately
   if(testData[identifier]){
     const poolAddress = testData[identifier].address;
     poolContract= (await ethers.getContractAt('IBPool', poolAddress)) as IBPool;
     stopLog(`${identifier} Pool already deployed at address: ${poolAddress}`);
   } else {
-    const poolReceipt = await (await bFactoryContract.newBPool({ gasLimit: '1000000' })).wait();
+    const poolReceipt = await (await bFactoryContract.newBPool({ gasLimit: '9000000' })).wait();
     const newPoolEvent = poolReceipt.events?.find(log => log.event && log.event === 'LOG_NEW_POOL');
     const poolAddress = (newPoolEvent && newPoolEvent.args ? newPoolEvent.args.pool : '') as string;
     poolContract = (await ethers.getContractAt('IBPool', poolAddress)) as IBPool;
@@ -250,16 +279,17 @@ async function createPool(deploymentData: any, testData: TestnetData, identifier
     startLog(`Finalizing Pool ${identifier}`);
     await poolContract.finalize({gasLimit: '300000'});
     stopLog(`Finalizing Pool ${identifier}`);
+
+    //set pares in BRegistry
+    startLog('Registering Pairs');
+    await Promise.all(
+      combinations(contracts, 2 ).map(
+        ([left, right]: [PoolConfig, PoolConfig]) =>
+        bRegistryContract.addPoolPair(poolContract.address, left.xToken.address, right.xToken.address, {gasLimit:'700000'}))
+    );
+    stopLog('Registering Pairs');
   }
 
-  //set pares in BRegistry
-  startLog('Registering Pairs');
-  await Promise.all(
-    combinations(contracts, 2 ).map(
-      ([left, right]: [PoolConfig, PoolConfig]) =>
-      bRegistryContract.addPoolPair(poolContract.address, left.xToken.address, right.xToken.address, {gasLimit:'700000'}))
-  );
-  stopLog('Registering Pairs');
   const poolAsToken: ERC20Mintable = (await ethers.getContractAt('ERC20Mintable', poolContract.address)) as ERC20Mintable;
   // TODO: this saves the pool token under `xSPT`, so we should work on redefining how will the testnetData file look like
   return deployXToken(deploymentData, testData, poolAsToken, name, name);

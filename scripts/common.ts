@@ -10,8 +10,8 @@ export type TestnetData = { [key: string]: { address: string } };
 
 export type ValidChainId = keyof typeof chainlinkFeeds;
 export type EthAsToken = 'ETH';
-export type TokenSymbol = 'USDC' | 'DAI' | 'WBTC' | 'SNX' | 'AAVE'|'SPT' | 'WETH'|EthAsToken;
-export type XTokenSymbol = 'xUSDC' | 'xDAI' | 'xWBTC' | 'xSNX' | 'xAAVE' | 'xETH'|'xSPT'|'xWETH';
+export type TokenSymbol = 'USDC' | 'DAI' | 'WBTC' | 'SMT' | 'SNX' | 'AAVE'| 'SPT' | 'WETH'|EthAsToken;
+export type XTokenSymbol = 'xUSDC' | 'xDAI' | 'xWBTC' | 'xSMT'| 'xSNX' | 'xAAVE' | 'xETH'|'xSPT'|'xWETH';
 
 // FIXME: figure out the proper way to add type bindings withoug copypasting the code
 export function combinations<Type>(collection: Array<Type>, n: number) :Array<[Type, Type]>{
@@ -93,6 +93,7 @@ export function tokenToXToken(token: TokenSymbol): XTokenSymbol {
     DAI: 'xDAI',
     WBTC: 'xWBTC',
     SPT: 'xSPT',
+    SMT: 'xSMT',
     SNX: 'xSNX',
     AAVE: 'xAAVE',
   };
