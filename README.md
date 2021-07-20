@@ -111,7 +111,7 @@ $ yarn deploy:network
 
 Supported networks: `rinkeby`, `kovan`
 
-### Very contract on Etherscan
+### Verify contract on Etherscan
 ```bash
 $ yarn verify:network
 ```
