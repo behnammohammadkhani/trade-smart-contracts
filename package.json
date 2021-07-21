@@ -2,7 +2,7 @@
   "name": "swarm-smart-contracts",
   "version": "0.0.1",
   "main": "index.js",
-  "repository": "git@github.com:Altoros/swarm-smart-contracts.git",
+  "repository": "git@github.com:SwarmMarkets/trade-smart-contracts.git",
   "author": "Protofire",
   "license": "MIT",
   "devDependencies": {
