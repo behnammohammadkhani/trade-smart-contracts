@@ -4,7 +4,7 @@
   "main": "index.js",
   "repository": "git@github.com:SwarmMarkets/trade-smart-contracts.git",
   "author": "Protofire",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "devDependencies": {
     "@chainlink/contracts": "^0.0.12",
     "@nomiclabs/hardhat-ethers": "^2.0.1",
